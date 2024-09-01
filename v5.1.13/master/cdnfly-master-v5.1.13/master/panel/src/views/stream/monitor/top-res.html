@@ -1,0 +1,141 @@
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+<script src="/src/lib/select2.min.js"></script>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>四层转发</cite></a>
+    <a><cite>监控统计</cite></a>
+    <a><cite>资源排行</cite></a>
+  </div>
+</div>
+<style type="text/css">
+.select2-container .select2-selection--multiple {min-height: 30px;}
+.layui-card-body  {line-height: 18px;}
+.active-btn {
+  border: 1px solid #009688 ! important;
+  color: #009688
+}
+.select2-container .select2-search--inline .select2-search__field {padding-left: 5px;}
+</style>
+
+<div class="layui-fluid" id="component-tabs">
+  <div class="layui-row">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-tab layui-tab-brief" lay-filter="top-res-tab">
+            <ul class="layui-tab-title">
+              <li class="layui-this">端口排行</li>
+            </ul>
+            <div class="layui-tab-content">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md6">
+                  <div class="layui-btn-group">
+                    <button type="button" data-minute=10m class="layui-btn layui-btn-primary recent_time layui-btn-sm active-btn">10分钟实时</button>
+                    <button type="button" data-minute=30m class="layui-btn layui-btn-primary recent_time layui-btn-sm ">近30分钟</button>
+                    <button type="button" data-minute=60m class="layui-btn layui-btn-primary recent_time layui-btn-sm ">近1小时</button>
+                  </div>
+                  <button id="reload" type="button" class="layui-btn layui-btn-sm">刷新</button>
+                </div>
+              </div>               
+              <div class="layui-tab-item layui-show">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <table id="top-ports" lay-filter="top-ports"></table>
+                    </div>
+                  </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+   </div>
+</div>
+
+<script>
+layui.use(['admin','table'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,table = layui.table
+  ,element = layui.element;
+
+  admin.on('hash(stream-monitor-res)', function(router){
+    clearInterval(window.stream_top_interval)
+  });
+
+  $("#reload").click(function (argument) {
+    render_table()
+  })
+
+  function render_table() {
+    // 清理定时
+    var stream_top_interval = window.stream_top_interval
+    if (typeof(stream_top_interval) != "undefined") {
+      clearInterval(stream_top_interval)
+    }
+
+    //最近时间
+    var recent_time = $(".active-btn").data("minute")
+
+
+    //类型
+    var type
+    var curr_tab = $(".layui-tab-title .layui-this").text()
+    if (curr_tab == "端口排行") {
+      type = "top-ports"
+      title = "端口"
+    }
+    admin.req({
+      url: '/monitor/stream/top?recent_time='+recent_time+"&type="+type
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        table.render({
+          elem: '#'+type
+          ,cols: [[
+            {title:'排行',type: "numbers"}
+            ,{field:'res', title:title}
+            ,{field:'count', title:'连接数',width:120}
+            ,{field:'traffic', title:'流量',width:120,templet:function (d) {
+                var v = d.traffic / 1024
+                if (v >= 921.6) {
+                  var t = (v / 1024).toFixed(2) + " MB" 
+                } else {
+                  var t = v.toFixed(2) + " KB"
+                }
+                return t
+            }}
+          ]]
+          ,data: data
+          ,page: true
+          ,limit: 20
+        });  
+     
+      }
+    }); 
+
+  }
+
+  render_table()
+
+  element.on('tab(top-res-tab)', function(data){
+    $(".domains").parent().removeClass("layui-hide")
+    render_table()
+
+  });
+
+  $(".recent_time").click(function (argument) {
+    $(".recent_time").removeClass("active-btn")
+    $(this).addClass("active-btn")
+    render_table()
+  })
+
+
+});  
+</script>

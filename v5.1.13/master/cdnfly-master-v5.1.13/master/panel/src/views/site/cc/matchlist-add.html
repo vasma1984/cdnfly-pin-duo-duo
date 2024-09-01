@@ -1,0 +1,70 @@
+
+
+<div class="layui-form" lay-filter="layuiadmin-form-matchadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">匹配项</label>
+    <div class="layui-input-inline">
+      <select name="type" lay-filter="type">
+        <option value="">请选择匹配项</option>
+        <option value="ip">IP地址</option>
+        <option value="host">域名</option>
+        <option value="req_uri">请求URI</option>
+        <option value="uri">请求URI(不带参数)</option>
+        <option value="req_method">请求方法</option>
+        <option value="user_agent">浏览器UA</option>
+        <option value="referer">请求来源</option>
+        <option value="country_iso_code">国家代码</option>
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">操作符</label>
+    <div class="layui-input-inline">
+      <select class="filter" name="operator" lay-filter="match-op">
+        <option value="">请选择操作符</option>
+        <option value="=">等于</option>
+        <option value="!=">不等于</option>
+        <option value="contain">包含</option>
+        <option value="!contain">不包含</option>
+        <option value="prefix">前缀匹配</option>
+        <option value="suffix">后缀匹配</option>
+        <option value="regex">正则匹配</option>
+      </select>   
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">匹配值</label>
+    <div class="layui-input-inline">
+      <input type="text" name="value"  placeholder="输入正则表达式" autocomplete="off" class="layui-input layui-hide">  
+      <textarea name="value"  placeholder="一行一个匹配值" class="layui-textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-matchlist-add-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+var form = layui.form
+var $ = layui.$
+form.render()
+form.on('select(match-op)', function(data){
+  if (data.value == "regex") {
+    $("input[name='value']").removeClass("layui-hide")
+    $("textarea[name='value']").addClass("layui-hide")
+  } else {
+    $("input[name='value']").addClass("layui-hide")
+    $("textarea[name='value']").removeClass("layui-hide")
+  }
+  form.render()
+})
+</script>

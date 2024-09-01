@@ -1,0 +1,79 @@
+<style type="text/css">
+
+</style>
+  <form class="layui-form" action="">
+      <span style="font-size:14px;font-weight: 500;">请选择需要同步的项目：</span>
+      <div class="layui-form-item">
+        <input type="checkbox" name="sync-item" value="name" title="套餐名称" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item" value="node_group_id" title="线路分组 (包括备用组)" lay-skin="primary"> 
+      </div>
+
+      <div class="layui-form-item">
+        <input type="checkbox" name="sync-item"  value="cname_domain" title="CNAME域名" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item"  value="cname_hostname2" title="CNAME主机名" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item"  value="cname_mode"  title="CNAME模式" lay-skin="primary"> 
+      </div>
+
+
+      <div class="layui-form-item">
+        <input type="checkbox" name="sync-item"  value="traffic"  title="月流量" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item"   value="domain" title="域名数" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item"   value="http_port" title="HTTP端口数" lay-skin="primary"> 
+      </div>
+      <div class="layui-form-item">
+        <input type="checkbox" name="sync-item"  value="bandwidth"  title="带宽" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item"   value="connection" title="连接数" lay-skin="primary"> 
+      </div>      
+      <div class="layui-form-item">
+        <input type="checkbox" name="sync-item"   value="stream_port" title="转发端口数" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item"  value="custom_cc_rule"  title="自定义CC规则" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item"   value="websocket" title="Websocket" lay-skin="primary"> 
+      </div>
+
+      <div class="layui-form-item">
+        <input type="checkbox" name="sync-item"  value="month_price"  title="月价" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item"   value="quarter_price" title="季价" lay-skin="primary"> 
+        <input type="checkbox" name="sync-item"   value="year_price" title="年价" lay-skin="primary"> 
+      </div>
+
+  </form>
+
+
+  <div class="layui-row layui-col-space30">   
+    <div class="layui-col-md6 layui-col-md-offset6">
+      <button type="button" class="layui-btn-normal layui-btn check-all">全选</button>
+      <button type="button" class="layui-btn sync">同步</button>
+    </div>    
+  </div>
+
+
+<script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,laydate = layui.laydate
+    ,form = layui.form;
+
+  $(".check-all").click(function () {
+    var text = $(this).text()
+    if (text == "全选") {
+      $("input[name='sync-item']").prop("checked",true)
+      $(this).text("取消全选")
+    } else {
+      $("input[name='sync-item']").prop("checked",false)
+      $(this).text("全选")
+    }
+    
+    form.render()
+  })
+
+
+  layui.form.render()
+
+   
+  }); //重载表格  
+
+
+</script>    

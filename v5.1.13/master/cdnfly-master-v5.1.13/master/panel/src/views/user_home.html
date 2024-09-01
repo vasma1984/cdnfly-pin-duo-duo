@@ -1,0 +1,361 @@
+<style type="text/css">
+.announcement li {
+  margin-bottom: 20px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.date {
+  color: #909399;
+  float: right;
+}
+.title {
+  width: 60%;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+.title:hover {text-decoration:underline}
+.red {color: red;}
+.bold {font-weight: bold;}
+</style>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <script type="text/html" template>
+      <div class="layui-col-md12 hello" style="font-size:13px;margin-left:20px;margin-bottom:10px;">
+        
+      </div>
+     </script>
+  </div>
+  <div class="layui-row layui-col-space15">
+
+    <div class="layui-col-md12">
+      <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6">
+          <div class="layui-card">
+            <div class="layui-card-header">快捷方式</div>
+            <div class="layui-card-body">
+              
+              <div class="layui-carousel layadmin-carousel layadmin-shortcut">
+                <div carousel-item>
+                  <ul class="layui-row layui-col-space10">
+                      <li class="layui-col-xs3">
+                        <a lay-href="site/site/">
+                          <i class="layui-icon layui-icon-console"></i>
+                          <cite>我的网站</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="site/cert/cert">
+                          <i class="layui-icon layui-icon-chart"></i>
+                          <cite>我的证书</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="stream/stream/">
+                          <i class="layui-icon layui-icon-template-1"></i>
+                          <cite>我的转发</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="site/monitor/realtime">
+                          <i class="layui-icon layui-icon-chat"></i>
+                          <cite>网站监控</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="stream/monitor/realtime">
+                          <i class="layui-icon layui-icon-find-fill"></i>
+                          <cite>转发监控</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="finance/order/">
+                          <i class="layui-icon layui-icon-survey"></i>
+                          <cite>消费记录</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="site/acl/">
+                          <i class="layui-icon layui-icon-user"></i>
+                          <cite>ACL管理</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="system/log/op">
+                          <i class="layui-icon layui-icon-set"></i>
+                          <cite>操作日志</cite>
+                        </a>
+                      </li>
+                    </ul>
+                  
+                  
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-card">
+            <div class="layui-card-header">使用统计</div>
+            <div class="layui-card-body">
+              <div class="layui-carousel layadmin-carousel layadmin-backlog">
+                <div carousel-item>
+                  <ul class="layui-row layui-col-space10">
+                    <li class="layui-col-xs6">
+                      <a class="layadmin-backlog-body">
+                        <h3>域名总数</h3>
+                        <p><cite id="domain"></cite></p>
+                      </a>
+                    </li>
+                    <li class="layui-col-xs6">
+                      <a class="layadmin-backlog-body">
+                        <h3>证书总数</h3>
+                        <p><cite id="cert"></cite></p>
+                      </a>
+                    </li>
+                    <li class="layui-col-xs6">
+                      <a class="layadmin-backlog-body">
+                        <h3>转发端口总数</h3>
+                        <p><cite id="stream_port"></cite></p>
+                      </a>
+                    </li>                   
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md6">
+      <div class="layui-card">
+        <div class="layui-card-header">公告</div>
+        <div class="layui-card-body layui-text announcement">
+          暂无公告
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="layui-col-md6">
+      <div class="layui-card">
+        <div class="layui-card-header">账号信息</div>
+        <div class="layui-card-body layui-text">
+          <table class="layui-table">
+            <colgroup>
+              <col width="200">
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <td>ID</td>
+                <td id="uid">
+                  1
+               </td>
+              </tr>
+              <tr>
+                <td>余额</td>
+                <td id="balance">
+                  0
+                </td>
+              </tr>              
+              <tr>
+                <td>待续费</td>
+                <td id="renew">
+                  1
+                </td>
+              </tr>              
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+  //区块轮播切换
+  layui.use(['admin', 'carousel'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,carousel = layui.carousel
+    ,element = layui.element
+    ,device = layui.device();
+
+    //轮播切换
+    $('.layadmin-carousel').each(function(){
+      var othis = $(this);
+      carousel.render({
+        elem: this
+        ,width: '100%'
+        ,arrow: 'none'
+        ,interval: othis.data('interval')
+        ,autoplay: othis.data('autoplay') === true
+        ,trigger: (device.ios || device.android) ? 'click' : 'hover'
+        ,anim: othis.data('anim')
+      });
+    });
+
+    // 问候语
+    admin.req({
+      url: '/log/login?page=1&limit=2'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var last_login = res['data'][1]
+        var username = decodeURI(layui.data('layuiAdmin').username)
+        var sys_name = layui.data('layuiAdmin').sys_name
+        var hello
+        if (typeof(last_login) == "undefined") {
+          hello = username +"您好！欢迎登录"+sys_name+"控制台。"
+        } else {
+          hello = username +"您好！欢迎回到"+sys_name+"控制台。您上次登录时间"+last_login['create_at2']+"，IP地址"+last_login['ip']+"。"
+        }
+        $(".hello").text(hello)
+
+      }
+    });
+
+    admin.req({
+      url: '/user/overview'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        $("#domain").text(res.data.domain_count)
+        $("#stream_port").text(res.data.stream_port_count)
+        $("#cert").text(res.data.cert_count)
+        $("#uid").text(res.data.uid)
+        $("#balance").text(res.data.balance + " 元")
+        $("#renew").text(res.data.renew)
+
+      }
+    });
+
+    // 显示公告
+    admin.req({
+      url: '/messages?type=announcement'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var data = res.data
+        var popuped = false
+        if (data.length > 0) {
+          $('.announcement').empty()
+        }
+
+        for (i in data) {
+          var extra_class=""
+          if (data[i]['is_red']) {
+            extra_class = "red"
+          }
+
+          if (data[i]['is_bold']) {
+            extra_class += " bold"
+          }          
+
+          var title = data[i]['title']
+          var msg_id = data[i]['id']
+          var is_external = data[i]['is_external']
+
+          $('.announcement').append('<li data-id='+msg_id+'><span class="title '+extra_class+' ">'+title+'</span><span class="date">'+data[i]['create_at2']+'</span></li>')
+
+          var is_popup = data[i]['is_popup']
+          var uid = data[i]['uid']
+          if (is_popup && !is_external && !popuped && !uid) {
+            var popup_msg_id = msg_id
+            popuped = true
+            admin.req({
+              url: '/messages/' + popup_msg_id
+              ,type: "get"
+              ,contentType:"application/json"
+              ,dataType: "json"
+              ,done: function(res){
+                var data = res.data
+                var content = data.content
+                var title = data.title
+                layer.open({
+                  title: title
+                  ,type: 0
+                  ,btn: ["我已阅读，不再显示","稍后再看"]
+                  ,yes: function(index, layero){
+                    admin.req({
+                      url: '/messages/read' //实际使用请改成服务端真实接口
+                      ,data: JSON.stringify({"id":popup_msg_id})
+                      ,type: "post"
+                      ,loader: false
+                      ,contentType:"application/json"
+                      ,dataType: "json"
+                    });
+                    layer.close(index);
+                  }
+                  ,closeBtn: 1
+                  ,shadeClose: true
+                  ,area: ['800px','600px']
+                  ,content: content
+                });                 
+              }
+            });            
+          }
+        }
+        
+        // 监听点击标题
+        $(".announcement li").click(function (argument) {
+          var msg_id = $(this).data("id")
+          var messages_ajax = admin.req({
+            url: '/messages/' + msg_id
+            ,type: "get"
+            ,contentType:"application/json"
+            ,dataType: "json"
+            ,done: function(res){
+              var data = res.data
+              var content = data.content
+              var title = data.title
+              var is_external = data.is_external
+              var url = data.url
+              if (is_external) {
+                window.open(url)
+              } else {
+                layer.open({
+                  title: title
+                  ,type: 0
+                  ,btn: ["关闭"]
+                  ,closeBtn: 1
+                  ,shadeClose: true
+                  ,area: ['800px','600px']
+                  ,content: content
+                });                 
+              }
+            }
+          });
+
+          $.when(messages_ajax).then(function  (argument) {
+            admin.req({
+              url: '/messages/read' //实际使用请改成服务端真实接口
+              ,data: JSON.stringify({"id":msg_id})
+              ,type: "post"
+              ,loader: false
+              ,contentType:"application/json"
+              ,dataType: "json"
+            });
+          })
+
+        })
+      
+      }
+    });
+})    
+
+</script>
+

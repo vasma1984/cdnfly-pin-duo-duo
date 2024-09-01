@@ -1,0 +1,128 @@
+
+
+  <title>消息订阅 - 账号中心</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>账号中心</cite></a>
+      <a><cite>消息订阅</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-table">
+              <colgroup>
+                <col>
+                <col>
+                <col>
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>消息类型</th>
+                  <th>手机提醒</th>
+                  <th>邮件提醒</th>
+                </tr> 
+              </thead>
+              <tbody>
+                <tr>
+                  <td>套餐到期</td>
+                  <td class="layui-form"><input lay-skin="primary" type="checkbox" lay-filter="sub" value="package-expire|phone" name="package-expire-phone" ></td>
+                  <td class="layui-form"><input lay-skin="primary" type="checkbox" lay-filter="sub" value="package-expire|email" name="package-expire-email" ></td>
+                </tr>
+                <tr>
+                  <td>流量超限</td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="traffic-exceed|phone" name="traffic-exceed-phone" ></td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="traffic-exceed|email" name="traffic-exceed-email" ></td>
+                </tr>     
+                <tr>
+                  <td>带宽超限</td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="bandwidth-exceed|phone" name="bandwidth-exceed-phone" ></td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="bandwidth-exceed|email" name="bandwidth-exceed-email" ></td>
+                </tr>        
+                <tr>
+                  <td>连接数超限</td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="connection-exceed|phone" name="connection-exceed-phone" ></td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="connection-exceed|email" name="connection-exceed-email" ></td>
+                </tr>     
+                <tr>
+                  <td>防护规则切换</td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="cc-switch|phone" name="cc-switch-phone" ></td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="cc-switch|email" name="cc-switch-email" ></td>
+                </tr>   
+                <tr>
+                  <td>证书到期</td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="cert-expire|phone" name="cert-expire-phone" ></td>
+                  <td class="layui-form"><input type="checkbox" lay-skin="primary" lay-filter="sub" value="cert-expire|email" name="cert-expire-email" ></td>
+                </tr>                                                 
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form
+
+    form.render()
+    // 获取订阅
+    admin.req({
+      url: '/messages/sub'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var data = res.data
+        for (i in data) {
+          var msg_type = data[i]['msg_type']
+          var phone = data[i]['phone']
+          var email = data[i]['email']
+          var phone_name = msg_type + "-phone"
+          var email_name = msg_type + "-email"
+          $("input[name='"+phone_name+"']").prop("checked",phone)
+          $("input[name='"+email_name+"']").prop("checked",email)
+        }
+
+        form.render("checkbox")
+
+      }
+    });    
+
+    // 更新
+    form.on('checkbox(sub)', function(data){
+      var v = data.elem.checked
+      var msg_type = data.value.split("|")[0]
+      var media = data.value.split("|")[1]
+      var data = {"msg_type":msg_type}
+      data[media] = v
+
+      admin.req({
+        url: '/messages/sub' //实际使用请改成服务端真实接口
+        ,data: JSON.stringify(data)
+        ,type: "put"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          layer.msg('更新成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          });
+        }        
+      });
+
+    });   
+
+  });
+  </script>

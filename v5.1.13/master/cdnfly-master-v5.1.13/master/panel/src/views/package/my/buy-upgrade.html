@@ -1,0 +1,72 @@
+<style type="text/css">
+.layui-layer-page .layui-layer-content {
+            position: relative;
+            overflow: visible !important;
+    }
+.li-title {
+  color:#999;
+  width:100px;
+  display: inline-block;
+}
+
+</style>
+
+<div class="layui-form" lay-filter="layuiadmin-form-nodeadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">数量</label>
+    <div class="layui-input-inline">
+        <input type="text" name="amount" value="1" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">价格</label>
+    <label class="layui-form-label price"></label>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" id="buy-upgrade-confirm" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+
+<script type="text/javascript">
+layui.data.sendParams = function(params){
+  var user_package_id = params.user_package_id
+  var package_up_id = params.id
+
+  var form = layui.form
+  var admin = layui.admin
+  var $ = layui.$
+
+  function get_price(amount) {
+    admin.req({
+      url: '/user-package/' + user_package_id + "/upgrades/"+package_up_id + "?amount="+amount //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var price =res.data.price
+        $(".price").text(price + " 元")
+      }
+    });
+  }    
+
+  get_price(1)
+
+  $("input[name='amount']").on('change', function(){
+      var amount = $(this).val();
+      get_price(amount)
+
+  });
+
+}
+</script>

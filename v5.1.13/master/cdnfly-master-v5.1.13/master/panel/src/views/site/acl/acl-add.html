@@ -1,0 +1,247 @@
+  <div class="layui-fluid">
+    <div class="layui-row layui-form layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2">名称</div>
+                <div class="layui-col-md3">
+                  <input type="text" name="name" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2">备注</div>
+                <div class="layui-col-md4">
+                  <input type="text" name="des" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2">默认行为</div>
+                <div class="layui-col-md4">
+                  <input type="radio" name="default_action" value="allow" checked title="允许">
+                  <input type="radio" name="default_action" value="reject" title="拒绝" >
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2">规则列表</div>
+                <div class="layui-col-md10">
+                  <table class="layui-hide" id="acllist" lay-filter="acllist"></table>
+                  <script type="text/html" id="acllist-toolbar">
+                      <div class="layui-row layui-col-space10">
+                        <div class="layui-col-md9">
+                          <button class="layui-btn layui-btn-xs" lay-event="add">新增</button>
+                          <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</button>
+                        </div>
+                      </div>
+                  </script>
+                   
+                  <script type="text/html" id="acllist-bar">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                  </script>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2"></div>
+                <div class="layui-col-md2">
+                  <button id="save" type="button" class="layui-btn">确认</button>
+                </div>
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+<script>
+layui.data.sendParams = function(params){
+  var data = params.data
+  var table = layui.table
+  var admin = layui.admin
+  var view = layui.view
+  var form = layui.form
+  var  $ = layui.$
+  if (typeof(data) == "undefined") {
+    data = []
+
+  } else {
+    data = JSON.parse(data)
+  }
+
+  window.acl_data = data
+  window.match_item_map = {"ip":"IP地址","host":"域名","req_uri":"请求URI","uri":"请求URI(不带参数)","req_method":"请求方法","user_agent":"浏览器UA","referer":"请求来源","country_iso_code":"国家代码","accept_language":"accept_language请求头"}
+  window.match_op_map = {"=":"等于","!=":"不等于","contain":"包含","!contain":"不包含","prefix":"前缀匹配","suffix":"后缀匹配","regex":"正则匹配"}
+
+  if (params) {
+    $("input[name='name']").val(params.name)
+    $("input[name='des']").val(params.des)
+    $("input[name='default_action'][value='"+params.default_action+"']").prop("checked",true)
+  }
+
+  form.render("radio")
+
+  table.render({
+    elem: '#acllist'
+    ,title: 'xx'
+    ,toolbar: '#acllist-toolbar'
+    ,autoSort: false
+    ,defaultToolbar: []
+      ,size: 'sm' //小尺寸的表格
+
+    ,cols: [[ //表头
+      {type: 'checkbox', fixed: 'left'}
+      ,{field: 'acl_matcher', title: '匹配', templet: function(d){
+        var m = []
+        for (i in d.acl_matcher) {
+          m.push(i + " " + d.acl_matcher[i]['operator'] + " " + d.acl_matcher[i]['value'])
+        }
+        return m.join(" & ")
+      }}
+      ,{field: 'acl_action', title: '行为'}
+      ,{fixed: 'right', title:'操作', toolbar: '#acllist-bar', width:120}
+
+    ]]
+    ,data: data
+    ,page: true    
+  }); 
+
+    //头工具栏事件
+    table.on('toolbar(acllist)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      var table_data = obj.config.data
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增规则'
+            ,area: ['800px', '350px']
+            ,id: 'LAY-popup-acllist-add'
+            ,success: function(layero, index){
+              view(this.id).render('site/acl/acllist-add').done(function(){
+                $("#add_match").click(function (argument) {
+                  var action = $("input[name='action']:checked").val()
+
+                  var acl_matcher = {}
+                  $(".match-item-list .del-span").each(function (index, ele) {
+                    var item = $(ele).text()
+                    var item_arr = item.split("\t")
+                    var type = item_arr[0]
+                    var op = item_arr[1]
+                    var val = item_arr[2].slice(0,-1)
+                    acl_matcher[type] = {"operator":op,"value":val}
+                  })
+
+                  if (JSON.stringify(acl_matcher) == '{}') {
+                    layer.alert("请先添加匹配项")
+                    return
+                  }
+
+                  window.acl_data.push({"acl_action":action,"acl_matcher":acl_matcher})
+                  var acl_data = JSON.parse(JSON.stringify(window.acl_data))
+
+                  table.reload('acllist',{data:acl_data}); //重载表格
+                  layer.close(layer.index); //执行关闭 
+
+
+                })
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的规则');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除所选的规则，是否继续', function(index){
+              var acl_data = []
+              for (i in table_data) {
+                if (!table_data[i]['LAY_CHECKED']) {
+                  acl_data.push(table_data[i])
+                }
+              }
+
+              window.acl_data = acl_data
+              layui.table.reload('acllist',{data: acl_data}); //重载表格
+              layer.close(index); //执行关闭 
+   
+          });
+        break; 
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(acllist)', function(obj){
+      var edit_index = $(obj.tr).data("index");
+      var table_data = obj.data
+      if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑规则'
+            ,area: ['800px', '450px']
+            ,id: 'LAY-popup-acllist-add'
+          ,success: function(layero, index){
+            view(this.id).render('site/acl/acllist-add',table_data).done(function(){
+              // 填充表单
+              var action = table_data.acl_action
+              var matcher = table_data.acl_matcher
+              $("input[name='action'][value='reject']").prop("checked",true)
+
+              $("#matchers").remove()
+              for (i in matcher) {
+                $("select[name='match-item']").find("option[value='"+i+"']").remove()
+                var match_item = i
+                var operator = matcher[i]['operator']
+                var value = matcher[i]['value']
+                $(".match-item-list").append('<div class="layui-form-mid match-item"><span class="layui-badge layui-bg-blue del-span">'+match_item+'\t'+operator +'\t'+value+'<span onclick=\'del_item(this)\' class="layui-badge del">x</span></span></div>')                
+              }
+
+              form.render()
+              $("#add_match").click(function (argument) {
+                var action = $("input[name='action']:checked").val()
+
+                var acl_matcher = {}
+                $(".match-item-list .del-span").each(function (index, ele) {
+                  var item = $(ele).text()
+                  var item_arr = item.split("\t")
+                  console.log(item_arr)
+                  var type = item_arr[0]
+                  var op = item_arr[1]
+                  var val = item_arr[2].slice(0,-1)         
+                  acl_matcher[type] = {"operator":op,"value":val}
+                })
+
+                if (JSON.stringify(acl_matcher) == '{}') {
+                  layer.alert("请先添加匹配项")
+                  return
+                }
+
+                window.acl_data[edit_index] = {"acl_action":action,"acl_matcher":acl_matcher}
+                var acl_data = JSON.parse(JSON.stringify(window.acl_data))
+
+                table.reload('acllist',{data:acl_data}); //重载表格
+                layer.close(layer.index); //执行关闭 
+
+
+                })
+            });
+          }
+        });
+      }
+    });
+
+}  
+</script>  

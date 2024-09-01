@@ -1,0 +1,129 @@
+
+
+  <title>登录日志 - 系统日志 - 系统管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>系统管理</cite></a>
+      <a><cite>系统日志</cite></a>
+      <a><cite>登录日志</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md3 layui-form" style="padding-left:40px;">
+          <input type="text" id="date" name="date"  placeholder="时间范围" autocomplete="off" class="layui-input">
+        </div> 
+    
+        <script type="text/html" template lay-done="listen_uid();">
+        {{# if(layui.router().search.show_all === '1'){ }}
+          <div class="layui-col-md2 layui-form">
+            <input type="text" name="uid"  placeholder="用户ID" autocomplete="off" class="layui-input">
+          </div> 
+        {{# } }}
+        </script>
+
+        <div class="layui-col-md3 layui-form">
+          <input type="text" name="ip"  placeholder="登录IP" autocomplete="off" class="layui-input">
+        </div> 
+
+        <div class="layui-col-md2 layui-form">
+          <select lay-filter="success" class="success" name="success" lay-verify="required">
+            <option value=''>登录结果</option>
+            <option value='1'>成功</option>
+            <option value='0'>失败</option>
+          </select>
+        </div>  
+
+
+    </div>
+
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form
+    ,laydate = layui.laydate;
+
+    laydate.render({
+      elem: '#date'
+      ,range: true
+      ,done: function(value, date, endDate){
+        var date_range = value
+        var start = date_range.split(" - ")[0]
+        var end = date_range.split(" - ")[1]
+        table.reload('test-table-toolbar',{where: {"start":start,"end":end}, page: {curr: 1}})        
+      }
+    });
+
+    form.render()
+    var show_all = layui.router().search.show_all
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var uid_hide = true
+    if (show_all == "1") {
+      uid_hide = false
+    }
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/log/login'
+      ,headers: {"access-token":access_token}
+      ,title: '登录日志'
+      ,where: {"show_all": show_all}
+      ,cols: [[
+        {field:'id', title:'ID',   sort: true}
+        ,{field:'uid', title:'用户ID',hide: uid_hide}
+        ,{field:'ip', title:'IP'}
+        ,{field:'create_at2', title:'登录时间'}
+        ,{field:'success', title:'登录状态', templet: function(d){
+          if (d.success == 1) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'  
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+          }            
+
+        }}
+      ]]
+      ,page: true
+      ,defaultToolbar: []
+    });
+
+    form.on('select(success)', function(data){
+      var success = data.value
+      table.reload('test-table-toolbar',{where: {"success":success}, page: {curr: 1}})
+    });       
+
+
+    $("input[name='ip']").on('change', function(){
+        var ip = $(this).val();
+        table.reload('test-table-toolbar',{where: {"ip":ip}, page: {curr: 1}})
+
+    }); 
+
+
+  });
+
+function listen_uid (argument) {
+    var $ = layui.$
+    var table = layui.table
+    $("input[name='uid']").on('change', function(){
+        var uid = $(this).val();
+        table.reload('test-table-toolbar',{where: {"uid":uid}, page: {curr: 1}})
+
+    });   
+}
+  </script>

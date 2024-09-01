@@ -1,0 +1,76 @@
+
+
+<div class="layui-form" lay-filter="layuiadmin-form-sitegroupadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">名称</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="name" value="{{ d.params.name || '' }}" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">备注</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="des" value="{{ d.params.des || '' }}"  placeholder="请输入备注" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">DNS</label>
+    <div class="layui-input-inline">
+        <select lay-filter="dns" name="type" lay-verify="">
+          <option value="">请选择DNS</option>
+          <option value="CloudFlare">CloudFlare</option>
+          <option value="DNSPod.cn">DNSPod.cn</option>
+          <option value="DNSPod.com">DNSPod.com</option>
+          <option value="GoDaddy.com">GoDaddy.com</option>
+          <option value="Aliyun">Aliyun</option>
+          <option value="cloudns.net">cloudns.net</option>
+          <option value="Name.com">Name.com</option>
+          <option value="Namecheap">Namecheap</option>
+          <option value="jdcloud.com">jdcloud.com</option>
+          <option value="dnsdun">dnsdun</option>
+        </select>  
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">验证信息</label>
+    <div class="layui-input-inline auth">
+        
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-node-front-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+var form = layui.form
+var $ = layui.$
+
+form.on('select(dns)', function(data){
+  var dns = data.value
+  var auth = window.auth_data[dns]
+  $(".auth").empty();
+  for (i in auth) {
+    var name = auth[i].name
+    var tip = auth[i].tip
+    $(".auth").append('<input type="text" name="'+name+'" lay-verify="required" placeholder="'+tip+'" autocomplete="off" class="layui-input">')    
+  }
+
+  form.render("select")
+
+});   
+
+</script>

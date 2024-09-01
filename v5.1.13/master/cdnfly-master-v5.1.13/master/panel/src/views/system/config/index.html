@@ -1,0 +1,2718 @@
+
+
+<title>系统设置 - 系统管理</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>系统管理</cite></a>
+    <a><cite>系统设置</cite></a>
+  </div>
+</div>
+
+<style type="text/css">
+.layui-elem-quote{padding: 6px;}
+.thin-gray{font-weight: 400;color: #999;} 
+.small-title{font-weight:700;font-size:14px}
+hr {margin-bottom: 30px}
+.layui-form-switch {margin-top: 0px;}
+</style>
+
+
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+            <ul class="layui-tab-title">
+              <li class="layui-this">系统设置</li>
+              <li>数据清理</li>
+              <li>用户相关</li>
+              <li>发信配置</li>
+              <li>通知设置</li>
+              <li>其它设置</li>
+            </ul>
+            <div class="layui-tab-content">
+              <div class="layui-tab-item layui-show">
+                <div class="layui-row ">
+                 <div class="layui-col-md2"> <span class="small-title">系统信息</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">系统名称：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="sys_name"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                </div> 
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">普通用户后台标题：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="user_console_title"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                </div> 
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">管理员后台标题：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="admin_console_title"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                </div>        
+                 <hr>
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">套餐相关</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">套餐到期关闭网站：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="package_expire_close_site" lay-filter="package_expire_close_site" lay-skin="switch" lay-text="是|否">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">流量超限关闭网站：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="traffic_excceed_close_site" lay-filter="traffic_excceed_close_site" lay-skin="switch" lay-text="是|否">
+                  </div>
+                </div> 
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">允许自主升级套餐：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="package_allow_upgrade" lay-filter="package_allow_upgrade" lay-skin="switch" lay-text="是|否">
+                  </div>
+                </div> 
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">允许自主降级套餐：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="package_allow_downgrade" lay-filter="package_allow_downgrade" lay-skin="switch" lay-text="是|否">
+                  </div>
+                </div> 
+                 <hr>
+
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">系统维护</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">维护状态：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox"  name="maintain-enable" lay-filter="maintain_check_on" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">维护提示：</div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="maintain-msg" placeholder="请输入"  autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+
+                <hr>                                              
+
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">升级设置</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">升级主控时自动升级节点：</div>
+                  <div class="layui-col-lg1 layui-col-md2 layui-form">
+                    <input style="margin-top: 0px;" type="checkbox" name="auto-upgrade-agent" lay-filter="auto-upgrade-agent" lay-skin="switch" lay-text="是|否">
+                  </div>
+                </div>
+
+                 
+                <hr>
+
+                <div class="layui-row ">
+                  <div class="layui-col-md2"> <span class="small-title">HTTPS设置</span></div>
+                 </div>
+                 <div class="layui-row layui-col-space10">
+                   <div style="color:red" class="layui-col-lg4 layui-col-md8">
+                    1. 保存后，需要登录主控执行命令生效 supervisorctl restart master-ssl<br>
+                    2. 如需强制https，修改主控的/opt/cdnfly/master/conf/config.py的FORCE_SSL=True，如果没有就增加，之后执行supervisorctl restart all生效
+                   </div>
+                </div> 
+                 <div class="layui-row layui-col-space10 ">
+                   <div class="layui-col-lg2 layui-col-md4">证书：</div> <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="https_cert" placeholder="正文" class="layui-textarea l"></textarea>
+                    </div>
+                 </div> 
+                 <div class="layui-row layui-col-space10">
+                   <div class="layui-col-lg2 layui-col-md4">密钥：</div> <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="https_key" placeholder="正文" class="layui-textarea "></textarea>
+                    </div>
+                 </div> 
+
+              </div>
+              <div class="layui-tab-item">
+                <div class="layui-row ">
+                 <div class="layui-col-md2"> <span class="small-title">数据清理</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">清缓存、解锁IP历史记录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="keep-job-days"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">天</div>
+                </div> 
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">登录记录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="keep-login-log-days"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">天</div>
+                </div> 
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">操作记录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="keep-op-log-days"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">天</div>
+                </div>        
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">后台任务记录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="keep-task-log-days"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">天</div>
+                </div>     
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">网站访问日志 (ES)：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="keep-access-log-days"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">天</div>
+                </div> 
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">节点监控数据 (ES)：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="keep-node-log-days"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">天</div>
+                </div>   
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">流量带宽历史记录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="keep-traffic-history-days"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">天</div>
+                </div>                                                        
+                <hr>
+
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">数据备份</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">备份频率：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="backup_rate"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                </div> 
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">保留天数：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="backup_keep_days"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                </div>                                           
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">备份目录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="backup_dir"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                </div>                                         
+                <hr>
+              </div>
+              <div class="layui-tab-item">
+
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">用户登录</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">登录session有效时间：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="login_session_valid_time"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">秒</div>
+                </div>      
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">限制普通用户只能从此域名登录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="user_domain"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                </div>  
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">限制管理员只能从此域名登录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="admin_domain"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                </div>  
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">允许用户开启邮件验证码登录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="allow-enable-email-captcha-login"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">1为允许,0为禁止</div>
+                </div>  
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">允许用户开启短信验证码登录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="allow-enable-sms-captcha-login"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">1为允许,0为禁止</div>
+                </div>  
+                 <hr>
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">用户注册</span></div>
+                </div>
+
+                <div class="layui-row ignore-fill layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">开放注册：</div>
+                  <div class="layui-col-lg2 layui-col-md4  layui-form">
+                    <input type="checkbox" name="allow_register" lay-skin="switch" lay-filter="allow_register" lay-text="开放|关闭">
+                  </div>
+                </div>
+
+                <div class="layui-row ignore-fill layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">注册成功邮件模板：</div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="register_templ_title"  placeholder="标题"  autocomplete="off" class="layui-input register_templ">
+                  </div>
+                  <div class="layui-col-lg3 layui-col-md4">
+                    <textarea name="register_templ_data" placeholder="正文" class="layui-textarea register_templ"></textarea>
+                  </div>                
+                </div>
+
+                <div class="layui-row ignore-fill layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">找回密码邮件模板：</div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="forget_password_templ_title"  placeholder="标题"  autocomplete="off" class="layui-input forget_password_templ">
+                  </div>
+                  <div class="layui-col-lg3 layui-col-md4">
+                    <textarea name="forget_password_templ_data" placeholder="正文" class="layui-textarea forget_password_templ"></textarea>
+                  </div>                
+                </div>
+
+                <div class="layui-row ignore-fill layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">邮箱验证码邮件模板：</div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="email_captcha_templ_title"  placeholder="标题"  autocomplete="off" class="layui-input email_captcha_templ">
+                  </div>
+                  <div class="layui-col-lg3 layui-col-md4">
+                    <textarea name="email_captcha_templ_data" placeholder="正文" class="layui-textarea email_captcha_templ"></textarea>
+                  </div>                
+                </div>
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">手机验证码模板：</div>
+                  <div class="layui-col-lg5 layui-col-md8">
+                    <textarea name="phone_captcha_templ" placeholder="正文" class="layui-textarea phone_captcha_templ"></textarea>
+                  </div>                
+                </div>
+
+                <div class="layui-row ignore-fill layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">用户协议：</div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="user_agreement_title"  placeholder="标题"  autocomplete="off" class="layui-input user_agreement">
+                  </div>
+                  <div class="layui-col-lg3 layui-col-md4">
+                    <textarea name="user_agreement_data" placeholder="正文" class="layui-textarea user_agreement"></textarea>
+                  </div>                
+                </div>
+
+                <div class="layui-row ignore-fill layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">用户名：</div>
+                  <div class="layui-col-lg10 layui-col-md8 layui-form">
+                    <input type="checkbox" lay-filter="register_username_need" name="register_username_need" lay-skin="primary" title="要求填写">
+                  </div>    
+                </div>
+                <div class="layui-row ignore-fill layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">邮箱：</div>
+                  <div class="layui-col-lg1 layui-col-md1 layui-form">
+                    <input type="checkbox" lay-filter="register_email_need" name="register_email_need" lay-skin="primary" title="要求填写">
+                  </div>    
+                  <div class="layui-col-lg1 layui-col-md1 layui-form register_email_verify layui-hide">
+                    <input type="checkbox" lay-filter="register_email_verify" name="register_email_verify" lay-skin="primary" title="要求验证">
+                  </div>                
+                </div>
+
+                <div class="layui-row ignore-fill layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">手机：</div>
+                  <div class="layui-col-lg1 layui-col-md1 layui-form">
+                    <input type="checkbox" lay-filter="register_phone_need" name="register_phone_need" lay-skin="primary" title="要求填写">
+                  </div>    
+                  <div class="layui-col-lg1 layui-col-md1 layui-form register_phone_verify layui-hide">
+                    <input type="checkbox" lay-filter="register_phone_verify" name="register_phone_verify" lay-skin="primary" title="要求验证">
+                  </div>                
+                </div>
+
+                <div class="layui-row ignore-fill layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">QQ：</div>
+                  <div class="layui-col-lg10 layui-col-md8 layui-form">
+                    <input type="checkbox" lay-filter="register_qq_need" name="register_qq_need" lay-skin="primary" title="要求填写">
+                  </div>    
+                </div>
+
+                 <hr>
+
+              <div class="layui-row ">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">支付宝身份认证</span></div>
+              </div>
+
+              <div class="layui-row layui-col-space10 ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">应用ID</div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-id-auth-app-id"  placeholder="应用ID"  autocomplete="off" class="layui-input">
+                </div>
+              </div> 
+
+              <div class="layui-row layui-col-space10 ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">应用密钥</div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-id-auth-app-key"  placeholder="应用密钥"  autocomplete="off" class="layui-input">
+                </div>
+              </div> 
+
+              <div class="layui-row layui-col-space10 ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">支付宝公钥</div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-id-auth-public-key"  placeholder="支付宝公钥"  autocomplete="off" class="layui-input">
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space10 ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">认证场景</div>
+                <div class="layui-col-lg2 layui-col-md4 layui-form">
+                  <select lay-filter="biz_code" name="biz_code" lay-verify="">
+                    <option checked value="FACE">人脸认证</option>
+                    <option value="CERT_PHOTO">证照认证</option>
+                    <option value="CERT_PHOTO_FACE">证照和人脸认证</option>
+                    <option value="SMART_FACE">快捷认证</option>
+                  </select>     
+                </div>
+              </div>
+
+              <hr>
+              <div class="layui-row ">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">充值设置</span></div>
+              </div>
+              <div class="layui-row layui-col-space10  ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">微信支付：</div>
+                <div class="layui-col-lg1 layui-col-md2 layui-form">
+                  <input style="margin-top: 0px;" type="checkbox" name="wxpay-enable" lay-filter="wxpay-enable" lay-skin="switch" lay-text="开启|关闭">
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space10 wxpay layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg4 layui-col-md4 layui-form">
+                  <input type="radio" lay-filter="wxpay-subtype" name="wxpay-subtype" value="native" checked title="Native支付(官方)">
+                  <input type="radio" lay-filter="wxpay-subtype" name="wxpay-subtype" value="cccyun" checked title="彩虹易支付(第三方)">
+                  <input type="radio" lay-filter="wxpay-subtype" name="wxpay-subtype" value="codepay" title="码支付(第三方 codepay.kjkl8.com)" >
+                </div>
+              </div> 
+
+              <!-- native支持 -->
+              <div class="layui-row layui-col-space10 wxpay-native layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-app-id"  placeholder="应用ID"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">应用ID</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10  wxpay-native layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-mch-id"  placeholder="商户ID"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">商户ID</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10 wxpay-native layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-mch-key"  placeholder="商户Key"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">商户Key</span>
+              </div> 
+
+              <!-- 彩虹易支付支持 -->
+              <div class="layui-row layui-col-space10 wxpay-cccyun layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-cccyun-url"  placeholder="易支付网址"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">易支付网址</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10  wxpay-cccyun layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-cccyun-id"  placeholder="商户ID"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">商户ID</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10 wxpay-cccyun layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-cccyun-key"  placeholder="商户密钥"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">商户密钥</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10 wxpay-cccyun layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-cccyun-return-url"  placeholder="跳转通知地址	"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">跳转通知地址	</span>
+              </div> 
+
+              <!-- 码支付 -->
+              <div class="layui-row layui-col-space10 wxpay-codepay layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-codepay-id"  placeholder="码支付ID"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">码支付ID</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10 wxpay-codepay layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-codepay-key"  placeholder="通信密钥"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">通信密钥</span>
+              </div> 
+
+              <!-- 异步通知地址 -->
+              <div class="layui-row layui-col-space10 wxpay layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="wxpay-notify-url"  placeholder="异步通知地址"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">异步通知地址</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10  ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">支付宝：</div>
+                <div class="layui-col-lg1 layui-col-md2 layui-form">
+                  <input style="margin-top: 0px;" type="checkbox" name="alipay-enable" lay-filter="alipay-enable" lay-skin="switch" lay-text="开启|关闭">
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space10 alipay layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg4 layui-col-md4 layui-form">
+                  <input type="radio" lay-filter="alipay-subtype" name="alipay-subtype" value="pc" checked title="电脑网站支付(官方)">
+                  <input type="radio" lay-filter="alipay-subtype" name="alipay-subtype" value="f2f" title="当面付(官方)" >
+                  <input type="radio" lay-filter="alipay-subtype" name="alipay-subtype" value="cccyun" title="彩虹易支付(第三方)" >
+                  <input type="radio" lay-filter="alipay-subtype" name="alipay-subtype" value="codepay" title="码支付(第三方 codepay.kjkl8.com)" >
+                </div>
+              </div> 
+
+              <!-- 电脑网站支付或者当面付 -->
+              <div class="layui-row layui-col-space10 alipay-pc layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-app-id"  placeholder="应用ID"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">应用ID</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10 alipay-pc layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-app-key"  placeholder="应用私钥"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">应用私钥</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10 alipay-pc layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-public-key"  placeholder="支付宝公钥"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">支付宝公钥</span>
+              </div>
+
+              <!-- 彩虹易支付支持 -->
+              <div class="layui-row layui-col-space10 alipay-cccyun layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-cccyun-url"  placeholder="易支付网址"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">易支付网址</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10  alipay-cccyun layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-cccyun-id"  placeholder="商户ID"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">商户ID</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10 alipay-cccyun layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-cccyun-key"  placeholder="商户密钥"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">商户密钥</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10 alipay-cccyun layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-cccyun-return-url"  placeholder="跳转通知地址	"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">跳转通知地址	</span>
+              </div> 
+
+              <!-- 码支付 -->
+              <div class="layui-row layui-col-space10 alipay-codepay layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-codepay-id"  placeholder="码支付ID"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">码支付ID</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10 alipay-codepay layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-codepay-key"  placeholder="通信密钥"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">通信密钥</span>
+              </div> 
+
+              <!-- 异步通知地址 -->
+              <div class="layui-row layui-col-space10 alipay layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" name="alipay-notify-url"   placeholder="异步通知地址"  autocomplete="off" class="layui-input">
+                </div>
+                <span style="line-height: 45px;">异步通知地址</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10  ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">转账汇款：</div>
+                <div class="layui-col-lg1 layui-col-md2 layui-form">
+                  <input style="margin-top: 0px;" type="checkbox" name="transfer-enable" lay-filter="transfer-enable" lay-skin="switch" lay-text="开启|关闭">
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space10 transfer layui-hide ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg3 layui-col-md4">
+                  <textarea name="transfer-data" class="layui-textarea"></textarea>
+                </div>
+                <span style="line-height: 45px;">转账说明</span>
+              </div> 
+
+              <div class="layui-row layui-col-space10  ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">默认方式：</div>
+                <div class="layui-col-lg4 layui-col-md8 layui-form">
+                  <input type="radio" name="default-pay" value="" checked title="无">
+                  <input type="radio" name="default-pay" value="wxpay" title="微信支付" >
+                  <input type="radio" name="default-pay" value="alipay" title="支付宝">
+                  <input type="radio" name="default-pay" value="transfer" title="转账汇款">
+                </div>
+              </div>
+
+              <div style="margin-top:20px;" class="layui-row layui-col-space10 ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg3 layui-col-md4">
+                  <button id="save-recharge" type="button" class="layui-btn  layui-btn-sm">保存充值设置</button>
+                </div>
+              </div>
+
+              </div>
+              <div class="layui-tab-item">
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">SMTP设置</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10 ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">SMTP地址：</div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="smtp_ip"  placeholder="请输入"  autocomplete="off" class="layui-input smtp">
+                  </div>
+                </div>
+                <div class="layui-row layui-col-space10 ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">启用SSL：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="smtp_ssl" lay-skin="switch" lay-text="启用|禁用" class="smtp">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10 ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">SMTP端口：</div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="smtp_port"  placeholder="请输入"  autocomplete="off" class="layui-input smtp">
+                  </div>
+                </div>         
+
+                <div class="layui-row layui-col-space10 ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">SMTP用户：</div> 
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="smtp_user"  placeholder="请输入"  autocomplete="off" class="layui-input smtp">
+                  </div>
+                </div>
+                <div class="layui-row layui-col-space10 ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">SMTP密码：</div> 
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="smtp_pwd"  placeholder="请输入"  autocomplete="off" class="layui-input smtp">
+                  </div>
+                </div>
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4 layui-col-md-offset3"> <button id="save-smtp" type="button" class="layui-btn  layui-btn-sm">保存SMTP</button></div>
+                </div>
+
+                 <hr>
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">手机短信 (http://www.smsbao.com/)</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10 ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">用户名：</div> 
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="sms_username"  placeholder="用户名"  autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+
+                <div class="layui-row layui-col-space10 ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">密码：</div> 
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="sms_password"  placeholder="密码"  autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4 layui-col-md-offset3"> <button id="save-sms" type="button" class="layui-btn  layui-btn-sm">保存短信配置</button></div>
+                </div>
+
+              </div>
+
+              <div class="layui-tab-item">
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">通知时间段</div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="notification-period" placeholder="请输入"  autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">通知方式</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="notify-method" lay-filter="notify-method" value="email" title="电子邮件" lay-skin="primary" >
+                    <input type="checkbox" name="notify-method" lay-filter="notify-method" value="phone" title="手机短信" lay-skin="primary" > 
+                  </div>
+                </div>
+                <hr>
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">流量超限通知</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">流量已超限：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="traffic-exceed-notify-state" lay-filter="traffic-exceed-notify-state" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10 traffic-exceed layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="traffic-exceed-notify-times"  placeholder="通知次数"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">连续通知次数</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  traffic-exceed layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="traffic-exceed-notify-interval"  placeholder="间隔时间,单位小时"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">间隔时间(小时)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  traffic-exceed layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="traffic-exceed-notify-phone-templ" required lay-verify="required" placeholder="手机短信模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">手机短信模板</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  traffic-exceed layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="traffic-exceed-notify-email-templ" required lay-verify="required" placeholder="邮件模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">邮件模板(首行为主题，余下为正文)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">流量即将超限：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="traffic-exceeding-notify-state" lay-filter="traffic-exceeding-notify-state" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  traffic-exceeding layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="traffic-exceeding-notify-less"  placeholder="剩余流量不足"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">剩余流量不足（GB）</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  traffic-exceeding layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="traffic-exceeding-notify-times"  placeholder="通知次数"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">连续通知次数</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  traffic-exceeding layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="traffic-exceeding-notify-interval"  placeholder="间隔时间,单位小时"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">间隔时间(小时)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  traffic-exceeding layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="traffic-exceeding-notify-phone-templ" required lay-verify="required" placeholder="手机短信模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">手机短信模板</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  traffic-exceeding layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="traffic-exceeding-notify-email-templ" required lay-verify="required" placeholder="邮件模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">邮件模板(首行为主题，余下为正文)</span>
+                </div>
+
+                <hr>
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">套餐过期通知</span></div>
+                </div>                
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">套餐已过期：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="package-expire-notify-state" lay-filter="package-expire-notify-state" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  package-expire layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="package-expire-notify-times"  placeholder="通知次数"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">连续通知次数</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  package-expire layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="package-expire-notify-interval"  placeholder="间隔时间,单位小时"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">间隔时间(小时)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  package-expire layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="package-expire-notify-phone-templ" required lay-verify="required" placeholder="手机短信模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">手机短信模板</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  package-expire layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="package-expire-notify-email-templ" required lay-verify="required" placeholder="邮件模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">邮件模板(首行为主题，余下为正文)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">套餐即将过期：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="package-expiring-notify-state" lay-filter="package-expiring-notify-state" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  package-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="package-expiring-notify-less"  placeholder="剩余时间不足（天）"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">剩余时间不足（天）</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  package-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="package-expiring-notify-times"  placeholder="通知次数"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">连续通知次数</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  package-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="package-expiring-notify-interval"  placeholder="间隔时间,单位小时"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">间隔时间(小时)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  package-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="package-expiring-notify-phone-templ" required lay-verify="required" placeholder="手机短信模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">手机短信模板</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  package-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="package-expiring-notify-email-templ" required lay-verify="required" placeholder="邮件模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">邮件模板(首行为主题，余下为正文)</span>
+                </div>
+
+                <hr>
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">网站CC规则自动切换：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="cc-switch-notify-state" lay-filter="cc-switch-notify-state" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  cc-switch layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="cc-switch-notify-phone-templ" required lay-verify="required" placeholder="手机短信模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">手机短信模板</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  cc-switch layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="cc-switch-notify-email-templ" required lay-verify="required" placeholder="邮件模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">邮件模板(首行为主题，余下为正文)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">套餐带宽超限：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="bandwidth-exceed-notify-state" lay-filter="bandwidth-exceed-notify-state" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  bandwidth-exceed layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="bandwidth-exceed-notify-phone-templ" required lay-verify="required" placeholder="手机短信模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">手机短信模板</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  bandwidth-exceed layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="bandwidth-exceed-notify-email-templ" required lay-verify="required" placeholder="邮件模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">邮件模板(首行为主题，余下为正文)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">套餐连接数超限：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="conn-exceed-notify-state" lay-filter="conn-exceed-notify-state" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  conn-exceed layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="conn-exceed-notify-phone-templ" required lay-verify="required" placeholder="手机短信模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">手机短信模板</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  conn-exceed layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="conn-exceed-notify-email-templ" required lay-verify="required" placeholder="邮件模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">邮件模板(首行为主题，余下为正文)</span>
+                </div>
+
+                <hr>
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">证书过期通知</span></div>
+                </div>                
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">证书已过期：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="cert-expire-notify-state" lay-filter="cert-expire-notify-state" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  cert-expire layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="cert-expire-notify-times"  placeholder="通知次数"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">连续通知次数</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  cert-expire layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="cert-expire-notify-interval"  placeholder="间隔时间,单位小时"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">间隔时间(小时)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  cert-expire layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="cert-expire-notify-phone-templ" required lay-verify="required" placeholder="手机短信模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">手机短信模板</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  cert-expire layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="cert-expire-notify-email-templ" required lay-verify="required" placeholder="邮件模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">邮件模板(首行为主题，余下为正文)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">证书即将过期：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="cert-expiring-notify-state" lay-filter="cert-expiring-notify-state" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  cert-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="cert-expiring-notify-less"  placeholder="剩余时间不足（天）"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">剩余时间不足（天）</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  cert-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="cert-expiring-notify-times"  placeholder="通知次数"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">连续通知次数</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  cert-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <input type="text" name="cert-expiring-notify-interval"  placeholder="间隔时间,单位小时"  autocomplete="off" class="layui-input">
+                  </div>
+                  <span style="line-height: 45px;">间隔时间(小时)</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  cert-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="cert-expiring-notify-phone-templ" required lay-verify="required" placeholder="手机短信模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">手机短信模板</span>
+                </div>
+
+                <div class="layui-row layui-col-space10  cert-expiring layui-hide ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4"></div>
+                  <div class="layui-col-lg2 layui-col-md4">
+                    <textarea name="cert-expiring-notify-email-templ" required lay-verify="required" placeholder="邮件模板" class="layui-textarea"></textarea>
+                  </div>
+                  <span style="line-height: 45px;">邮件模板(首行为主题，余下为正文)</span>
+                </div>
+
+              </div>  
+
+              <div class="layui-tab-item">
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">主控获取源IP</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">源IP请求头：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="master_client_ip_header"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><span style="line-height: 45px;">反代主控后台时，主控获取客户端IP的请求头</span>
+                </div> 
+
+                <hr>
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">记录相关</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">记录同步：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="record_sync" lay-filter="record_sync" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div> 
+
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">记录定时修复：</div>
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="checkbox" name="record-repair-enable" lay-filter="record-repair-enable" lay-skin="switch" lay-text="开启|关闭">
+                  </div>
+                </div>
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">DNS记录保护：</div>
+                  <div class="layui-col-lg4 layui-col-md4">
+                   <input type="text" name="dns_rs_protect"  placeholder="输入主机名,即域名的前面部分,多个以逗号分隔"  autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+
+                 <hr>
+                <div class="layui-row ">
+                 <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">配置同步</span></div>
+                </div>
+
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-lg2 layui-col-md4">单次同步站点及转发最大个数：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="max_site_stream_sync_one_time"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                </div>   
+                <div class="layui-row layui-col-space10  ignore-fill">
+                  <div class="layui-col-lg2 layui-col-md4">同步范围：</div> 
+                  <div class="layui-col-lg2 layui-col-md4 layui-form">
+                    <input type="radio" name="sync-site-config-scope" lay-filter="sync-site-config-scope" value="region" title="按区域">
+                    <input type="radio" name="sync-site-config-scope" lay-filter="sync-site-config-scope" value="line_group" title="按线路组" >
+                  </div>
+                </div>                              
+              </div>
+            </div>
+          </div>            
+        </div>      
+      </div>  
+    </div>  
+  </div>  
+</div>      
+
+<script type="text/javascript">
+  layui.use(['admin', 'table','form'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    form.render()
+
+    // 监听流量已超限开关
+    form.on('switch(traffic-exceed-notify-state)', function(data){
+      if (data.elem.checked) {
+        $(".traffic-exceed").removeClass("layui-hide")
+      } else {
+        $(".traffic-exceed").addClass("layui-hide")
+      }
+      update_traffic_exceed()
+
+    });      
+
+    // 监听流量即将超限开关
+    form.on('switch(traffic-exceeding-notify-state)', function(data){
+      if (data.elem.checked) {
+        $(".traffic-exceeding").removeClass("layui-hide")
+      } else {
+        $(".traffic-exceeding").addClass("layui-hide")
+      }
+      update_traffic_exceeding()
+
+    });
+
+    // 监听套餐已过期开关
+    form.on('switch(package-expire-notify-state)', function(data){
+      if (data.elem.checked) {
+        $(".package-expire").removeClass("layui-hide")
+      } else {
+        $(".package-expire").addClass("layui-hide")
+      }
+
+      update_package_expire()
+
+    });
+
+    // 监听套餐即将过期开关
+    form.on('switch(package-expiring-notify-state)', function(data){
+      if (data.elem.checked) {
+        $(".package-expiring").removeClass("layui-hide")
+      } else {
+        $(".package-expiring").addClass("layui-hide")
+      }
+
+      update_package_expiring()
+
+    });
+
+    // 监听证书已过期开关
+    form.on('switch(cert-expire-notify-state)', function(data){
+      if (data.elem.checked) {
+        $(".cert-expire").removeClass("layui-hide")
+      } else {
+        $(".cert-expire").addClass("layui-hide")
+      }
+
+      update_cert_expire()
+
+    });
+
+    // 监听证书即将过期开关
+    form.on('switch(cert-expiring-notify-state)', function(data){
+      if (data.elem.checked) {
+        $(".cert-expiring").removeClass("layui-hide")
+      } else {
+        $(".cert-expiring").addClass("layui-hide")
+      }
+
+      update_cert_expiring()
+
+    });
+
+    // 监听套餐带宽超限
+    form.on('switch(bandwidth-exceed-notify-state)', function(data){
+      if (data.elem.checked) {
+        $(".bandwidth-exceed").removeClass("layui-hide")
+      } else {
+        $(".bandwidth-exceed").addClass("layui-hide")
+      }
+
+      update_bandwidth_exceed()
+
+    });
+
+    // 监听套餐连接数超限
+    form.on('switch(conn-exceed-notify-state)', function(data){
+      if (data.elem.checked) {
+        $(".conn-exceed").removeClass("layui-hide")
+      } else {
+        $(".conn-exceed").addClass("layui-hide")
+      }
+
+      update_conn_exceed()
+
+    });
+
+    // 监听网站CC规则自动切换
+    form.on('switch(cc-switch-notify-state)', function(data){
+      if (data.elem.checked) {
+        $(".cc-switch").removeClass("layui-hide")
+      } else {
+        $(".cc-switch").addClass("layui-hide")
+      }
+
+      update_cc_switch()
+
+    });
+
+    // 监听流量已超限修改
+    $(".traffic-exceed input,.traffic-exceed textarea").change(function (argument) {
+      update_traffic_exceed()
+    })
+
+    // 监听流量即将超限修改
+    $(".traffic-exceeding input,.traffic-exceeding textarea").change(function (argument) {
+      update_traffic_exceeding()
+    })
+
+    // 监听套餐已到期修改
+    $(".package-expire input,.package-expire textarea").change(function (argument) {
+      update_package_expire()
+    })
+
+    // 监听套餐即将到期修改
+    $(".package-expiring input,.package-expiring textarea").change(function (argument) {
+      update_package_expiring()
+    })
+
+    // 监听证书已到期修改
+    $(".cert-expire input,.cert-expire textarea").change(function (argument) {
+      update_cert_expire()
+    })
+
+    // 监听证书即将到期修改
+    $(".cert-expiring input,.cert-expiring textarea").change(function (argument) {
+      update_cert_expiring()
+    })
+
+    // 监听套餐带宽超限
+    $(".bandwidth-exceed input,.bandwidth-exceed textarea").change(function (argument) {
+      update_bandwidth_exceed()
+    })
+
+    // 监听套餐连接数超限
+    $(".conn-exceed input,.conn-exceed textarea").change(function (argument) {
+      update_conn_exceed()
+    })
+
+    // 监听网站CC规则自动切换
+    $(".cc-switch input,.cc-switch textarea").change(function (argument) {
+      update_cc_switch()
+    })
+
+
+    // 修改流量已超限
+    function update_traffic_exceed(argument) {
+      var state = $("input[name='traffic-exceed-notify-state']").prop("checked")
+      var notify_times = $("input[name='traffic-exceed-notify-times']").val()
+      var interval = $("input[name='traffic-exceed-notify-interval']").val()
+      var phone_templ = $("textarea[name='traffic-exceed-notify-phone-templ']").val()
+      var email_templ = $("textarea[name='traffic-exceed-notify-email-templ']").val()
+
+      var value = {"state":state, "notify-times":notify_times,"interval":interval,"phone-templ":phone_templ,"email-templ":email_templ}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("traffic-exceed-notify", req_data, null,null )      
+    }
+
+    // 修改流量即将超限
+    function update_traffic_exceeding(argument) {
+      var state = $("input[name='traffic-exceeding-notify-state']").prop("checked")
+      var notify_times = $("input[name='traffic-exceeding-notify-times']").val()
+      var interval = $("input[name='traffic-exceeding-notify-interval']").val()
+      var less = $("input[name='traffic-exceeding-notify-less']").val()
+      var phone_templ = $("textarea[name='traffic-exceeding-notify-phone-templ']").val()
+      var email_templ = $("textarea[name='traffic-exceeding-notify-email-templ']").val()
+
+      var value = {"state":state, "notify-times":notify_times,"less":less, "interval":interval,"phone-templ":phone_templ,"email-templ":email_templ}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("traffic-exceeding-notify", req_data, null,null )      
+    }
+
+    // 修改套餐已过期
+    function update_package_expire(argument) {
+      var state = $("input[name='package-expire-notify-state']").prop("checked")
+      var notify_times = $("input[name='package-expire-notify-times']").val()
+      var interval = $("input[name='package-expire-notify-interval']").val()
+      var phone_templ = $("textarea[name='package-expire-notify-phone-templ']").val()
+      var email_templ = $("textarea[name='package-expire-notify-email-templ']").val()
+
+      var value = {"state":state, "notify-times":notify_times,"interval":interval,"phone-templ":phone_templ,"email-templ":email_templ}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("package-expire-notify", req_data, null,null )      
+    }
+
+    // 修改套餐即将过期
+    function update_package_expiring(argument) {
+      var state = $("input[name='package-expiring-notify-state']").prop("checked")
+      var notify_times = $("input[name='package-expiring-notify-times']").val()
+      var interval = $("input[name='package-expiring-notify-interval']").val()
+      var less = $("input[name='package-expiring-notify-less']").val()
+      var phone_templ = $("textarea[name='package-expiring-notify-phone-templ']").val()
+      var email_templ = $("textarea[name='package-expiring-notify-email-templ']").val()
+
+      var value = {"state":state, "notify-times":notify_times,"less":less, "interval":interval,"phone-templ":phone_templ,"email-templ":email_templ}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("package-expiring-notify", req_data, null,null )      
+    }
+
+    // 修改证书已过期
+    function update_cert_expire(argument) {
+      var state = $("input[name='cert-expire-notify-state']").prop("checked")
+      var notify_times = $("input[name='cert-expire-notify-times']").val()
+      var interval = $("input[name='cert-expire-notify-interval']").val()
+      var phone_templ = $("textarea[name='cert-expire-notify-phone-templ']").val()
+      var email_templ = $("textarea[name='cert-expire-notify-email-templ']").val()
+
+      var value = {"state":state, "notify-times":notify_times,"interval":interval,"phone-templ":phone_templ,"email-templ":email_templ}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("cert-expire-notify", req_data, null,null )      
+    }
+
+    // 修改证书即将过期
+    function update_cert_expiring(argument) {
+      var state = $("input[name='cert-expiring-notify-state']").prop("checked")
+      var notify_times = $("input[name='cert-expiring-notify-times']").val()
+      var interval = $("input[name='cert-expiring-notify-interval']").val()
+      var less = $("input[name='cert-expiring-notify-less']").val()
+      var phone_templ = $("textarea[name='cert-expiring-notify-phone-templ']").val()
+      var email_templ = $("textarea[name='cert-expiring-notify-email-templ']").val()
+
+      var value = {"state":state, "notify-times":notify_times,"less":less, "interval":interval,"phone-templ":phone_templ,"email-templ":email_templ}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("cert-expiring-notify", req_data, null,null )      
+    }
+
+    // 修改套餐带宽超限
+    function update_bandwidth_exceed(argument) {
+      var state = $("input[name='bandwidth-exceed-notify-state']").prop("checked")
+      var phone_templ = $("textarea[name='bandwidth-exceed-notify-phone-templ']").val()
+      var email_templ = $("textarea[name='bandwidth-exceed-notify-email-templ']").val()
+
+      var value = {"state":state, "phone-templ":phone_templ,"email-templ":email_templ}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("bandwidth-exceed-notify", req_data, null,null )      
+    }
+
+    // 修改套餐连接数超限
+    function update_conn_exceed(argument) {
+      var state = $("input[name='conn-exceed-notify-state']").prop("checked")
+      var phone_templ = $("textarea[name='conn-exceed-notify-phone-templ']").val()
+      var email_templ = $("textarea[name='conn-exceed-notify-email-templ']").val()
+
+      var value = {"state":state, "phone-templ":phone_templ,"email-templ":email_templ}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("conn-exceed-notify", req_data, null,null )      
+    }
+
+    // 修改网站CC规则自动切换
+    function update_cc_switch(argument) {
+      var state = $("input[name='cc-switch-notify-state']").prop("checked")
+      var phone_templ = $("textarea[name='cc-switch-notify-phone-templ']").val()
+      var email_templ = $("textarea[name='cc-switch-notify-email-templ']").val()
+
+      var value = {"state":state, "phone-templ":phone_templ,"email-templ":email_templ}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("cc-switch-notify", req_data, null,null )      
+    }
+
+
+    // 填充流量已超限
+    admin.req({
+      url: '/configs/global-0-system-traffic-exceed-notify'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var state = data.state
+        var notify_times = data["notify-times"]
+        var interval = data.interval
+        var phone_templ = data["phone-templ"]
+        var email_templ = data["email-templ"]
+        $("input[name='traffic-exceed-notify-times']").val(notify_times)
+        $("input[name='traffic-exceed-notify-interval']").val(interval)
+        $("textarea[name='traffic-exceed-notify-phone-templ']").val(phone_templ)
+        $("textarea[name='traffic-exceed-notify-email-templ']").val(email_templ)
+        if (state) {
+          $(".traffic-exceed").removeClass("layui-hide")
+          $("input[name='traffic-exceed-notify-state']").prop("checked",true)
+          form.render()
+        }
+      }
+    }); 
+
+    // 填充流量即将超限
+    admin.req({
+      url: '/configs/global-0-system-traffic-exceeding-notify'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var state = data.state
+        var notify_times = data["notify-times"]
+        var interval = data.interval
+        var less = data.less
+        var phone_templ = data["phone-templ"]
+        var email_templ = data["email-templ"]
+        if (state) {
+          $(".traffic-exceeding").removeClass("layui-hide")
+          $("input[name='traffic-exceeding-notify-state']").prop("checked",true)
+          form.render()
+        }
+        $("input[name='traffic-exceeding-notify-times']").val(notify_times)
+        $("input[name='traffic-exceeding-notify-interval']").val(interval)
+        $("input[name='traffic-exceeding-notify-less']").val(less)
+        $("textarea[name='traffic-exceeding-notify-phone-templ']").val(phone_templ)
+        $("textarea[name='traffic-exceeding-notify-email-templ']").val(email_templ)        
+      }
+    }); 
+
+    // 填充套餐已过期
+    admin.req({
+      url: '/configs/global-0-system-package-expire-notify'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var state = data.state
+        var notify_times = data["notify-times"]
+        var interval = data.interval
+        var phone_templ = data["phone-templ"]
+        var email_templ = data["email-templ"]
+        if (state) {
+          $(".package-expire").removeClass("layui-hide")
+          $("input[name='package-expire-notify-state']").prop("checked",true)
+          form.render()
+        }
+
+        $("input[name='package-expire-notify-times']").val(notify_times)
+        $("input[name='package-expire-notify-interval']").val(interval)
+        $("textarea[name='package-expire-notify-phone-templ']").val(phone_templ)
+        $("textarea[name='package-expire-notify-email-templ']").val(email_templ)        
+      }
+    }); 
+
+    // 填充套餐即将过期
+    admin.req({
+      url: '/configs/global-0-system-package-expiring-notify'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var state = data.state
+        var notify_times = data["notify-times"]
+        var interval = data.interval
+        var less = data.less
+        var phone_templ = data["phone-templ"]
+        var email_templ = data["email-templ"]
+        if (state) {
+          $(".package-expiring").removeClass("layui-hide")
+          $("input[name='package-expiring-notify-state']").prop("checked",true)
+          form.render()
+        }
+        $("input[name='package-expiring-notify-less']").val(less)
+        $("input[name='package-expiring-notify-times']").val(notify_times)
+        $("input[name='package-expiring-notify-interval']").val(interval)
+        $("textarea[name='package-expiring-notify-phone-templ']").val(phone_templ)
+        $("textarea[name='package-expiring-notify-email-templ']").val(email_templ)        
+      }
+    }); 
+
+    // 填充证书已过期
+    admin.req({
+      url: '/configs/global-0-system-cert-expire-notify'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var state = data.state
+        var notify_times = data["notify-times"]
+        var interval = data.interval
+        var phone_templ = data["phone-templ"]
+        var email_templ = data["email-templ"]
+        if (state) {
+          $(".cert-expire").removeClass("layui-hide")
+          $("input[name='cert-expire-notify-state']").prop("checked",true)
+          form.render()
+        }
+
+        $("input[name='cert-expire-notify-times']").val(notify_times)
+        $("input[name='cert-expire-notify-interval']").val(interval)
+        $("textarea[name='cert-expire-notify-phone-templ']").val(phone_templ)
+        $("textarea[name='cert-expire-notify-email-templ']").val(email_templ)        
+      }
+    }); 
+
+    // 填充证书即将过期
+    admin.req({
+      url: '/configs/global-0-system-cert-expiring-notify'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var state = data.state
+        var notify_times = data["notify-times"]
+        var interval = data.interval
+        var less = data.less
+        var phone_templ = data["phone-templ"]
+        var email_templ = data["email-templ"]
+        if (state) {
+          $(".cert-expiring").removeClass("layui-hide")
+          $("input[name='cert-expiring-notify-state']").prop("checked",true)
+          form.render()
+        }
+        $("input[name='cert-expiring-notify-less']").val(less)
+        $("input[name='cert-expiring-notify-times']").val(notify_times)
+        $("input[name='cert-expiring-notify-interval']").val(interval)
+        $("textarea[name='cert-expiring-notify-phone-templ']").val(phone_templ)
+        $("textarea[name='cert-expiring-notify-email-templ']").val(email_templ)        
+      }
+    }); 
+
+    // 填充网站CC规则自动切换
+    admin.req({
+      url: '/configs/global-0-system-cc-switch-notify'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var state = data.state
+        var phone_templ = data["phone-templ"]
+        var email_templ = data["email-templ"]
+        if (state) {
+          $(".cc-switch").removeClass("layui-hide")
+          $("input[name='cc-switch-notify-state']").prop("checked",true)
+          form.render()
+        }
+        $("textarea[name='cc-switch-notify-phone-templ']").val(phone_templ)
+        $("textarea[name='cc-switch-notify-email-templ']").val(email_templ)        
+      }
+    }); 
+
+    // 填充套餐带宽超限
+    admin.req({
+      url: '/configs/global-0-system-bandwidth-exceed-notify'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var state = data.state
+        var phone_templ = data["phone-templ"]
+        var email_templ = data["email-templ"]
+        if (state) {
+          $(".bandwidth-exceed").removeClass("layui-hide")
+          $("input[name='bandwidth-exceed-notify-state']").prop("checked",true)
+          form.render()
+        }
+        $("textarea[name='bandwidth-exceed-notify-phone-templ']").val(phone_templ)
+        $("textarea[name='bandwidth-exceed-notify-email-templ']").val(email_templ)        
+      }
+    }); 
+
+    // 填充套餐连接数超限
+    admin.req({
+      url: '/configs/global-0-system-conn-exceed-notify'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var state = data.state
+        var phone_templ = data["phone-templ"]
+        var email_templ = data["email-templ"]
+        if (state) {
+          $(".conn-exceed").removeClass("layui-hide")
+          $("input[name='conn-exceed-notify-state']").prop("checked",true)
+          form.render()
+        }
+        $("textarea[name='conn-exceed-notify-phone-templ']").val(phone_templ)
+        $("textarea[name='conn-exceed-notify-email-templ']").val(email_templ)        
+      }
+    }); 
+
+    // 填充通知方式
+    admin.req({
+      url: '/configs/global-0-system-notify-method'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        var email = data['email']
+        var phone = data['phone']
+        $("input[name='notify-method'][value='email']").prop("checked",email)
+        $("input[name='notify-method'][value='phone']").prop("checked",phone)
+        form.render("checkbox")
+      }
+    }); 
+
+    // 修改通知方式
+    form.on('checkbox(notify-method)', function(data){
+      var email = $("input[name='notify-method'][value='email']").prop("checked")
+      var phone = $("input[name='notify-method'][value='phone']").prop("checked")
+      var value = {"email":email,"phone":phone}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("notify-method", req_data, null,null )
+    });        
+
+
+    // 填充系统信息
+    admin.req({
+      url: '/configs/global-0-system-system_info'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = JSON.parse(res.data.value)
+        for (i in data) {
+          $("input[name='"+i+"']").val(data[i])
+        }
+      }
+    });    
+
+    // 修改系统信息
+    $("input[name='sys_name'],input[name='user_console_title'],input[name='admin_console_title']").on('change', function() {
+      var sys_name = $("input[name='sys_name']").val()
+      var user_console_title = $("input[name='user_console_title']").val()
+      var admin_console_title = $("input[name='admin_console_title']").val()
+      var value = {"sys_name":sys_name,"user_console_title":user_console_title,"admin_console_title":admin_console_title}
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("system_info", req_data, null,null )
+    })
+
+    // 填充package_expire_close_site
+    admin.req({
+      url: '/configs/global-0-system-package_expire_close_site'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = parseInt(res.data.value)
+        $("input[name='package_expire_close_site']").prop("checked",value)
+        form.render()
+      }
+    });    
+
+
+    // 修改package_expire_close_site
+    form.on('switch(package_expire_close_site)', function(data){
+      curr = data.elem.checked?1:0
+      var req_data = {"value": curr}
+      update_config("package_expire_close_site", req_data, null,null )
+    });  
+
+    // 填充package_allow_upgrade
+    admin.req({
+      url: '/configs/global-0-system-package_allow_upgrade'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = parseInt(res.data.value)
+        $("input[name='package_allow_upgrade']").prop("checked",value)
+        form.render()
+      }
+    });    
+
+
+    // 修改package_allow_upgrade
+    form.on('switch(package_allow_upgrade)', function(data){
+      curr = data.elem.checked?1:0
+      var req_data = {"value": curr}
+      update_config("package_allow_upgrade", req_data, null,null )
+    });  
+
+    // 填充package_allow_downgrade
+    admin.req({
+      url: '/configs/global-0-system-package_allow_downgrade'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = parseInt(res.data.value)
+        $("input[name='package_allow_downgrade']").prop("checked",value)
+        form.render()
+      }
+    });    
+
+
+    // 修改package_allow_downgrade
+    form.on('switch(package_allow_downgrade)', function(data){
+      curr = data.elem.checked?1:0
+      var req_data = {"value": curr}
+      update_config("package_allow_downgrade", req_data, null,null )
+    });  
+
+    // 填充traffic_excceed_close_site
+    admin.req({
+      url: '/configs/global-0-system-traffic_excceed_close_site'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = parseInt(res.data.value)
+        $("input[name='traffic_excceed_close_site']").prop("checked",value)
+        form.render()
+      }
+    });    
+
+    // 修改traffic_excceed_close_site
+    form.on('switch(traffic_excceed_close_site)', function(data){
+      curr = data.elem.checked?1:0
+      var req_data = {"value": curr}
+      update_config("traffic_excceed_close_site", req_data, null,null )  
+    });  
+
+
+    // 填充record_sync
+    admin.req({
+      url: '/configs/global-0-system-record_sync'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = parseInt(res.data.value)
+        $("input[name='record_sync']").prop("checked",value)
+        form.render()
+      }
+    });    
+
+
+    // 修改record_sync
+    form.on('switch(record_sync)', function(data){
+      curr = data.elem.checked?1:0
+      var req_data = {"value": curr}
+      update_config("record_sync", req_data, null,null )  
+    });  
+
+    // 填充record-repair-enable
+    admin.req({
+      url: '/configs/global-0-system-record-repair-enable'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = parseInt(res.data.value)
+        $("input[name='record-repair-enable']").prop("checked",value)
+        form.render()
+      }
+    });    
+
+
+    // 修改record-repair-enable
+    form.on('switch(record-repair-enable)', function(data){
+      curr = data.elem.checked?1:0
+      var req_data = {"value": curr}
+      update_config("record-repair-enable", req_data, null,null )  
+    });
+
+    // 填充allow_register
+    admin.req({
+      url: '/configs/global-0-system-allow_register'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = parseInt(res.data.value)
+        $("input[name='allow_register']").prop("checked",value)
+        form.render()
+      }
+    });    
+
+
+    // 修改allow_register
+    form.on('switch(allow_register)', function(data){
+      curr = data.elem.checked?1:0
+      var req_data = {"value": curr}
+      update_config("allow_register", req_data, null,null )  
+    });  
+
+    // 填充register_templ
+    admin.req({
+      url: '/configs/global-0-system-register_success_templ'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = JSON.parse(res.data.value)
+        var title = value.title
+        var data = value.data
+        $("input[name='register_templ_title']").val(title)
+        $("textarea[name='register_templ_data']").val(data)
+      }
+    });
+
+    // 修改register_templ
+    $(".register_templ").on('change', function(){
+      var title = $("input[name='register_templ_title']").val()
+      var data = $("textarea[name='register_templ_data']").val()
+      if (title != "" && data != "") {
+        var curr = JSON.stringify({"title":title,"data":data})
+        var req_data = {"value": curr}
+        update_config("register_success_templ", req_data, null,null )        
+      }
+    });
+
+    // 填充forget_password_templ
+    admin.req({
+      url: '/configs/global-0-system-forget_password_templ'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = JSON.parse(res.data.value)
+        var title = value.title
+        var data = value.data
+        $("input[name='forget_password_templ_title']").val(title)
+        $("textarea[name='forget_password_templ_data']").val(data)
+      }
+    });
+
+    // 修改forget_password_templ
+    $(".forget_password_templ").on('change', function(){
+      var title = $("input[name='forget_password_templ_title']").val()
+      var data = $("textarea[name='forget_password_templ_data']").val()
+      if (title != "" && data != "") {
+        var curr = JSON.stringify({"title":title,"data":data})
+        var req_data = {"value": curr}
+        update_config("forget_password_templ", req_data, null,null )        
+      }
+    });
+
+    // 填充email_captcha_templ
+    admin.req({
+      url: '/configs/global-0-system-email_captcha_templ'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = JSON.parse(res.data.value)
+        var title = value.title
+        var data = value.data
+        $("input[name='email_captcha_templ_title']").val(title)
+        $("textarea[name='email_captcha_templ_data']").val(data)
+      }
+    });
+
+    // 修改email_captcha_templ
+    $(".email_captcha_templ").on('change', function(){
+      var title = $("input[name='email_captcha_templ_title']").val()
+      var data = $("textarea[name='email_captcha_templ_data']").val()
+      if (title != "" && data != "") {
+        var curr = JSON.stringify({"title":title,"data":data})
+        var req_data = {"value": curr}
+        update_config("email_captcha_templ", req_data, null,null )        
+      }
+    });
+
+    // 填充user_agreement
+    admin.req({
+      url: '/configs/global-0-system-user_agreement'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = JSON.parse(res.data.value)
+        var title = value.title
+        var data = value.data
+        $("input[name='user_agreement_title']").val(title)
+        $("textarea[name='user_agreement_data']").val(data)
+      }
+    });
+
+    // 修改user_agreement
+    $(".user_agreement").on('change', function(){
+      var title = $("input[name='user_agreement_title']").val()
+      var data = $("textarea[name='user_agreement_data']").val()
+      if (title != "" && data != "") {
+        var curr = JSON.stringify({"title":title,"data":data})
+        var req_data = {"value": curr}
+        update_config("user_agreement", req_data, null,null )        
+      }
+    });
+
+    // 填充支付宝身份认证
+    admin.req({
+      url: '/configs/global-0-system-alipay_id_auth'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = JSON.parse(res.data.value)
+        var app_id = value.app_id
+        var app_key = value.app_key
+        var public_key = value.public_key
+        var biz_code = value.biz_code
+        $("input[name='alipay-id-auth-app-id']").val(app_id)
+        $("input[name='alipay-id-auth-app-key']").val(app_key)
+        $("input[name='alipay-id-auth-public-key']").val(public_key)
+        if (biz_code) {
+          $("select[name='biz_code']").val(biz_code)
+        }
+        
+        form.render("select")
+      }
+    });
+
+    // 修改支付宝身份认证
+    $("input[name='alipay-id-auth-app-id'],input[name='alipay-id-auth-app-key'],input[name='alipay-id-auth-public-key']").on('change', function(){
+      var app_id = $("input[name='alipay-id-auth-app-id']").val()
+      var app_key =  $("input[name='alipay-id-auth-app-key']").val()
+      var public_key =  $("input[name='alipay-id-auth-public-key']").val()
+      var biz_code = $("select[name='biz_code']").val()
+      if (app_id != "" && app_key != "" && public_key != "") {
+        var curr = JSON.stringify({"biz_code":biz_code, "app_id":app_id,"app_key":app_key,"public_key":public_key})
+        var req_data = {"value": curr}
+        update_config("alipay_id_auth", req_data, null,null )        
+      }
+    });
+
+    form.on('select(biz_code)', function(data){
+      var biz_code = data.value
+      var app_id = $("input[name='alipay-id-auth-app-id']").val()
+      var app_key =  $("input[name='alipay-id-auth-app-key']").val()
+      var public_key =  $("input[name='alipay-id-auth-public-key']").val()
+      if (app_id != "" && app_key != "" && public_key != "") {
+        var curr = JSON.stringify({"biz_code":biz_code, "app_id":app_id,"app_key":app_key,"public_key":public_key})
+        var req_data = {"value": curr}
+        update_config("alipay_id_auth", req_data, null,null )        
+      }
+
+    });      
+
+
+
+    // 填充sms配置
+    admin.req({
+      url: '/configs/global-0-system-sms_config'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = JSON.parse(res.data.value)
+        var username = value.username
+        var password = value.password
+        $("input[name='sms_username']").val(username)
+        $("input[name='sms_password']").val(password)
+      }
+    });
+
+    // 监听sms保存
+    $("#save-sms").click(function (argument) {
+      var username = $("input[name='sms_username']").val()
+      var password = $("input[name='sms_password']").val()
+
+      var curr = JSON.stringify({"username":username,"password":password,"type":"smsbao"})
+      var req_data = {"value": curr}
+      update_config("sms_config", req_data, null,null )
+    })
+
+    // 监听email填写
+    form.on('checkbox(register_email_need)', function(data){
+      if (data.elem.checked) {
+        $(".register_email_verify").removeClass("layui-hide")
+      } else {
+        $(".register_email_verify").addClass("layui-hide")
+      }
+      update_85()
+    });  
+
+    // 监听email验证
+    form.on('checkbox(register_email_verify)', function(data){
+      update_85()
+    }); 
+
+    // 监听phone填写
+    form.on('checkbox(register_phone_need)', function(data){
+      if (data.elem.checked) {
+        $(".register_phone_verify").removeClass("layui-hide")
+      } else {
+        $(".register_phone_verify").addClass("layui-hide")
+      }
+      update_85()
+    }); 
+
+    // 监听phone验证
+    form.on('checkbox(register_phone_verify)', function(data){
+      update_85()
+    });
+
+    // 监听username填写
+    form.on('checkbox(register_username_need)', function(data){
+      update_85()
+    }); 
+
+    // 监听qq填写
+    form.on('checkbox(register_qq_need)', function(data){
+      update_85()
+    }); 
+
+    function update_85(argument) {
+      var username_need = $("input[name='register_username_need']").prop("checked")
+      var qq_need = $("input[name='register_qq_need']").prop("checked")
+      var email_need = $("input[name='register_email_need']").prop("checked")
+      var phone_need = $("input[name='register_phone_need']").prop("checked")
+      var email_verify = $("input[name='register_email_verify']").prop("checked")
+      var phone_verify = $("input[name='register_phone_verify']").prop("checked")
+
+      var data = {"username":{"need":username_need},"email":{"need":email_need,"verify":email_verify},"phone":{"need":phone_need,"verify":phone_verify},"qq":{"need":qq_need}}
+      var req_data = {"value": JSON.stringify(data)}
+      update_config("register_require", req_data, null,null )
+
+    }
+
+    // 填充注册填写要求
+    admin.req({
+      url: '/configs/global-0-system-register_require'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = JSON.parse(res.data.value)
+        var username_need = value['username']['need']
+        var email_need = value['email']['need']
+        var email_verify = value['email']['verify']
+        var phone_need = value['phone']['need']
+        var phone_verify = value['phone']['verify']
+        var qq_need = value['qq']['need']
+
+        $("input[name='register_username_need']").prop("checked",username_need) 
+        $("input[name='register_email_need']").prop("checked",email_need) 
+        $("input[name='register_phone_need']").prop("checked",phone_need) 
+        $("input[name='register_qq_need']").prop("checked",qq_need) 
+
+        $("input[name='register_email_verify']").prop("checked",email_verify) 
+        $("input[name='register_phone_verify']").prop("checked",phone_verify) 
+
+        if (email_need) {
+          $(".register_email_verify").removeClass("layui-hide")
+        } else {
+          $(".register_email_verify").addClass("layui-hide")
+        }        
+
+        if (phone_need) {
+          $(".register_phone_verify").removeClass("layui-hide")
+        } else {
+          $(".register_phone_verify").addClass("layui-hide")
+        }
+      }
+    });
+
+    // 填充smtp
+    admin.req({
+      url: '/configs/global-0-system-smtp'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = JSON.parse(res.data.value)
+        var ip = value.ip
+        var use_ssl = value.use_ssl
+        var port = value.port
+        var user = value.user
+        var pwd = value.pwd
+        $("input[name='smtp_ip']").val(ip)
+        $("input[name='smtp_port']").val(port)
+        $("input[name='smtp_user']").val(user)
+        $("input[name='smtp_pwd']").val(pwd)
+        $("input[name='smtp_ssl']").prop("checked",use_ssl) 
+        form.render()
+      }
+    });
+
+
+    // 修改smtp
+    $("#save-smtp").click(function (argument) {
+        var smtp_ip = $("input[name='smtp_ip']").val()
+        var smtp_port = $("input[name='smtp_port']").val()
+        var smtp_user = $("input[name='smtp_user']").val()
+        var smtp_pwd = $("input[name='smtp_pwd']").val()
+        var smtp_ssl = $("input[name='smtp_ssl']").is(":checked")
+
+        var smtp = {"ip": smtp_ip,"port": smtp_port, "user":smtp_user,"pwd":smtp_pwd,"use_ssl":smtp_ssl}
+        var req_data = {"value": JSON.stringify(smtp)}
+        update_config("smtp", req_data, null,null )
+    })
+
+    // 填充维护信息
+    admin.req({
+      url: '/configs/global-0-system-maintain'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = JSON.parse(res.data.value)
+        var enable = value.enable
+        var msg = value.msg
+        $("input[name='maintain-enable']").prop("checked",enable) 
+        $("input[name='maintain-msg']").val(msg)
+        form.render()
+      }
+    });
+
+    // 修改维护开关
+    form.on('switch(maintain_check_on)', function(data){
+      var enable = data.elem.checked?1:0
+      var value = {"enable": enable,"msg": $("input[name='maintain-msg']").val() }
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("maintain", req_data, null,null )  
+    }); 
+
+    // 修改维护信息
+    $("input[name='maintain-msg']").on('change', function(){
+      var enable = $("input[name='maintain-enable']").prop("checked")?1:0
+      var value = {"enable": enable,"msg": $("input[name='maintain-msg']").val() }
+      var req_data = {"value": JSON.stringify(value)}
+      update_config("maintain", req_data, null,null )  
+    });
+
+    // 填充api-key
+    admin.req({
+      url: '/api-key'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = res.data
+        if (data) {
+          var api_key = data['api_key']
+          var api_secret = data['api_secret']
+          var api_ip = data['api_ip']
+
+          $(".api-key").text(api_key)
+          $(".api-secret").text(api_secret)
+          $("input[name='api-ip']").val(api_ip)
+          $(".api-key-section").removeClass("layui-hide")
+          $("input[name='api-key-enable']").prop("checked",true) 
+
+        };
+      }
+    });
+
+    // 开启和关闭api key
+    form.on('switch(api-key-enable)', function(data){
+      var checked = data.elem.checked?1:0
+      if (checked) {
+        admin.req({
+          url: '/api-key' //实际使用请改成服务端真实接口
+          ,type: "post"
+          ,contentType:"application/json"
+          ,dataType: "json"        
+          ,done: function(res){
+            //登入成功的提示与跳转
+            layer.msg('成功开启', {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              var data = res.data
+              var api_key = data['api_key']
+              var api_secret = data['api_secret']
+
+              $(".api-key").text(api_key)
+              $(".api-secret").text(api_secret)
+              $(".api-key-section").removeClass("layui-hide")
+            });
+          }
+        });
+      } else {
+        admin.req({
+          url: '/api-key' //实际使用请改成服务端真实接口
+          ,type: "delete"
+          ,contentType:"application/json"
+          ,dataType: "json"        
+          ,done: function(res){
+            //登入成功的提示与跳转
+            layer.msg('成功关闭', {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              $(".api-key-section").addClass("layui-hide")
+            });
+          }
+        });
+      }
+
+    });     
+
+    // ip白名单
+    $("input[name='api-ip']").on('change', function(){
+      var ip = $(this).val();
+      admin.req({
+        url: '/api-key' //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,data: JSON.stringify({"ip":ip})
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('更新成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          });
+        }
+      });
+
+    });
+
+    // 重置密钥
+    $("#reset-api-key").click(function (argument) {
+      admin.req({
+        url: '/api-key' //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,data: JSON.stringify({"reset":1})
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('重置成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          }, function(){
+              var data = res.data
+              var api_key = data['api_key']
+              var api_secret = data['api_secret']
+
+              $(".api-key").text(api_key)
+              $(".api-secret").text(api_secret)
+            
+          });
+        }
+      });
+    })
+
+    // 微信支付开关
+    form.on('switch(wxpay-enable)', function(data){
+      var enable = data.elem.checked?1:0
+      if (enable) {
+        $(".wxpay").removeClass("layui-hide")
+        $(".wxpay-native").removeClass("layui-hide")
+        $("input[name='wxpay-subtype'][value='native']").prop("checked",true)
+        form.render("radio")
+      } else {
+        $(".wxpay").addClass("layui-hide")
+        $(".wxpay-native").addClass("layui-hide")
+        $(".wxpay-codepay").addClass("layui-hide")
+
+      }
+
+    }); 
+
+    // 微信码支付开关
+    form.on('radio(wxpay-subtype)', function(data){
+      var value = data.value
+      if (value == "native") {
+        $(".wxpay-native").removeClass("layui-hide")
+        $(".wxpay-codepay").addClass("layui-hide")
+        $(".wxpay-cccyun").addClass("layui-hide")
+        $("input[name='wxpay-notify-url']").val(host + "/wxpay/notify") 
+
+      } else if (value == "codepay") {
+        $(".wxpay-native").addClass("layui-hide")
+        $(".wxpay-cccyun").addClass("layui-hide")
+        $(".wxpay-codepay").removeClass("layui-hide")
+        $("input[name='wxpay-notify-url']").val(host + "/codepay/notify") 
+      } else if (value == "cccyun") {
+        $(".wxpay-native").addClass("layui-hide")
+        $(".wxpay-cccyun").removeClass("layui-hide")
+        $(".wxpay-codepay").addClass("layui-hide")
+        $("input[name='wxpay-notify-url']").val(host + "/cccyun/notify") 
+        $("input[name='wxpay-cccyun-return-url']").val(host + "/src/views/account/balance/return.html")
+
+      }
+
+    }); 
+
+    // 支付宝开关
+    form.on('switch(alipay-enable)', function(data){
+      var enable = data.elem.checked?1:0
+      if (enable) {
+        $(".alipay").removeClass("layui-hide")
+        $(".alipay-pc").removeClass("layui-hide")
+        $("input[name='alipay-subtype'][value='pc']").prop("checked",true)
+        form.render("radio")
+      } else {
+        $(".alipay").addClass("layui-hide")
+        $(".alipay-pc").addClass("layui-hide")
+        $(".alipay-codepay").addClass("layui-hide")
+
+      }
+
+    }); 
+
+    // 支付宝码支付开关
+    form.on('radio(alipay-subtype)', function(data){
+      var value = data.value
+      if (value == "pc" || value == "f2f") {
+        $(".alipay-pc").removeClass("layui-hide")
+        $(".alipay-cccyun").addClass("layui-hide")
+        $(".alipay-codepay").addClass("layui-hide")
+        $("input[name='alipay-notify-url']").val(host + "/alipay/notify") 
+
+      } else if (value == "codepay") {
+        $(".alipay-pc").addClass("layui-hide")
+        $(".alipay-cccyun").addClass("layui-hide")
+        $(".alipay-codepay").removeClass("layui-hide")
+        $("input[name='alipay-notify-url']").val(host + "/codepay/notify") 
+      } else if (value == "cccyun") {
+        $(".alipay-pc").addClass("layui-hide")
+        $(".alipay-cccyun").removeClass("layui-hide")
+        $(".alipay-codepay").addClass("layui-hide")
+        $("input[name='alipay-notify-url']").val(host + "/cccyun/notify") 
+        $("input[name='alipay-cccyun-return-url']").val(host + "/src/views/account/balance/return.html")
+      }
+
+    }); 
+
+    // 转账汇款开关
+    form.on('switch(transfer-enable)', function(data){
+      var enable = data.elem.checked?1:0
+      if (enable) {
+        $(".transfer").removeClass("layui-hide")
+      } else {
+        $(".transfer").addClass("layui-hide")
+      }
+
+    });
+
+    // 保存充值设置
+    $("#save-recharge").click(function (argument) {
+      var setting = {}
+
+      // 微信支付
+      var wxpay_enable = $("input[name='wxpay-enable']").prop("checked")
+      if (wxpay_enable) {
+        var wxpay_app_id = $("input[name='wxpay-app-id']").val()
+        var wxpay_mch_id = $("input[name='wxpay-mch-id']").val()
+        var wxpay_mch_key = $("input[name='wxpay-mch-key']").val()
+
+        var wxpay_cccyun_url = $("input[name='wxpay-cccyun-url']").val()
+        var wxpay_cccyun_return_url = $("input[name='wxpay-cccyun-return-url']").val()
+        var wxpay_cccyun_id = $("input[name='wxpay-cccyun-id']").val()
+        var wxpay_cccyun_key = $("input[name='wxpay-cccyun-key']").val()
+
+        var wxpay_codepay_id = $("input[name='wxpay-codepay-id']").val()
+        var wxpay_codepay_key = $("input[name='wxpay-codepay-key']").val()
+
+        var wxpay_notify_url = $("input[name='wxpay-notify-url']").val()
+        var wxpay_subtype = $("input[name='wxpay-subtype']:checked").val()
+
+        // native支持
+        if (wxpay_subtype == "native") {
+          if (wxpay_app_id == "") {
+            layer.alert("请输入微信支付应用id")
+            return
+          }
+
+          if (wxpay_mch_id == "") {
+            layer.alert("请输入微信支付商户id")
+            return
+          }
+
+          if (wxpay_mch_key == "") {
+            layer.alert("请输入微信支付商户key")
+            return
+          }        
+        // codepay  
+        } else if (wxpay_subtype == "codepay") {
+          if (wxpay_codepay_id == "") {
+            layer.alert("请输入码支付ID")
+            return
+          }
+
+          if (wxpay_codepay_key == "") {
+            layer.alert("请输入码支付通信密钥")
+            return
+          }
+
+        } else if (wxpay_subtype == "cccyun") {
+          if (wxpay_cccyun_url == "") {
+            layer.alert("请输入易支付网址")
+            return
+          }
+
+          if (wxpay_cccyun_id == "") {
+            layer.alert("请输入易支付商户ID")
+            return
+          }
+
+          if (wxpay_cccyun_key == "") {
+            layer.alert("请输入易支付商户密钥")
+            return
+          }
+
+        }
+
+        if (wxpay_notify_url == "") {
+          layer.alert("请输入微信支付异步通知地址")
+          return
+        }
+
+      }
+
+      // 支付宝
+      var alipay_enable = $("input[name='alipay-enable']").prop("checked")
+      if (alipay_enable) {
+        var alipay_app_id = $("input[name='alipay-app-id']").val()
+        var alipay_app_key = $("input[name='alipay-app-key']").val()
+        var alipay_public_key = $("input[name='alipay-public-key']").val()
+
+        var alipay_cccyun_url = $("input[name='alipay-cccyun-url']").val()
+        var alipay_cccyun_return_url = $("input[name='alipay-cccyun-return-url']").val()
+        var alipay_cccyun_id = $("input[name='alipay-cccyun-id']").val()
+        var alipay_cccyun_key = $("input[name='alipay-cccyun-key']").val()
+
+        var alipay_codepay_id = $("input[name='alipay-codepay-id']").val()
+        var alipay_codepay_key = $("input[name='alipay-codepay-key']").val()
+
+        var alipay_notify_url = $("input[name='alipay-notify-url']").val()
+        var alipay_subtype = $("input[name='alipay-subtype']:checked").val()
+
+        // pc网站支付和当面付
+        if (alipay_subtype == "pc" || alipay_subtype == "f2f") {
+          if (alipay_app_id == "") {
+            layer.alert("请输入支付宝应用id")
+            return
+          }
+
+          if (alipay_app_key == "") {
+            layer.alert("请输入支付宝应用密钥")
+            return
+          }
+
+          if (alipay_public_key == "") {
+            layer.alert("请输入支付宝公钥")
+            return
+          }          
+        } else if (alipay_subtype == "codepay") {
+          if (alipay_codepay_id == "") {
+            layer.alert("请输入码支付ID")
+            return
+          }
+
+          if (alipay_codepay_key == "") {
+            layer.alert("请输入码支付通信密钥")
+            return
+          }
+
+        } else if (alipay_subtype == "cccyun") {
+          if (alipay_cccyun_url == "") {
+            layer.alert("请输入易支付网址")
+            return
+          }
+
+          if (alipay_cccyun_id == "") {
+            layer.alert("请输入易支付商户ID")
+            return
+          }
+
+          if (alipay_cccyun_key == "") {
+            layer.alert("请输入易支付商户密钥")
+            return
+          }
+        }
+
+        if (alipay_notify_url == "") {
+          layer.alert("请输入支付宝异步通知地址")
+          return
+        }
+
+      }
+
+      // 转账
+      var transfer_enable = $("input[name='transfer-enable']").prop("checked")
+      if (transfer_enable) {
+        var transfer_data = $("textarea[name='transfer-data']").val()
+        if (transfer_data == "") {
+          layer.alert("请输入转账说明")
+          return
+        }
+      }
+
+      var default_pay = $("input[name='default-pay']:checked").val()
+
+      // 保存
+      setting["wxpay"] = {"state": wxpay_enable,"subtype":wxpay_subtype,"codepay_id":wxpay_codepay_id,"codepay_key":wxpay_codepay_key,"cccyun_url":wxpay_cccyun_url,"cccyun_return_url":wxpay_cccyun_return_url,"cccyun_id":wxpay_cccyun_id,"cccyun_key":wxpay_cccyun_key, "app_id": wxpay_app_id,"mch_id": wxpay_mch_id,"mch_key":wxpay_mch_key,"notify_url":wxpay_notify_url}
+      setting["alipay"] = {"state": alipay_enable,"subtype":alipay_subtype,"codepay_id":alipay_codepay_id,"codepay_key":alipay_codepay_key,"cccyun_url":alipay_cccyun_url,"cccyun_return_url":alipay_cccyun_return_url,"cccyun_id":alipay_cccyun_id,"cccyun_key":alipay_cccyun_key, "app_id": alipay_app_id,"app_key": alipay_app_key,"public_key":alipay_public_key,"notify_url":alipay_notify_url}
+      setting["transfer"] = {"state": transfer_enable, "data": transfer_data || "" }
+      setting["default-pay"] = default_pay
+
+      var req_data = {"value": JSON.stringify(setting) }
+      admin.req({
+        url: '/configs/global-0-system-recharge' //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,data: JSON.stringify(req_data)
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('保存成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          });
+        }
+      });
+
+
+    })
+
+    // 初始化异步通知地址
+    var host = document.location.origin
+    $("input[name='wxpay-notify-url']").val(host + "/wxpay/notify") 
+    $("input[name='alipay-notify-url']").val(host + "/alipay/notify") 
+
+    $("input[name='wxpay-cccyun-return-url']").val(host + "/console/index.html#/account/balance/") 
+    $("input[name='alipay-cccyun-return-url']").val(host + "/console/index.html#/account/balance/") 
+
+    // 获取充值设置
+    admin.req({
+      url: '/configs/global-0-system-recharge' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = res.data.value
+        var value = JSON.parse(value)
+      
+        var wxpay = value["wxpay"]
+        var alipay = value["alipay"]
+        var transfer = value["transfer"]
+        var default_pay = value["default-pay"]
+        
+        // 微信
+
+        if (wxpay.state) {
+          $(".wxpay").removeClass("layui-hide")
+          $("input[name='wxpay-enable']").prop("checked",wxpay.state)
+          $("input[name='wxpay-app-id']").val(wxpay.app_id)
+          $("input[name='wxpay-mch-id']").val(wxpay.mch_id)
+          $("input[name='wxpay-mch-key']").val(wxpay.mch_key)
+          $("input[name='wxpay-notify-url']").val(wxpay.notify_url)
+
+          $("input[name='wxpay-cccyun-url']").val(wxpay.cccyun_url)
+          $("input[name='wxpay-cccyun-return-url']").val(wxpay.cccyun_return_url)
+          $("input[name='wxpay-cccyun-id']").val(wxpay.cccyun_id)
+          $("input[name='wxpay-cccyun-key']").val(wxpay.cccyun_key)
+
+          $("input[name='wxpay-codepay-id']").val(wxpay.codepay_id)
+          $("input[name='wxpay-codepay-key']").val(wxpay.codepay_key)
+
+          $("input[name='wxpay-subtype'][value='"+wxpay.subtype+"']").prop("checked",true)          
+
+          if (wxpay.subtype == "native") {
+            $(".wxpay-native").removeClass("layui-hide")
+            $(".wxpay-codepay").addClass("layui-hide")
+            $(".wxpay-cccyun").addClass("layui-hide")
+
+          } else if (wxpay.subtype == "codepay") {
+            $(".wxpay-native").addClass("layui-hide")
+            $(".wxpay-codepay").removeClass("layui-hide")
+            $(".wxpay-cccyun").addClass("layui-hide")
+          } else if (wxpay.subtype == "cccyun") {
+            $(".wxpay-native").addClass("layui-hide")
+            $(".wxpay-codepay").addClass("layui-hide")
+            $(".wxpay-cccyun").removeClass("layui-hide")
+          }
+
+        }
+
+        // 支付宝
+        if (alipay.state) {
+          $(".alipay").removeClass("layui-hide")
+          $("input[name='alipay-enable']").prop("checked",alipay.state)
+          $("input[name='alipay-app-id']").val(alipay.app_id)
+          $("input[name='alipay-app-key']").val(alipay.app_key)
+          $("input[name='alipay-public-key']").val(alipay.public_key)
+          $("input[name='alipay-notify-url']").val(alipay.notify_url)
+
+          $("input[name='alipay-cccyun-url']").val(alipay.cccyun_url)
+          $("input[name='alipay-cccyun-return-url']").val(alipay.cccyun_return_url)
+          $("input[name='alipay-cccyun-id']").val(alipay.cccyun_id)
+          $("input[name='alipay-cccyun-key']").val(alipay.cccyun_key)
+
+          $("input[name='alipay-codepay-id']").val(alipay.codepay_id)
+          $("input[name='alipay-codepay-key']").val(alipay.codepay_key)
+
+          $("input[name='alipay-subtype'][value='"+alipay.subtype+"']").prop("checked",true)          
+
+          if (alipay.subtype == "pc" || alipay.subtype == "f2f") {
+            $(".alipay-pc").removeClass("layui-hide")
+            $(".alipay-codepay").addClass("layui-hide")
+            $(".alipay-cccyun").addClass("layui-hide")
+
+          } else if (alipay.subtype == "codepay") {
+            $(".alipay-pc").addClass("layui-hide")
+            $(".alipay-codepay").removeClass("layui-hide")
+            $(".alipay-cccyun").addClass("layui-hide")
+          } else if (alipay.subtype == "cccyun") {
+            $(".alipay-pc").addClass("layui-hide")
+            $(".alipay-codepay").addClass("layui-hide")
+            $(".alipay-cccyun").removeClass("layui-hide")
+          }
+
+        }
+
+        // 转账汇款
+        $("input[name='transfer-enable']").prop("checked",transfer.state)
+        $("textarea[name='transfer-data']").val(transfer.data)
+
+        if (transfer.state) {
+          $(".transfer").removeClass("layui-hide")
+        }
+
+        $("input[name='default-pay'][value='"+default_pay+"']").prop("checked",true)
+
+        form.render()
+
+      }
+    });
+
+
+    // 获取config值
+    $(".layui-card-body input,textarea").each(function (argument) {
+      var id = $(this).attr("name")
+      var parent = $(this).parent().parent()
+      if (parent.hasClass("ignore-fill") || parent.hasClass("layui-form-select")) {
+        return true
+      }
+
+      admin.req({
+        url: '/configs/global-0-system-'+id //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          var v = res.data.value
+          $("[name='"+id+"']").val(v)
+
+          form.render()
+
+        }
+      });
+
+    })
+
+    function update_config(id,data,success,fail) {
+      admin.req({
+        url: '/configs/global-0-system-'+id //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,data: JSON.stringify(data)
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,fail: fail
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('更新成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          }, function(){
+            if (success) {
+              success()
+            }
+            
+          });
+        }
+      });
+    }
+
+    // 填充配置同步范围
+    admin.req({
+      url: '/configs/global-0-system-sync-site-config-scope'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = res.data.value
+        $("input[name='sync-site-config-scope'][value='"+value+"']").prop("checked",true)
+        form.render()
+      }
+    });  
+
+    // 配置同步范围选项
+    form.on('radio(sync-site-config-scope)', function(data){
+      var value = data.value
+      var req_data = {"value": value}
+      update_config("sync-site-config-scope", req_data, null,null )      
+    });  
+
+
+
+    // 填充auto-upgrade-agent
+    admin.req({
+      url: '/configs/global-0-system-auto_upgrade_agent'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var value = parseInt(res.data.value)
+        $("input[name='auto-upgrade-agent']").prop("checked",value)
+        form.render()
+      }
+    });    
+
+
+    // 修改auto-upgrade-agent
+    form.on('switch(auto-upgrade-agent)', function(data){
+      curr = data.elem.checked?1:0
+      var req_data = {"value": curr}
+      update_config("auto_upgrade_agent", req_data, null,null )  
+    });  
+
+
+    // 修改值
+    $("input,textarea").on('focusin', function(){
+        $(this).data('val', $(this).val());
+    }).on('change', function(){
+        if ($(this).parent().parent().hasClass("ignore-fill")) {
+          return true
+        }      
+
+        var prev = $(this).data('val');
+        var curr = $(this).val();
+        var id = $(this).attr("name")
+
+        var fail = function (argument) {
+          $("input[name='"+id+"']").val(prev)
+        }
+
+        var req_data = {"value": curr}
+        update_config(id, req_data, null,fail )
+
+    });
+
+  });  
+
+</script>
+

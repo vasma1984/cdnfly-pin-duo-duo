@@ -1,0 +1,38 @@
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <table class="layui-hide" id="test-table-toolbar3" lay-filter="test-table-toolbar3"></table>
+          <script type="text/html" id="test-table-toolbar3-barDemo">
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+          </script>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space15" style="margin-left:7.5px">
+    <div class="layui-col-md8">
+      <textarea id="sub-ips" required lay-verify="required" placeholder="一行一个IP" class="layui-textarea"></textarea>
+    </div>
+    <div class="layui-col-md4" style="margin-top:70px">
+      <a class="layui-btn layui-btn-sm" id="add-sub-ip">添加</a>
+    </div>    
+  </div>
+
+
+</div>
+<script>
+layui.use(['admin', 'table'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,view = layui.view
+  ,table = layui.table
+  ,form = layui.form;
+
+
+})
+
+</script>

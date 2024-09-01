@@ -1,0 +1,41 @@
+<style type="text/css">
+.layui-layer-page .layui-layer-content {
+            position: relative;
+            overflow: visible !important;
+    }
+..layui-form-label {
+    width: 100px !important;
+}   
+</style>
+
+<form class="layui-form" action="">
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">购买时长</label>
+      <div class="layui-input-inline">
+        <select name="duration" lay-verify="">
+            <option value="">选择时长</option>
+            <option value="month">月付</option>
+            <option value="quarter">季度付</option>
+            <option value="year">年付</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">自定义套餐名称</label>
+      <div class="layui-input-inline">
+        <input type="text" name="name" class="layui-input">   
+      </div>
+    </div>
+  </div>
+
+</form>   
+
+<div class="layui-row layui-col-space20"> 
+    <div class="layui-col-md4 layui-col-md-offset8">
+        <button id="buy-confirm" type="button" class="layui-btn">购买</button>
+    </div>   
+</div>    

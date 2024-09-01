@@ -1,0 +1,384 @@
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1">名称</div>
+                <div class="layui-col-md3">
+                  <input type="text" name="name" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1">排序</div>
+                <div class="layui-col-md4">
+                  <input type="text" name="sort" value="100" autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1">备注</div>
+                <div class="layui-col-md4">
+                  <input type="text" name="des" autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1">显示</div>
+                <div class="layui-col-md4 layui-form">
+                  <input type="checkbox" name="is_show" lay-skin="switch" lay-text="是|否" checked>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1">规则</div>
+                <div class="layui-col-md11">
+                  <table class="layui-hide" id="rulelist" lay-filter="rulelist"></table>
+                  <script type="text/html" id="rulelist-toolbar">
+                      <div class="layui-row layui-col-space10">
+                        <div class="layui-col-md9">
+                          <button class="layui-btn layui-btn-xs" lay-event="add">新增</button>
+                          <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</button>
+                        </div>
+                      </div>
+                  </script>
+                   
+                  <script type="text/html" id="rulelist-bar">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642</i></a>
+                    <div class="layui-btn-group">
+                      <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="up"><i class="layui-icon">&#xe619;</i></a>
+                      <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="down"><i class="layui-icon">&#xe61a;</i></a>
+                    </div>
+                  </script>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1"></div>
+                <div class="layui-col-md2">
+                  <button id="save" type="button" class="layui-btn">确认</button>
+                </div>
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+<script>
+layui.data.sendParams = function(params){
+  var data = params.data
+  var table = layui.table
+  var admin = layui.admin
+  var view = layui.view
+  var form = layui.form
+  var  $ = layui.$
+  if (typeof(data) == "undefined") {
+    data = []
+  } else {
+    data = JSON.parse(data)
+    window.rule_data = data
+  }
+
+  if (JSON.stringify(params) != '{}') {
+    $("input[name='name']").val(params.name)
+    $("input[name='des']").val(params.des)
+    $("input[name='sort']").val(params.sort)
+    $("input[name='is_show']").prop("checked",params.is_show)
+  }
+
+  layui.form.render()
+
+  table.render({
+    elem: '#rulelist'
+    ,title: 'xx'
+    ,toolbar: '#rulelist-toolbar'
+    ,autoSort: false
+    ,defaultToolbar: []
+      ,size: 'sm' //小尺寸的表格
+
+    ,cols: [[ //表头
+      {type: 'checkbox', fixed: 'left'}
+      ,{type: 'numbers',title:"序号"}
+      ,{field: 'matcher_name', title: '匹配器'}
+      ,{field: 'filter1_name', title: '过滤器1'}
+      ,{field: 'filter2_name', title: '过滤器2'}
+      ,{field: 'action', title: '动作', width: 60}
+      ,{field: 'state', title: '启用', width: 60, templet: function(d){
+          if (d.state) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 20px; color: #009688;"></i>'            
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 20px; color: #FF5722;"></i>'
+          }
+      }}
+      ,{fixed: 'right', title:'操作', toolbar: '#rulelist-bar', width:120}
+
+    ]]
+    ,data: data
+    ,page: true
+    
+  }); 
+
+    //头工具栏事件
+    table.on('toolbar(rulelist)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      var table_data = obj.config.data
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增规则'
+            ,area: ['800px', '450px']
+            ,id: 'LAY-popup-rulelist-add'
+            ,success: function(layero, index){
+              view(this.id).render('site/cc/rulelist-add').done(function(){
+                //获取匹配器
+                var internal = layui.router().search.internal
+                var cert_ajax = admin.req({
+                  url: '/cc-matchs?limit=0&internal='+internal //实际使用请改成服务端真实接口
+                  ,type: "get"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    var data = res.data
+                    for (i in data) {
+                      $("select[name='matcher']").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");          
+                    }
+                    form.render("select")
+                  }
+                })
+
+                //获取过滤器
+                var internal = layui.router().search.internal
+                var cert_ajax = admin.req({
+                  url: '/cc-filters?limit=0&internal='+internal //实际使用请改成服务端真实接口
+                  ,type: "get"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    var data = res.data
+                    for (i in data) {
+                      $(".filter").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");          
+                    }
+                    form.render("select")
+                  }
+                })
+
+
+                //监听提交
+                form.on('submit(LAY-rulelist-add-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var matcher = field.matcher
+                  var filter1 = field.filter1
+                  var filter2 = field.filter2
+                  var action = field.action
+                  var state = field.state
+
+                  var matcher_name = $("select[name='matcher']").find("option:selected").text()
+                  var filter1_name = $("select[name='filter1']").find("option:selected").text()
+                  var filter2_name = $("select[name='filter2']").find("option:selected").text()
+
+                  if (state == "on") {
+                    state = true
+                  } else {
+                    state = false
+                  }
+
+                  if (matcher == "") {
+                    layer.alert("请选择匹配器")
+                    return
+                  }
+
+                  if (filter1 == "") {
+                    layer.alert("请选择过滤器1")
+                    return                    
+                  }
+
+                  if (filter2 == "") {
+                    filter2_name = ""
+                  }
+
+                  if (action == "") {
+                    layer.alert("请选择动作")
+                    return                      
+                  }
+
+                  window.rule_data.push({"matcher_name":matcher_name,"filter1_name":filter1_name,"filter2_name":filter2_name, "matcher":matcher,"filter1":filter1,"filter2":filter2,"action":action,"state":state})
+                  var rule_data = JSON.parse(JSON.stringify(window.rule_data))
+                  table.reload('rulelist',{data:rule_data}); //重载表格
+                  layer.close(index); //执行关闭 
+
+                });
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的规则');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除所选的规则，是否继续', function(index){
+              var rule_data = []
+              for (i in table_data) {
+                if (!table_data[i]['LAY_CHECKED']) {
+                  rule_data.push(table_data[i])
+                }
+              }
+
+              for (i in rule_data) {
+                delete rule_data[i]['LAY_TABLE_INDEX']
+                delete rule_data[i]['LAY_CHECKED']
+              }
+
+              window.rule_data = rule_data
+              layui.table.reload('rulelist',{data: rule_data}); //重载表格
+              layer.close(index); //执行关闭 
+   
+          });
+        break; 
+      };
+    });
+
+    //监听行工具事件
+    table.on('tool(rulelist)', function(obj){
+      var edit_index = $(obj.tr).data("index");
+      var table_data = obj.data
+      if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑规则'
+            ,area: ['800px', '450px']
+            ,id: 'LAY-popup-rulelist-edit'
+          ,success: function(layero, index){
+            view(this.id).render('site/cc/rulelist-add',table_data).done(function(){
+
+              //获取匹配器
+              var internal = layui.router().search.internal
+              var match_ajax = admin.req({
+                url: '/cc-matchs?limit=0&internal='+internal //实际使用请改成服务端真实接口
+                ,type: "get"
+                ,contentType:"application/json"
+                ,dataType: "json"
+                ,done: function(res){
+                  var data = res.data
+                  for (i in data) {
+                    $("select[name='matcher']").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");          
+                  }
+                  form.render("select")
+                }
+              })
+
+              //获取过滤器
+              var internal = layui.router().search.internal
+              var filter_ajax = admin.req({
+                url: '/cc-filters?limit=0&internal='+internal //实际使用请改成服务端真实接口
+                ,type: "get"
+                ,contentType:"application/json"
+                ,dataType: "json"
+                ,done: function(res){
+                  var data = res.data
+                  for (i in data) {
+                    $(".filter").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");          
+                  }
+                  form.render("select")
+                }
+              })
+
+              $.when(match_ajax, filter_ajax).then(function (argument) {
+                $("select[name='matcher']").val(table_data.matcher)
+                $("select[name='filter1']").val(table_data.filter1)
+                $("select[name='filter2']").val(table_data.filter2)
+                $("select[name='action']").val(table_data.action)
+                $("input[name='state']").prop("checked",table_data.state)
+                form.render()
+              })
+
+
+              //监听提交
+              form.on('submit(LAY-rulelist-add-submit)', function(data){
+                var field = data.field; //获取提交的字段
+                var matcher = field.matcher
+                var filter1 = field.filter1
+                var filter2 = field.filter2
+                var action = field.action
+                var state = field.state
+
+                var matcher_name = $("select[name='matcher']").find("option:selected").text()
+                var filter1_name = $("select[name='filter1']").find("option:selected").text()
+                var filter2_name = $("select[name='filter2']").find("option:selected").text()
+
+                if (state == "on") {
+                  state = true
+                } else {
+                  state = false
+                }
+
+                if (matcher == "") {
+                  layer.alert("请选择匹配器")
+                  return
+                }
+
+                if (filter1 == "") {
+                  layer.alert("请选择过滤器1")
+                  return                    
+                }
+
+                if (filter2 == "") {
+                  filter2_name = ""
+                }
+
+                if (action == "") {
+                  layer.alert("请选择动作")
+                  return                      
+                }
+                window.rule_data[edit_index]={"matcher_name":matcher_name,"filter1_name":filter1_name,"filter2_name":filter2_name, "matcher":matcher,"filter1":filter1,"filter2":filter2,"action":action,"state":state}
+
+                var rule_data = JSON.parse(JSON.stringify(window.rule_data))
+                table.reload('rulelist',{data:rule_data}); //重载表格
+                layer.close(index); //执行关闭 
+
+                });
+            });
+          }
+        });
+      } else if(obj.event === 'up'){
+        // 判断是否到顶
+        if (edit_index == 0) {
+          layer.msg("已到顶部")
+          return               
+        }
+
+        window.rule_data.splice(edit_index,1)
+        window.rule_data.splice(edit_index-1,0,table_data)
+        var rule_data = JSON.parse(JSON.stringify(window.rule_data))
+        table.reload('rulelist',{data:rule_data}); //重载表格
+
+      } else if(obj.event === 'down'){
+        // 判断是否到底
+        if (window.rule_data.length -1 == edit_index) {
+          layer.msg("已到底部")
+          return               
+        }
+
+        window.rule_data.splice(edit_index,1)
+        window.rule_data.splice(edit_index+1,0,table_data)
+        var rule_data = JSON.parse(JSON.stringify(window.rule_data))
+        table.reload('rulelist',{data:rule_data}); //重载表格
+
+      }  
+    });
+
+}  
+</script>  

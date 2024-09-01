@@ -1,0 +1,644 @@
+
+
+<title>账户中心 - 个人资料</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>账户中心</cite></a>
+    <a><cite>个人资料</cite></a>
+  </div>
+</div>
+
+<style type="text/css">
+.layui-elem-quote{padding: 6px;}
+.thin-gray{font-weight: 400;color: #999;} 
+.small-title{font-weight:700;font-size:14px}
+hr {margin-bottom: 30px}
+.layui-form-switch {margin-top: 0px;}
+.bold {font-weight: 500}
+.custom-icon {
+  font-size: 40px;
+  border-radius: 50px;
+  border: 2px solid;
+  border-color: #f2f2f2;
+  padding: 10px;
+  color: #009688;
+}
+.line {
+  line-height: 80px;
+  cursor: pointer;
+}
+.title1 {
+  display: block;
+  line-height: 35px;
+  margin-top: 8px;
+font-size: 18px;
+    font-weight: 500;  
+}
+.title2 {
+  display: block;
+  line-height: 35px;
+font-weight: 400;
+    color: #9b9b9b;
+}
+
+</style>
+<script type="text/javascript" src="/src/lib/qrcode.min.js"></script>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-row">
+            <div class="layui-col-md4">
+              <label class="layui-form-label bold">用户名：</label> <label class="username layui-form-label"></label>
+              <img id="set-name" class="layui-hide" style="cursor: pointer;margin-top:10px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAAEhyb7BAAAAAXNSR0IArs4c6QAAAbJJREFUOBHFU79Lw0AUTppa6iA04NRVuhUUHHTNVkFcXFxqKJZk0M2pSwddXUQUklIQQxTrJK5K/wAHnfs/lDgUTcAYvxdzxyWtPwbFg8u9H9/73rt3L5KUXZZlRVlbRrdt+zpjStRUMCmdTmd7MhRWmXlc11VHo9FKrIPd5jwQlrjC4D86EaUxIE/EDEhxEUXRRrFYnA2CwDUMo5ZnTkQeQN4FQJJl+VDX9SH0GvljJkQvwPmgKMpas9m8IcfvLKSeEplyokIy0pLtHiW8Ml/qdr1eT/E8j5xt7PVCobDcaDR8zgQGOQEQwZ6qqosEIEWhD61yucyHAL3JVavVtw+PJMVMKNQjA/oTmaaJQ+YBZGfpSkg3JAYy/u9KtemrUugRcJ8rYFZR/ibudy7ivyXq9/v5wWBwiaBHTNiJ7/t3kOdBGuKsoR+3RPgpEb0R/pxTyk5AYbUxdMfYz+zNyDeRCCNyBIIdITgWUcVZpVLZ0jSNjxDDcKJutzsThmELBC3mFM42erIv6GMi/5lAMpeQPAFVwqaserapYwyJgVcEkpzjONMMWK/XX3AVPpbM/ufnO48jrizssOlvAAAAAElFTkSuQmCC">
+
+            </div>
+            <div class="layui-col-md4">
+              <label class="layui-form-label bold">QQ：</label> <label style="width: 140px;" class="layui-form-label qq"></label>
+              <img id="update-qq" style="cursor: pointer;margin-top:10px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAAEhyb7BAAAAAXNSR0IArs4c6QAAAbJJREFUOBHFU79Lw0AUTppa6iA04NRVuhUUHHTNVkFcXFxqKJZk0M2pSwddXUQUklIQQxTrJK5K/wAHnfs/lDgUTcAYvxdzxyWtPwbFg8u9H9/73rt3L5KUXZZlRVlbRrdt+zpjStRUMCmdTmd7MhRWmXlc11VHo9FKrIPd5jwQlrjC4D86EaUxIE/EDEhxEUXRRrFYnA2CwDUMo5ZnTkQeQN4FQJJl+VDX9SH0GvljJkQvwPmgKMpas9m8IcfvLKSeEplyokIy0pLtHiW8Ml/qdr1eT/E8j5xt7PVCobDcaDR8zgQGOQEQwZ6qqosEIEWhD61yucyHAL3JVavVtw+PJMVMKNQjA/oTmaaJQ+YBZGfpSkg3JAYy/u9KtemrUugRcJ8rYFZR/ibudy7ivyXq9/v5wWBwiaBHTNiJ7/t3kOdBGuKsoR+3RPgpEb0R/pxTyk5AYbUxdMfYz+zNyDeRCCNyBIIdITgWUcVZpVLZ0jSNjxDDcKJutzsThmELBC3mFM42erIv6GMi/5lAMpeQPAFVwqaserapYwyJgVcEkpzjONMMWK/XX3AVPpbM/ufnO48jrizssOlvAAAAAElFTkSuQmCC">
+
+            </div>        
+
+            <div class="layui-col-md4">
+              <label class="layui-form-label bold">注册时间：</label> <label class="layui-form-label create_at" style="width: 140px;"></label>
+            </div>  
+
+          </div>
+          <div class="layui-row">
+            <div class="layui-col-md4">
+              <label class="layui-form-label bold">余额：</label> <label class="layui-form-label balance">40元</label>
+            </div>     
+            <div class="layui-col-md4">
+              <label class="layui-form-label bold">密码：</label> <label style="width: 140px;" class="layui-form-label">******</label>
+            <img id="update-pwd" style="cursor: pointer;;margin-top:10px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAAEhyb7BAAAAAXNSR0IArs4c6QAAAbJJREFUOBHFU79Lw0AUTppa6iA04NRVuhUUHHTNVkFcXFxqKJZk0M2pSwddXUQUklIQQxTrJK5K/wAHnfs/lDgUTcAYvxdzxyWtPwbFg8u9H9/73rt3L5KUXZZlRVlbRrdt+zpjStRUMCmdTmd7MhRWmXlc11VHo9FKrIPd5jwQlrjC4D86EaUxIE/EDEhxEUXRRrFYnA2CwDUMo5ZnTkQeQN4FQJJl+VDX9SH0GvljJkQvwPmgKMpas9m8IcfvLKSeEplyokIy0pLtHiW8Ml/qdr1eT/E8j5xt7PVCobDcaDR8zgQGOQEQwZ6qqosEIEWhD61yucyHAL3JVavVtw+PJMVMKNQjA/oTmaaJQ+YBZGfpSkg3JAYy/u9KtemrUugRcJ8rYFZR/ibudy7ivyXq9/v5wWBwiaBHTNiJ7/t3kOdBGuKsoR+3RPgpEb0R/pxTyk5AYbUxdMfYz+zNyDeRCCNyBIIdITgWUcVZpVLZ0jSNjxDDcKJutzsThmELBC3mFM42erIv6GMi/5lAMpeQPAFVwqaserapYwyJgVcEkpzjONMMWK/XX3AVPpbM/ufnO48jrizssOlvAAAAAElFTkSuQmCC">              
+            </div>                  
+          </div>         
+
+        </div>
+      </div>      
+    </div>
+
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-row">
+            <div class="layui-col-md12 line">
+              <div class="layui-col-md1">
+                <i style="color: #5bb9fe" class="layui-icon custom-icon layui-icon-username"></i>   
+              </div>  
+              <div class="layui-col-md4">
+                <span class="title1 certify"></span>
+                <span class="title2 certify_tip"></span>
+              </div> 
+              <div class="layui-col-md1 layui-col-md-offset6">
+                <button type="button" class="layui-btn layui-btn-normal layui-btn-xs">立即认证</button>
+              </div>
+            </div>
+
+            <div class="layui-col-md12 verified" style="display:none;">
+              <div class="layui-col-lg1 layui-col-md2">&nbsp;</div>  
+              <div class="layui-col-lg4 layui-col-md6 layui-form">
+                <div class="layui-form-item">
+                  <label class="layui-form-label">姓名:</label>
+                  <div class="layui-input-block">
+                    <input type="text" name="cert_name" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                  </div>
+
+                </div>  
+
+                <div class="layui-form-item">
+                  <label class="layui-form-label">身份证号码:</label>
+                  <div class="layui-input-block">
+                    <input type="text" name="cert_no" required  lay-verify="required" placeholder="请输入身份证号码" autocomplete="off" class="layui-input">
+                  </div>
+                </div>  
+
+                <div class="layui-form-item">
+                  <label class="layui-form-label">&nbsp;</label>
+                  <div class="layui-input-block">
+                    <button class="layui-btn" id="cert-verify-int">确定</button>
+                  </div>
+                </div>                                  
+
+              </div> 
+            </div>
+
+            <hr>
+            <div class="layui-col-md12 line">
+              <div class="layui-col-md1">
+                <i style="color: #f6c936" class="layui-icon custom-icon layui-icon-cellphone"></i>   
+              </div>
+              <div class="layui-col-md4">
+                <span class="title1 sec-phone"></span>
+                <span class="title2 sec-phone-tip"></span>
+              </div> 
+              <div class="layui-col-md1 layui-col-md-offset6">
+                <button type="button" class="layui-btn layui-btn-normal layui-btn-xs">立即绑定</button>
+              </div>
+
+            </div>
+
+            <div class="layui-col-md12 phone" style="display:none;">
+              <div class="layui-col-lg1 layui-col-md2 ">&nbsp;</div>  
+              <div class="layui-col-lg4 layui-col-md6 layui-form">
+                <div class="layui-form-item">
+                  <label class="layui-form-label">手机号:</label>
+                  <div class="layui-input-block">
+                    <input type="text" name="phone" required  lay-verify="required" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                  </div>
+
+                </div>  
+
+                <div class="layui-form-item">
+                  <label class="layui-form-label">验证码:</label>
+                  <div class="layui-input-block">
+                    <input type="text" name="phone-code" required  lay-verify="required" placeholder="请输入手机验证码" autocomplete="off" class="layui-input">
+                    <button style="width:120px;float: right;top: 0px;position: absolute;right: 0px;" type="button" class="layui-btn layui-btn-primary layui-btn-fluid" id="get-phone-code">获取验证码</button>
+                  </div>
+                    
+                </div>  
+
+
+                <div class="layui-form-item">
+                  <label class="layui-form-label">&nbsp;</label>
+                  <div class="layui-input-block">
+                    <button class="layui-btn" id="phone-bind">确定</button>
+                  </div>
+                </div>                                  
+
+              </div> 
+            </div>
+
+            <hr>
+            <div class="layui-col-md12 line">
+              <div class="layui-col-md1">
+                <i style="color: #5b94ff" class="layui-icon custom-icon layui-icon-email"></i>   
+              </div>
+              <div class="layui-col-md4">
+                <span class="title1 sec-email"></span>
+                <span class="title2 sec-email-tip"></span>
+              </div> 
+              <div class="layui-col-md1 layui-col-md-offset6">
+                <button type="button" class="layui-btn layui-btn-normal layui-btn-xs">立即绑定</button>
+              </div>               
+            </div>
+            <div class="layui-col-md12 email" style="display:none;">
+              <div class="layui-col-lg1 layui-col-md2 ">&nbsp;</div>  
+              <div class="layui-col-lg4 layui-col-md6 layui-form">
+                <div class="layui-form-item">
+                  <label class="layui-form-label">邮箱:</label>
+                  <div class="layui-input-block">
+                    <input type="text" name="email" required  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                  </div>
+
+                </div>  
+
+                <div class="layui-form-item">
+                  <label class="layui-form-label">验证码:</label>
+                  <div class="layui-input-block">
+                    <input type="text" name="email-code" required  lay-verify="required" placeholder="请输入邮箱验证码" autocomplete="off" class="layui-input">
+                    <button style="width:100px;float: right;top: 0px;position: absolute;right: 0px;" type="button" class="layui-btn layui-btn-primary layui-btn-fluid" id="get-email-code">获取验证码</button>
+                  </div>
+                    
+                </div>  
+
+
+                <div class="layui-form-item">
+                  <label class="layui-form-label">&nbsp;</label>
+                  <div class="layui-input-block">
+                    <button class="layui-btn" id="email-bind">确定</button>
+                  </div>
+                </div>                                  
+
+              </div> 
+            </div>            
+            <hr>
+            <div class="layui-col-md12 line">
+              <div class="layui-col-md1">
+                <i style="color: #5b94ff" class="layui-icon custom-icon layui-icon-password"></i>   
+              </div>
+              <div class="layui-col-md4">
+                <span class="title1">登录安全设置</span>
+                <span class="title2">可设置登录白名单，开启登录验证码</span>
+              </div> 
+              <div class="layui-col-md1 layui-col-md-offset6">
+                <button type="button" class="layui-btn layui-btn-normal layui-btn-xs">立即设置</button>
+              </div>               
+            </div>
+            <div class="layui-col-md12" style="display:none;">
+              <div class="layui-col-lg1 layui-col-md2 ">&nbsp;</div>  
+              <div class="layui-col-lg4 layui-col-md6 layui-form">
+                <div class="layui-form-item">
+                  <label class="layui-form-label">登录白名单:</label>
+                  <div class="layui-input-block">
+                    <input type="text" name="white_ip" required  lay-verify="required" placeholder="多个IP空格分隔" autocomplete="off" class="layui-input">
+                  </div>
+
+                </div>  
+
+                <div class="layui-form-item">
+                  <label class="layui-form-label">登录验证码:</label>
+                  <div class="layui-input-block">
+                    <input type="radio" name="login_captcha" value="" title="无">
+                    <input type="radio" name="login_captcha" value="email" title="邮箱验证码">
+                    <input type="radio" name="login_captcha" value="sms" title="短信验证码">
+                  </div>
+                    
+                </div>  
+
+
+                <div class="layui-form-item">
+                  <label class="layui-form-label">&nbsp;</label>
+                  <div class="layui-input-block">
+                    <button class="layui-btn" id="login-sec">确定</button>
+                  </div>
+                </div>                                  
+
+              </div> 
+            </div>            
+            <hr>
+          </div>
+        </div>
+      </div>      
+    </div>    
+
+  </div>
+</div>
+
+<script type="text/javascript">
+function refresh_img(ele) {
+  ele.src = '/common/captcha?t='+ new Date().getTime()
+}
+
+function wait_60s () {
+  $ = layui.$
+  window.second_total = window.second_total - 1
+  $("#get-phone-code").text(window.second_total+"秒后可重发")
+  if (window.second_total <= 0) {
+    $("#get-phone-code").text("获取手机验证码")
+    $("#get-phone-code").removeClass("layui-btn-disabled")
+    clearInterval(window.count_down_interval)
+  }
+}
+
+function send_sms(ele) {
+  $ = layui.$
+  admin = layui.admin
+
+  var code = $(ele).val()
+  if (code.length == 4) {
+    var phone = $("input[name='phone']").val()
+
+    // 发送短信
+    admin.req({
+      url: '/phone-captcha' //实际使用请改成服务端真实接口
+      ,data: JSON.stringify({"phone": phone,"check_exist":0,"code":code})
+      ,type: "post"
+      ,fail: fail
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var code = res.code
+        if (code == 0) {
+          window.second_total = 60
+          $("#get-phone-code").addClass("layui-btn-disabled")
+          $("input[name='phone-code']").focus()
+          window.count_down_interval = setInterval('wait_60s()', 1000);
+          layer.closeAll();
+          layer.msg("验证码已发送到您的手机，请收到后输入继续注册")
+        }
+      }
+    });
+
+  }
+
+  function fail (argument) {
+    $(".captcha-img").click()
+  }
+
+}
+
+  layui.use(['admin', 'table','form'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    form.render()
+
+    $(".line").click(function (ele) {
+      var curr = $(this).next()
+      if (curr.css("display") == "none") {
+        curr.slideDown()
+      } else {
+        curr.slideUp()
+      } 
+    })
+
+   // 获取用户信息
+    admin.req({ 
+      url: '/user' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,loader: false
+      ,done: function(res){
+        var data = res.data
+
+        // 用户名
+        var name = data.name
+        if (name) {
+          $(".username").text(name)
+        } else {
+          $(".username").text("请设置")
+          $("#set-name").removeClass("layui-hide")
+        }
+
+        // qq
+        var qq = data.qq
+        if (qq) {
+          $(".qq").text(data.qq)
+        } else {
+          $(".qq").text("请设置")
+        }
+
+        // 注册时间
+        $(".create_at").text(data.create_at)
+        
+        // 余额
+        $(".balance").text(data.balance / 100 + " 元" )
+        
+        // 实名认证
+        var cert_verified = data.cert_verified
+        if (cert_verified) {
+          $(".certify").text(data.cert_name)
+          $(".certify_tip").text("您已完成实名认证。")
+          $("input[name='cert_name']").val(data.cert_name)
+          $("input[name='cert_no']").val(data.cert_no)
+          $("#cert-verify-int").addClass("layui-disabled")
+          $("input[name='cert_name']").addClass("layui-disabled")
+          $("input[name='cert_no']").addClass("layui-disabled")
+
+          $("#cert-verify-int").attr("disabled",true)
+          $("input[name='cert_name']").attr("disabled",true)
+          $("input[name='cert_no']").attr("disabled",true)
+
+        } else {
+          $(".certify").text("未认证")
+          $(".certify_tip").text("请尽快完成实名认证，否则可能会影响部分功能使用。")
+          var cert_id = data.cert_id
+          if (cert_id) {
+            window.query_order()
+          }
+        }
+
+        // 手机绑定
+        var phone = data.phone
+        if (phone) {
+          $(".sec-phone").text(phone)
+          $(".sec-phone-tip").text("您已绑定安全手机")
+        } else {
+          $(".sec-phone").text("未绑定")
+          $(".sec-phone-tip").text("绑定的手机可用于找回账号及接收通知")
+        }
+
+        // 邮箱
+        var email = data.email
+        if (email) {
+          $(".sec-email").text(email)
+          $(".sec-email-tip").text("您已绑定安全邮箱")
+        } else {
+          $(".sec-email").text("未绑定")
+          $(".sec-email-tip").text("绑定的邮箱可用于找回账号及接收通知")
+        }
+
+        // 登录安全
+        $("input[name='login_captcha'][value='"+data.login_captcha+"']").prop("checked",true)
+        $("input[name='white_ip']").val(data.white_ip)
+
+        form.render()
+
+      }
+    }); 
+
+
+   // 获取邮箱验证码
+   $("#get-email-code").click(function (argument) {
+      var email = $("input[name='email']").val()
+      var data = {"email":email,"check_exist":0}
+      admin.req({
+        url: '/email-captcha' //实际使用请改成服务端真实接口
+        ,type: "post"
+        ,data: JSON.stringify(data)
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          layer.msg('验证码已发送至你的邮箱，请注意查收', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          });
+        }
+      }); 
+   }) 
+
+  // 获取短信，弹出图形验证码
+  $("#get-phone-code").click(function function_name (argument) {
+    var phone = $("input[name='phone']").val()
+    if (phone == "") {
+      layer.alert("请输入手机号")
+      return
+    }
+
+    layer.open({
+      type: 1,
+      title: false,
+      closeBtn: 0,
+      shadeClose: true,
+      skin: 'yourClass',
+      content: '<div class="layui-form-item"><img onclick="refresh_img(this)" class="captcha-img" style="cursor: pointer;margin:-5px 10px 0px 20px;width:100px;float:left;" src="/common/captcha"><input oninput="send_sms(this)" style="margin:15px 20px 0px 0px;width:200px;" type="text" name="code" autocomplete="off"  placeholder="输入验证码获取手机短信"  class="layui-input"></div>'
+    });
+
+    $("input[name='code']").focus()
+  })
+
+    // 查询认证状态
+    window.query_order = function (order_id) {
+      admin.req({ 
+        url: '/user/certify' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,loader: false
+        ,done: function(res){
+          var data = res.data
+          if (data.passed == "T") {
+            layer.closeAll();
+            layer.msg("认证成功!",function (argument) {
+              layui.index.render();
+            })
+          }
+        }
+      });       
+    }
+
+    $("#cert-verify-int").click(function (argument) {
+      var cert_name = $("input[name='cert_name']").val()
+      var cert_no = $("input[name='cert_no']").val()
+      var data = {"cert_name":cert_name,"cert_no":cert_no}
+      admin.req({
+        url: '/user/certify' //实际使用请改成服务端真实接口
+        ,type: "post"
+        ,contentType:"application/json"
+        ,data: JSON.stringify(data)
+        ,dataType: "json"        
+        ,done: function(res){
+          var data = res.data
+          layer.open({
+            type: 1,
+            title: '打开支付宝扫一扫认证',
+            offset: '150px',
+            closeBtn: 0,
+            shadeClose: true,
+            area: "340px",
+            skin: 'yourClass',
+            content: '<div  style="margin-left:20px;margin-top:20px;" class="layui-row " id="qrcode"></div><div style="margin-left:40px;margin-top:10px;" class="layui-row"></div>',
+            end: function (argument) {
+              clearInterval(window.query_order_interval)
+            }
+          });
+
+          var qrcode = new QRCode("qrcode", {
+              text: data,
+              width: 300,
+              height: 300,
+              colorDark : "#000000",
+              colorLight : "#ffffff",
+              correctLevel : QRCode.CorrectLevel.H
+          });
+
+          // 间隔查询结果
+          window.query_order_interval =  setInterval('window.query_order()', 3000);
+
+        }
+      });
+    })
+
+    // 绑定手机号
+    $("#phone-bind").click(function (argument) {
+      var phone = $("input[name='phone']").val()
+      var phone_captcha = $("input[name='phone-code']").val()
+      var data = {"phone": phone, "phone_captcha":phone_captcha}
+      admin.req({
+        url: '/user' //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,contentType:"application/json"
+        ,data: JSON.stringify(data)
+        ,dataType: "json"        
+        ,done: function(res){
+            layer.msg("绑定成功!",function (argument) {
+              layui.index.render();
+            })
+        }
+      });
+    })
+
+    // 绑定邮箱
+    $("#email-bind").click(function (argument) {
+      var email = $("input[name='email']").val()
+      var email_captcha = $("input[name='email-code']").val()
+      var data = {"email": email, "captcha":email_captcha}
+      admin.req({
+        url: '/user' //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,contentType:"application/json"
+        ,data: JSON.stringify(data)
+        ,dataType: "json"        
+        ,done: function(res){
+            layer.msg("绑定成功!",function (argument) {
+              layui.index.render();
+            })
+        }
+      });
+    })
+
+    // 修改qq
+    $("#update-qq").click(function (argument) {
+      layer.prompt({"title":"请输入新QQ号"}, function(value, index, elem){
+        var data = {"qq":value}
+        admin.req({
+          url: '/user' //实际使用请改成服务端真实接口
+          ,type: "put"
+          ,contentType:"application/json"
+          ,data: JSON.stringify(data)
+          ,dataType: "json"        
+          ,done: function(res){
+              layer.close(index);
+              layer.msg("修改成功!",function (argument) {
+                layui.index.render();
+              })
+          }
+        });
+      });
+    })
+
+    // 修改密码
+    $("#update-pwd").click(function (argument) {
+      layer.prompt({"title":"请输入新密码"}, function(value, index, elem){
+        var data = {"password":value}
+        admin.req({
+          url: '/user' //实际使用请改成服务端真实接口
+          ,type: "put"
+          ,contentType:"application/json"
+          ,data: JSON.stringify(data)
+          ,dataType: "json"        
+          ,done: function(res){
+              layer.close(index);
+              layer.msg("修改成功!",function (argument) {
+                layui.index.render();
+              })
+          }
+        });
+      });
+    })
+
+    // 设置用户名
+    $("#set-name").click(function (argument) {
+      layer.prompt({"title":"请输入用户名"}, function(value, index, elem){
+        var data = {"name":value}
+        admin.req({
+          url: '/user' //实际使用请改成服务端真实接口
+          ,type: "put"
+          ,contentType:"application/json"
+          ,data: JSON.stringify(data)
+          ,dataType: "json"        
+          ,done: function(res){
+              layer.close(index);
+              layer.msg("设置成功!",function (argument) {
+                layui.index.render();
+              })
+          }
+        });
+      });
+    })    
+
+    // 登录安全设置
+    $("#login-sec").click(function (argument) {
+      var login_captcha = $("input[name='login_captcha']:checked").val()
+      var white_ip = $("input[name='white_ip']").val()
+      var data = {"login_captcha":login_captcha, "white_ip":white_ip}
+      admin.req({
+        url: '/user' //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,contentType:"application/json"
+        ,data: JSON.stringify(data)
+        ,dataType: "json"        
+        ,done: function(res){
+            layer.msg("设置成功!")
+        }
+      });      
+    })   
+
+  });  
+
+</script>

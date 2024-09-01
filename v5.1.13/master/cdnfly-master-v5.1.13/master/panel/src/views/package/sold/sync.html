@@ -1,0 +1,89 @@
+<style type="text/css">
+
+</style>
+  <form class="layui-form" action="">
+      <span style="font-size:14px;font-weight: 500;">请选择需要同步的项目：</span>
+      <div class="layui-form-item">
+        <input lay-filter="node_group_id" type="checkbox" name="sync-item"  value="node_group_id" title="线路分组 (包括备用组)" lay-skin="primary"> 
+      </div>
+
+      <div class="layui-form-item">
+        <input lay-filter="cname_domain" type="checkbox" name="sync-item"  value="cname_domain" title="CNAME域名" lay-skin="primary"> 
+        <input lay-filter="cname_hostname2" type="checkbox" name="sync-item"  value="cname_hostname2" title="CNAME主机名" lay-skin="primary"> 
+      </div>
+
+      <div class="layui-form-item">
+        <input type="checkbox" name="sync-item" lay-filter="cname_mode" value="cname_mode"  title="CNAME模式 (只能独选)" lay-skin="primary"> 
+      </div>
+  </form>
+
+
+  <div class="layui-row layui-col-space30">   
+    <div class="layui-col-md6 layui-col-md-offset6">
+      <button type="button" class="layui-btn sync">同步</button>
+    </div>    
+  </div>
+
+
+<script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,laydate = layui.laydate
+    ,layer = layui.layer
+    ,form = layui.form;
+
+    layui.form.render()
+    var check_if_cname_mode_is_checked = function(v) {
+      var cname_mode_is_checked = $("input[name='sync-item'][value='cname_mode']").prop("checked")
+      if (cname_mode_is_checked) {
+        layer.alert("请选取消CNAME模式选项")
+        $("input[name='sync-item'][value='"+v+"']").prop("checked",false)
+        form.render("checkbox")
+        return
+      }
+    }
+    
+    form.on('checkbox(cname_mode)', function(data){
+      if(data.elem.checked) {
+        $("input[name='sync-item']").each(function (){ 
+          var is_check = $(this).prop("checked")
+          var value = $(this).val()
+          if (is_check && value != "cname_mode" ) {
+            layer.alert("请选取消其它选项")
+            $("input[name='sync-item'][value='cname_mode']").prop("checked",false)
+            form.render("checkbox")
+            return false
+          }
+        })
+
+      }
+    });       
+    
+    form.on('checkbox(node_group_id)', function(data){
+      if(data.elem.checked) {
+        check_if_cname_mode_is_checked("node_group_id")
+
+      }
+    });   
+
+    form.on('checkbox(cname_domain)', function(data){
+      if(data.elem.checked) {
+        check_if_cname_mode_is_checked("cname_domain")
+
+      }
+    });   
+
+    form.on('checkbox(cname_hostname2)', function(data){
+      if(data.elem.checked) {
+        check_if_cname_mode_is_checked("cname_hostname2")
+      }
+    });   
+
+   
+  });
+
+
+</script>    

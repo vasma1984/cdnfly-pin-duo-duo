@@ -1,0 +1,276 @@
+# -*- coding: utf-8 -*-
+
+import sys
+sys.path.append("/opt/cdnfly/master/")
+from tasks.interface import dns
+from view.util import FileLock
+import json
+import requests
+import math
+import os
+import datetime
+import time
+
+class Dns(dns):
+    def __init__(self, auth):
+        try:
+            auth = json.loads(auth)
+        except ValueError:
+            raise ValueError(u"传入的验证信息非json")
+        try:
+            user = auth['id']
+        except KeyError:
+            raise ValueError(u"auth中找不到id")
+
+        try:
+            password = auth['token']
+        except KeyError:
+            raise ValueError(u"auth中找不到token")
+
+
+        # 获取token
+        self.token_path = "/opt/huaweicloud_token"
+
+        need_get_token = False
+        
+        if os.path.exists(self.token_path):
+            with open(self.token_path) as fp:
+                data = fp.read()
+                try:
+                    data = json.loads(data)
+                    expire = data['expire']
+                    token = data['token']
+                    now = int(time.time())
+                    if now + 3600 > expire:
+                        # 过期
+                        need_get_token = True
+
+                except ValueError:
+                    # 非json
+                    need_get_token = True
+
+        else:
+            # token文件不存在时
+            need_get_token = True
+
+        if need_get_token:
+            ret, err = self.get_token(user, password)
+            if ret:
+                self.token = ret['token']
+                with open(self.token_path, "w") as fp:
+                    fp.write(json.dumps(ret))
+
+            else:
+                self.token = err
+
+        else:
+            self.token = token
+
+    def get_token(self, user, password):
+        data = {
+            "auth": {
+                "identity": {
+                    "methods": [
+                        "password"
+                    ],
+                    "password": {
+                        "user": {
+                            "domain": {
+                                "name": user
+                            },
+                            "name": "dnsapi",
+                            "password": password
+                        }
+                    }
+                },
+                "scope": {
+                    "domain": {
+                        "name": user
+                    }
+                }
+            }
+        }
+
+        filename = "/tmp/get_huawei_token.lock"
+        Lock = FileLock(filename)
+        try:
+            try:
+                Lock.lock()
+
+            except IOError:
+                return False, "另一个程序在获取token"
+
+            print data
+            r = requests.post("https://iam.myhuaweicloud.com/v3/auth/tokens", data=json.dumps(data), headers={"Content-Type":"application/json;charset=utf8"}, timeout=10)
+            headers = r.headers
+            try:
+                body = json.loads(r.content)
+            except ValueError:
+                return False, "非json,内容:{content}".format(content=r.content)
+
+            status_code = r.status_code
+            if status_code != 201:
+                return False, body['error']['message']
+
+            expire = body['token']['expires_at']
+            expire = datetime.datetime.strptime(expire, "%Y-%m-%dT%H:%M:%S.%fZ")
+            expire = int((expire - datetime.datetime(1970, 1, 1)).total_seconds())
+            ret = {"token": headers['X-Subject-Token'], "expire": expire}
+            return  ret, None
+
+        except requests.exceptions.Timeout:
+            msg = "获取token失败，连接超时"
+            return False, msg
+
+        except requests.exceptions.ConnectionError:
+            msg = "获取token失败，连接错误"
+            return False, msg
+
+        finally:
+            if 'Lock' in locals().keys():
+                Lock.unlock()
+
+    def get_lines(self, domain, zone_id):
+        url = "https://dns.myhuaweicloud.com/v2/zones/{zone_id}".format(zone_id=zone_id)
+        ret, err = self.send_request("get", url, None)
+        if err:
+            return None, err
+
+        if ret['name'] != domain + ".":
+            return None, "找不到此域名"
+
+        return '[{"id":"default_view","name":"全网默认"},{"id":"CN","name":"中国","pid":[{"id":"Huabei","name":"华北地区","pid":[{"id":"Beijing","name":"北京"},{"id":"Tianjin","name":"天津"},{"id":"Hebei","name":"河北"},{"id":"Shanxi","name":"山西"},{"id":"Neimenggu","name":"内蒙古"}]},{"id":"Dongbei","name":"东北地区","pid":[{"id":"Liaoning","name":"辽宁"},{"id":"Jilin","name":"吉林"},{"id":"Heilongjiang","name":"黑龙江"}]},{"id":"Xibei","name":"西北地区","pid":[{"id":"Shaanxi","name":"陕西"},{"id":"Gansu","name":"甘肃"},{"id":"Qinghai","name":"青海"},{"id":"Ningxia","name":"宁夏"},{"id":"Xinjiang","name":"新疆"}]},{"id":"Huazhong","name":"华中地区","pid":[{"id":"Henan","name":"河南"},{"id":"Hubei","name":"湖北"},{"id":"Hunan","name":"湖南"}]},{"id":"Huadong","name":"华东地区","pid":[{"id":"Shanghai","name":"上海"},{"id":"Jiangsu","name":"江苏"},{"id":"Zhejiang","name":"浙江"},{"id":"Anhui","name":"安徽"},{"id":"Fujian","name":"福建"},{"id":"Jiangxi","name":"江西"},{"id":"Shandong","name":"山东"}]},{"id":"Huanan","name":"华南地区","pid":[{"id":"Guangdong","name":"广东"},{"id":"Hainan","name":"海南"},{"id":"Guangxi","name":"广西"}]},{"id":"Xinan","name":"西南地区","pid":[{"id":"Chongqing","name":"重庆"},{"id":"Sichuan","name":"四川"},{"id":"Guizhou","name":"贵州"},{"id":"Yunnan","name":"云南"},{"id":"Xizang","name":"西藏"}]}]},{"id":"Abroad","name":"全球","pid":[{"id":"AP","name":"亚太地区","pid":[{"id":"TW","name":"中国台湾"},{"id":"HK","name":"中国香港"},{"id":"MO","name":"中国澳门"},{"id":"JP","name":"日本"},{"id":"KR","name":"韩国"},{"id":"IN","name":"印度"},{"id":"TR","name":"土耳其"},{"id":"ID","name":"印度尼西亚"},{"id":"VN","name":"越南"},{"id":"SG","name":"新加坡"},{"id":"TH","name":"泰国"},{"id":"MY","name":"马来西亚"},{"id":"BD","name":"孟加拉"},{"id":"AE","name":"阿联酋"},{"id":"AM","name":"亚美尼亚"},{"id":"AZ","name":"阿塞拜疆"},{"id":"BH","name":"巴林"},{"id":"BN","name":"文莱"},{"id":"BT","name":"不丹"},{"id":"CX","name":"圣诞岛"},{"id":"GE","name":"格鲁吉亚"},{"id":"IQ","name":"伊拉克"},{"id":"JO","name":"约旦"},{"id":"KG","name":"吉尔吉斯斯坦"},{"id":"KH","name":"柬埔寨"},{"id":"KW","name":"科威特"},{"id":"KZ","name":"哈萨克斯坦"},{"id":"LB","name":"黎巴嫩"},{"id":"LK","name":"斯里兰卡"},{"id":"MM","name":"缅甸"},{"id":"MN","name":"蒙古"},{"id":"MV","name":"马尔代夫"},{"id":"NP","name":"尼泊尔"},{"id":"OM","name":"阿曼"},{"id":"PH","name":"菲律宾"},{"id":"PK","name":"巴基斯坦"},{"id":"PS","name":"巴勒斯坦"},{"id":"QA","name":"卡塔尔"},{"id":"SA","name":"沙特阿拉伯"},{"id":"TJ","name":"塔吉克斯坦"},{"id":"TL","name":"东帝汶"},{"id":"TM","name":"土库曼斯坦"},{"id":"UZ","name":"乌兹别克斯坦"},{"id":"YE","name":"也门"},{"id":"CY","name":"塞浦路斯"},{"id":"IL","name":"以色列"},{"id":"AS","name":"美属萨摩亚"},{"id":"CK","name":"库克群岛"},{"id":"FM","name":"密克罗尼西亚"},{"id":"GU","name":"关岛"},{"id":"KI","name":"基里巴斯"},{"id":"MH","name":"马绍尔群岛"},{"id":"MP","name":"北马里亚纳群岛"},{"id":"NC","name":"新喀里多尼亚"},{"id":"NF","name":"诺福克岛"},{"id":"NR","name":"瑙鲁"},{"id":"PF","name":"法属波利尼西亚"},{"id":"PG","name":"巴布亚新几内亚"},{"id":"PW","name":"帕劳"},{"id":"SB","name":"所罗门群岛"},{"id":"TK","name":"托克劳群岛"},{"id":"TO","name":"汤加"},{"id":"TV","name":"图瓦卢"},{"id":"VU","name":"瓦努阿图"},{"id":"WS","name":"萨摩亚"},{"id":"AFG","name":"阿富汗"},{"id":"LAO","name":"老挝"}]},{"id":"OA","name":"大洋洲","pid":[{"id":"AU","name":"澳大利亚"},{"id":"NZ","name":"新西兰"}]},{"id":"EU","name":"欧洲","pid":[{"id":"GB","name":"英国"},{"id":"DE","name":"德国"},{"id":"FR","name":"法国"},{"id":"IT","name":"意大利"},{"id":"RU","name":"俄罗斯"},{"name":"西班牙"},{"id":"UA","name":"乌克兰"},{"id":"NL","name":"荷兰"},{"id":"SE","name":"瑞典"},{"id":"PL","name":"波兰"},{"id":"IO","name":"英属印度洋领地"},{"id":"BY","name":"白俄罗斯"},{"id":"AD","name":"安道尔"},{"id":"AL","name":"阿尔巴尼亚"},{"id":"AT","name":"奥地利"},{"id":"AX","name":"奥兰群岛"},{"id":"BE","name":"比利时"},{"id":"BG","name":"保加利亚"},{"id":"CH","name":"瑞士"},{"id":"CZ","name":"捷克"},{"id":"DK","name":"丹麦"},{"id":"EE","name":"爱沙尼亚"},{"id":"FI","name":"芬兰"},{"id":"FO","name":"法罗群岛"},{"id":"GG","name":"根西岛"},{"id":"GI","name":"直布罗陀"},{"id":"GR","name":"希腊"},{"id":"HR","name":"克罗地亚"},{"id":"HU","name":"匈牙利"},{"id":"IE","name":"爱尔兰"},{"id":"IM","name":"马恩岛"},{"id":"IS","name":"冰岛"},{"id":"JE","name":"泽西岛"},{"id":"LI","name":"列支敦士登"},{"id":"LT","name":"立陶宛"},{"id":"LU","name":"卢森堡"},{"id":"LV","name":"拉脱维亚"},{"id":"MC","name":"摩纳哥"},{"id":"MD","name":"摩尔多瓦"},{"id":"ME","name":"黑山"},{"id":"MK","name":"北马其顿"},{"id":"MT","name":"马耳他"},{"id":"NO","name":"挪威"},{"name":"葡萄牙"},{"id":"RO","name":"罗马尼亚"},{"id":"RS","name":"塞尔维亚"},{"id":"SI","name":"斯洛文尼亚"},{"id":"SK","name":"斯洛伐克"},{"id":"SM","name":"圣马力诺"},{"id":"VA","name":"梵蒂冈"},{"id":"XK","name":"科索沃"},{"id":"GL","name":"格陵兰"}]},{"id":"NA","name":"北美洲","pid":[{"id":"US","name":"美国"},{"id":"CA","name":"加拿大"},{"id":"MX","name":"墨西哥"},{"id":"AG","name":"安提瓜和巴布达"},{"id":"BB","name":"巴巴多斯"},{"id":"BS","name":"巴哈马"},{"id":"BZ","name":"伯利兹"},{"id":"CR","name":"哥斯达黎加"},{"id":"DM","name":"多米尼克"},{"id":"DO","name":"多米尼加"},{"id":"GD","name":"格林纳达"},{"id":"GT","name":"危地马拉"},{"id":"HN","name":"洪都拉斯"},{"id":"HT","name":"海地"},{"id":"JM","name":"牙买加"},{"id":"KN","name":"圣基茨和尼维斯"},{"id":"KY","name":"开曼群岛"},{"id":"LC","name":"圣卢西亚"},{"id":"NI","name":"尼加拉瓜"},{"id":"PA","name":"巴拿马"},{"id":"PR","name":"波多黎各"},{"id":"SV","name":"萨尔瓦多"},{"id":"TC","name":"特克斯和凯科斯群岛"},{"id":"TT","name":"特立尼达和多巴哥"},{"id":"VG","name":"英属维尔京群岛"},{"id":"VI","name":"美属维尔京群岛"},{"id":"VC","name":"圣文森特和格林纳丁斯"}]},{"id":"LA","name":"南美洲","pid":[{"id":"BR","name":"巴西"},{"id":"AR","name":"阿根廷"},{"id":"AI","name":"安圭拉"},{"id":"AW","name":"阿鲁巴"},{"id":"BL","name":"圣巴泰勒米岛"},{"id":"BM","name":"百慕大"},{"id":"GP","name":"瓜德罗普"},{"id":"MS","name":"蒙特塞拉特岛"},{"id":"BO","name":"玻利维亚"},{"id":"CL","name":"智利"},{"id":"CO","name":"哥伦比亚"},{"id":"CW","name":"库拉索"},{"id":"EC","name":"厄瓜多尔"},{"id":"GF","name":"法属圭亚那"},{"id":"GY","name":"圭亚那"},{"id":"PE","name":"秘鲁"},{"id":"PY","name":"巴拉圭"},{"id":"SR","name":"苏里南"},{"id":"UY","name":"乌拉圭"},{"id":"VE","name":"委内瑞拉"}]},{"id":"AF","name":"非洲","pid":[{"id":"ZA","name":"南非"},{"id":"EG","name":"埃及"},{"id":"AO","name":"安哥拉"},{"id":"BF","name":"布基纳法索"},{"id":"BI","name":"布隆迪"},{"id":"BJ","name":"贝宁"},{"id":"BW","name":"博茨瓦纳"},{"id":"CD","name":"刚果金"},{"id":"CF","name":"中非"},{"id":"CG","name":"刚果布"},{"id":"CI","name":"科特迪瓦"},{"id":"CM","name":"喀麦隆"},{"id":"CV","name":"佛得角"},{"id":"DJ","name":"吉布提"},{"id":"DZ","name":"阿尔及利亚"},{"id":"ER","name":"厄立特里亚"},{"id":"ET","name":"埃塞俄比亚"},{"id":"GA","name":"加蓬"},{"id":"GH","name":"加纳"},{"id":"GM","name":"冈比亚"},{"id":"GN","name":"几内亚"},{"id":"GQ","name":"赤道几内亚"},{"id":"GW","name":"几内亚比绍"},{"id":"KE","name":"肯尼亚"},{"id":"KM","name":"科摩罗"},{"id":"LR","name":"利比里亚"},{"id":"LS","name":"莱索托"},{"id":"LY","name":"利比亚"},{"id":"MA","name":"摩洛哥"},{"id":"MG","name":"马达加斯加"},{"id":"ML","name":"马里"},{"id":"MR","name":"毛里塔尼亚"},{"id":"MU","name":"毛里求斯"},{"id":"MW","name":"马拉维"},{"id":"MZ","name":"莫桑比克"},{"id":"NE","name":"尼日尔"},{"id":"NG","name":"尼日利亚"},{"id":"RE","name":"留尼汪"},{"id":"RW","name":"卢旺达"},{"id":"SC","name":"塞舌尔"},{"id":"SL","name":"塞拉利昂"},{"id":"SN","name":"塞内加尔"},{"id":"SO","name":"索马里"},{"id":"SS","name":"南苏丹"},{"id":"ST","name":"圣多美和普林西比"},{"id":"SZ","name":"斯威士兰"},{"id":"TD","name":"乍得"},{"id":"TG","name":"多哥"},{"id":"TN","name":"突尼斯"},{"id":"TZ","name":"坦桑尼亚"},{"id":"UG","name":"乌干达"},{"id":"YT","name":"马约特"},{"id":"ZM","name":"赞比亚"},{"id":"ZW","name":"津巴布韦"},{"id":"NAM","name":"纳米比亚"}]}]},{"id":"Dianxin","name":"电信","pid":[{"id":"Huabei","name":"华北地区","pid":[{"id":"Beijing","name":"北京"},{"id":"Tianjin","name":"天津"},{"id":"Hebei","name":"河北"},{"id":"Shanxi","name":"山西"},{"id":"Neimenggu","name":"内蒙古"}]},{"id":"Dongbei","name":"东北地区","pid":[{"id":"Liaoning","name":"辽宁"},{"id":"Jilin","name":"吉林"},{"id":"Heilongjiang","name":"黑龙江"}]},{"id":"Xibei","name":"西北地区","pid":[{"id":"Shaanxi","name":"陕西"},{"id":"Gansu","name":"甘肃"},{"id":"Qinghai","name":"青海"},{"id":"Ningxia","name":"宁夏"},{"id":"Xinjiang","name":"新疆"}]},{"id":"Huazhong","name":"华中地区","pid":[{"id":"Henan","name":"河南"},{"id":"Hubei","name":"湖北"},{"id":"Hunan","name":"湖南"}]},{"id":"Huadong","name":"华东地区","pid":[{"id":"Shanghai","name":"上海"},{"id":"Jiangsu","name":"江苏"},{"id":"Zhejiang","name":"浙江"},{"id":"Anhui","name":"安徽"},{"id":"Fujian","name":"福建"},{"id":"Jiangxi","name":"江西"},{"id":"Shandong","name":"山东"}]},{"id":"Huanan","name":"华南地区","pid":[{"id":"Guangdong","name":"广东"},{"id":"Hainan","name":"海南"},{"id":"Guangxi","name":"广西"}]},{"id":"Xinan","name":"西南地区","pid":[{"id":"Chongqing","name":"重庆"},{"id":"Sichuan","name":"四川"},{"id":"Guizhou","name":"贵州"},{"id":"Yunnan","name":"云南"},{"id":"Xizang","name":"西藏"}]}]},{"id":"Yidong","name":"移动","pid":[{"id":"Huabei","name":"华北地区","pid":[{"id":"Beijing","name":"北京"},{"id":"Tianjin","name":"天津"},{"id":"Hebei","name":"河北"},{"id":"Shanxi","name":"山西"},{"id":"Neimenggu","name":"内蒙古"}]},{"id":"Dongbei","name":"东北地区","pid":[{"id":"Liaoning","name":"辽宁"},{"id":"Jilin","name":"吉林"},{"id":"Heilongjiang","name":"黑龙江"}]},{"id":"Xibei","name":"西北地区","pid":[{"id":"Shaanxi","name":"陕西"},{"id":"Gansu","name":"甘肃"},{"id":"Qinghai","name":"青海"},{"id":"Ningxia","name":"宁夏"},{"id":"Xinjiang","name":"新疆"}]},{"id":"Huazhong","name":"华中地区","pid":[{"id":"Henan","name":"河南"},{"id":"Hubei","name":"湖北"},{"id":"Hunan","name":"湖南"}]},{"id":"Huadong","name":"华东地区","pid":[{"id":"Shanghai","name":"上海"},{"id":"Jiangsu","name":"江苏"},{"id":"Zhejiang","name":"浙江"},{"id":"Anhui","name":"安徽"},{"id":"Fujian","name":"福建"},{"id":"Jiangxi","name":"江西"},{"id":"Shandong","name":"山东"}]},{"id":"Huanan","name":"华南地区","pid":[{"id":"Guangdong","name":"广东"},{"id":"Hainan","name":"海南"},{"id":"Guangxi","name":"广西"}]},{"id":"Xinan","name":"西南地区","pid":[{"id":"Chongqing","name":"重庆"},{"id":"Sichuan","name":"四川"},{"id":"Guizhou","name":"贵州"},{"id":"Yunnan","name":"云南"},{"id":"Xizang","name":"西藏"}]}]},{"id":"Liantong","name":"联通","pid":[{"id":"Huabei","name":"华北地区","pid":[{"id":"Beijing","name":"北京"},{"id":"Tianjin","name":"天津"},{"id":"Hebei","name":"河北"},{"id":"Shanxi","name":"山西"},{"id":"Neimenggu","name":"内蒙古"}]},{"id":"Dongbei","name":"东北地区","pid":[{"id":"Liaoning","name":"辽宁"},{"id":"Jilin","name":"吉林"},{"id":"Heilongjiang","name":"黑龙江"}]},{"id":"Xibei","name":"西北地区","pid":[{"id":"Shaanxi","name":"陕西"},{"id":"Gansu","name":"甘肃"},{"id":"Qinghai","name":"青海"},{"id":"Ningxia","name":"宁夏"},{"id":"Xinjiang","name":"新疆"}]},{"id":"Huazhong","name":"华中地区","pid":[{"id":"Henan","name":"河南"},{"id":"Hubei","name":"湖北"},{"id":"Hunan","name":"湖南"}]},{"id":"Huadong","name":"华东地区","pid":[{"id":"Shanghai","name":"上海"},{"id":"Jiangsu","name":"江苏"},{"id":"Zhejiang","name":"浙江"},{"id":"Anhui","name":"安徽"},{"id":"Fujian","name":"福建"},{"id":"Jiangxi","name":"江西"},{"id":"Shandong","name":"山东"}]},{"id":"Huanan","name":"华南地区","pid":[{"id":"Guangdong","name":"广东"},{"id":"Hainan","name":"海南"},{"id":"Guangxi","name":"广西"}]},{"id":"Xinan","name":"西南地区","pid":[{"id":"Chongqing","name":"重庆"},{"id":"Sichuan","name":"四川"},{"id":"Guizhou","name":"贵州"},{"id":"Yunnan","name":"云南"},{"id":"Xizang","name":"西藏"}]}]},{"id":"Jiaoyuwang","name":"教育网"},{"id":"Tietong","name":"铁通"},{"id":"Pengboshi","name":"鹏博士","pid":[{"id":"Huabei","name":"华北地区","pid":[{"id":"Beijing","name":"北京"},{"id":"Tianjin","name":"天津"},{"id":"Hebei","name":"河北"},{"id":"Shanxi","name":"山西"},{"id":"Neimenggu","name":"内蒙古"}]},{"id":"Dongbei","name":"东北地区","pid":[{"id":"Liaoning","name":"辽宁"},{"id":"Jilin","name":"吉林"},{"id":"Heilongjiang","name":"黑龙江"}]},{"id":"Xibei","name":"西北地区","pid":[{"id":"Shaanxi","name":"陕西"},{"id":"Gansu","name":"甘肃"},{"id":"Qinghai","name":"青海"},{"id":"Ningxia","name":"宁夏"},{"id":"Xinjiang","name":"新疆"}]},{"id":"Huazhong","name":"华中地区","pid":[{"id":"Henan","name":"河南"},{"id":"Hubei","name":"湖北"},{"id":"Hunan","name":"湖南"}]},{"id":"Huadong","name":"华东地区","pid":[{"id":"Shanghai","name":"上海"},{"id":"Jiangsu","name":"江苏"},{"id":"Zhejiang","name":"浙江"},{"id":"Anhui","name":"安徽"},{"id":"Fujian","name":"福建"},{"id":"Jiangxi","name":"江西"},{"id":"Shandong","name":"山东"}]},{"id":"Huanan","name":"华南地区","pid":[{"id":"Guangdong","name":"广东"},{"id":"Hainan","name":"海南"},{"id":"Guangxi","name":"广西"}]},{"id":"Xinan","name":"西南地区","pid":[{"id":"Chongqing","name":"重庆"},{"id":"Sichuan","name":"四川"},{"id":"Guizhou","name":"贵州"},{"id":"Yunnan","name":"云南"},{"id":"Xizang","name":"西藏"}]}]}]', None
+       
+    def get_record(self,domain,record_id):
+        url = "https://dns.myhuaweicloud.com/v2/zones/{zone_id}/recordsets/{record_id}".format(zone_id=zone_id,record_id=record_id)
+        ret, err = self.send_request("get", url, None)
+        if err:
+            return None, err
+
+        ret = {"sub_domain":record['sub_domain'],"domain":domain,"line":record['record_line_id'],"type":record['record_type'],"value":record['value'],"ttl":record['ttl']}
+        return ret, None
+
+    def append_rs(self, from_rs, to_rs):
+        for r in from_rs:
+            sub_domain = r['name']
+            r_type = r['type']
+            line_id = r['line_id']
+            ip = r['value']
+            record_id = r['id']
+
+            to_rs[record_id] = {"sub_domain": sub_domain, "type": r_type, "line_id": line_id, "ip": ip}        
+
+    def get_all_record(self, domain):
+        offset = 0
+        page_size = 3000
+        url = "https://dnsapi.cn/Record.List"
+        data = {"domain":domain,"offset":offset,"length":page_size}
+        body, err = self.send_request(url, data)
+        if err:
+            if err == "记录列表为空":
+                return {}, None
+
+            return None, err
+
+        records = {}
+        total = int(body['info']['record_total'])
+        self.append_rs(body['records'], records)
+
+
+        total_page = int(math.ceil(total/float(page_size)))
+
+        for p in range(total_page-1):
+            offset += page_size
+            data = {"domain":domain, "offset":offset, "length": page_size}
+            body, err = self.send_request(url, data)
+            if err:
+                return None, err
+
+            self.append_rs(body['records'], records)
+
+        return records, None
+
+    def get_default_line_id(self):
+        return "0"        
+
+    def add_record(self,domain,sub_domain,record_type,record_line_id,ip,ttl):
+        if record_type == "CNAME":
+            record_line_id = self.get_default_line_id()
+
+        url = "https://dnsapi.cn/Record.Create"
+        data = {"domain":domain,"sub_domain":sub_domain,"record_type":record_type,"record_line_id":record_line_id,"value":ip,"ttl":ttl}
+        body, err = self.send_request(url, data)
+        if err:
+            return None, err
+
+        return body['record']['id'], None
+
+    def del_record(self,domain,record_id):
+        url = "https://dnsapi.cn/Record.Remove"
+        data = {"domain":domain,"record_id":record_id}
+        body, err = self.send_request(url, data)
+        if err:
+            return None, err
+
+        return True, None            
+
+    def update_record(self,domain,record_id,sub_domain,record_type,record_line_id,ip,ttl):
+        if record_type == "CNAME":
+            record_line_id = self.get_default_line_id()
+
+        url = "https://dnsapi.cn/Record.Modify"
+        data = {"domain":domain,"record_id":record_id, "sub_domain":sub_domain,"record_type":record_type,"record_line_id":record_line_id,"value":ip,"ttl":ttl}
+        body, err = self.send_request(url, data)
+        if err:
+            return None, err
+
+        return True, None
+
+    def get_domain_grade(self, domain):
+        url = "https://dnsapi.cn/Domain.Info"
+        data = {"domain":domain}
+        body, err = self.send_request(url, data)
+        if err:
+            return None, err
+
+        return body['domain']['grade'], None
+
+    def send_request(self, method, url, data):
+        req = getattr(requests, method, None)
+        headers = {"Content-Type": "application/json", "X-Auth-Token": self.token}
+        try:
+            r = req(url, data=data,headers=headers, timeout=10)
+
+            try:
+                body = json.loads(r.content)
+            except ValueError:
+                return None, "返回结果非json，原始数据为:{body}".format(body=r.content)
+
+            status_code = str(r.status_code)
+            if status_code == "401":
+                if os.path.exists(self.token_path):
+                    os.remove(self.token_path)                
+
+                return None, self.token
+
+            if not status_code.startswith("2"):
+                code = body['code']
+                message = body['message']
+                if code == "DNS.0005":
+                    if os.path.exists(self.token_path):
+                        os.remove(self.token_path)
+
+                return None, message
+
+            return body, None
+
+        except requests.ConnectTimeout:
+            return None, "url:{url} 连接超时".format(url=url)
+
+        except requests.ConnectionError:
+            return None, "url:{url} 连接错误".format(url=url)
+
+        except requests.Timeout:
+            return None, "url:{url} 读取超时".format(url=url)
+
+

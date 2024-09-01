@@ -1,0 +1,124 @@
+<style type="text/css">
+
+.desc {width: 250px;}
+.green {color:#009688}
+.red {color:#FF5722}
+
+</style>
+  <form class="layui-form" action="">
+      <fieldset class="layui-elem-field layui-field-title">
+        <legend>邮件发送</legend>
+      </fieldset>
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">需要发送?</label>
+          <div class="layui-input-inline">
+            <i class="email_need_send desc layui-form-label layui-icon layui-icon-ok-circle" style="font-size: 20px; color: #009688;"></i>
+          </div>
+        </div>
+        <div class="layui-inline email_is_sent_block">
+          <label class="layui-form-label">已经发送?</label>
+          <div class="layui-input-inline">
+            <i class="email_is_sent desc layui-form-label layui-icon layui-icon-ok-circle" style="font-size: 20px; color: #009688;"></i>
+          </div>
+        </div>
+        <div class="layui-inline email_fail_times_block">
+          <label class="layui-form-label">失败次数</label>
+          <div class="layui-input-inline">
+            <label class="email_fail_times desc layui-form-label">0次</label>
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">原因</label>
+          <div class="layui-input-inline">
+            <label class="email_ret desc layui-form-label">未开启</label>
+          </div>
+        </div>
+
+        <div class="layui-inline email_time_block">
+          <label class="layui-form-label">发送时间</label>
+          <div class="layui-input-inline">
+            <label class="email_time desc layui-form-label">2000-01-01 12:00:00</label>
+          </div>
+        </div>
+
+        <div class="layui-inline email_send_state_block">
+          <label class="layui-form-label">发送状态</label>
+          <div class="layui-input-inline">
+            <label class="email_send_state desc layui-form-label">待发送</label>
+          </div>
+        </div>
+
+      </div>
+
+      <fieldset class="layui-elem-field layui-field-title">
+        <legend>手机短信发送</legend>
+      </fieldset>
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">需要发送?</label>
+          <div class="layui-input-inline">
+            <i class="phone_need_send desc layui-form-label layui-icon layui-icon-ok-circle" style="font-size: 20px; color: #009688;"></i>
+          </div>
+        </div>
+        <div class="layui-inline phone_is_sent_block">
+          <label class="layui-form-label ">已经发送?</label>
+          <div class="layui-input-inline">
+            <i class="phone_is_sent desc layui-form-label layui-icon layui-icon-ok-circle" style="font-size: 20px; color: #009688;"></i>
+          </div>
+        </div>
+        <div class="layui-inline phone_fail_times_block">
+          <label class="layui-form-label">失败次数</label>
+          <div class="layui-input-inline">
+            <label class="phone_fail_times desc layui-form-label">0次</label>
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">原因</label>
+          <div class="layui-input-inline">
+            <label class="phone_ret desc layui-form-label">未开启</label>
+          </div>
+        </div>
+
+        <div class="layui-inline phone_time_block">
+          <label class="layui-form-label">发送时间</label>
+          <div class="layui-input-inline">
+            <label class="phone_time desc layui-form-label">2000-01-01 12:00:00</label>
+          </div>
+        </div>
+
+        <div class="layui-inline phone_send_state_block">
+          <label class="layui-form-label">发送状态</label>
+          <div class="layui-input-inline">
+            <label class="phone_send_state desc layui-form-label">待发送</label>
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">发送内容</label>
+          <div class="layui-input-inline">
+            <label class="content desc layui-form-label">待发送</label>
+          </div>
+        </div>
+
+      </div>
+
+  </form>
+
+
+<script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,laydate = layui.laydate
+    ,form = layui.form;
+
+   
+  }); //重载表格  
+
+
+</script>    

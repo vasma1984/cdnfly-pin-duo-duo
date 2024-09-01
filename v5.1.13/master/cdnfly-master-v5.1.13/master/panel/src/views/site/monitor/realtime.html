@@ -1,0 +1,164 @@
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>网站管理</cite></a>
+    <a><cite>监控统计</cite></a>
+    <a><cite>实时监控</cite></a>
+  </div>
+</div>
+<style type="text/css">
+.layui-card-body  {line-height: 18px;}
+.active-btn {
+  border: 1px solid #009688 ! important;
+  color: #009688
+}
+.select2-container .select2-search--inline .select2-search__field {padding-left: 5px;}
+</style>
+
+<div class="layui-fluid" id="component-tabs">
+  <div class="layui-row">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-tab layui-tab-brief" lay-filter="monitor-tab">
+            <ul class="layui-tab-title">
+              <li class="layui-this">基础数据</li>
+              <li>质量监控</li>
+              <li>回源监控</li>
+            </ul>
+            <div class="layui-tab-content">
+              <div class="layui-form-item">
+                <div class="layui-input-inline" style="width:220px">
+                  <input style="height: 32px;" type="text" name="domains"  placeholder="输入域名,多个域名空格分隔" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-input-inline" style="width: 120px;">
+                  <input style="height: 32px;" type="text" name="server_port"  placeholder="监听端口" autocomplete="off" class="layui-input">
+                </div>                
+                <div class="layui-input-inline time-period" style="width: 300px;">
+                  <div class="layui-btn-group">
+                    <button type="button" data-hour=1 class="layui-btn layui-btn-primary layui-btn-sm hours active-btn">1小时实时</button>
+                    <button type="button" data-hour=6 class="layui-btn layui-btn-primary layui-btn-sm hours">近6小时</button>
+                    <button type="button" data-hour=12 class="layui-btn layui-btn-primary layui-btn-sm hours">近12小时</button>
+                    <button type="button" id="date_tip" class="layui-btn layui-btn-primary  layui-btn-sm">自定义 <i class="layui-icon">&#xe637;</i></button>
+                    <button type="button" id="date" class="layui-btn layui-btn-primary layui-btn-sm layui-hide"></button>         
+                  </div>         
+                </div>
+
+                <div class="layui-input-inline">
+                  <button id="query" type="button" class="layui-btn layui-btn-sm">查询</button>
+                </div>
+                
+                                
+              </div>
+              
+              <div class="layui-tab-item layui-show">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="bandwidth">
+                        <div carousel-item id="bandwidth">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="req">
+                        <div carousel-item id="req">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="layui-col-lg6  layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="traffic">
+                        <div carousel-item id="traffic">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="qps">
+                        <div carousel-item id="qps">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="req-cache-status">
+                        <div carousel-item id="req-cache-status">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="status-4xx">
+                        <div carousel-item id="status-4xx">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="layui-col-lg6  layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="byte-cache-status">
+                        <div carousel-item id="byte-cache-status">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="status-5xx">
+                        <div carousel-item id="status-5xx">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+              </div>
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="backend-bandwidth">
+                        <div carousel-item id="backend-bandwidth">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="backend-resp-time">
+                        <div carousel-item id="backend-resp-time">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="backend-traffic">
+                        <div carousel-item id="backend-traffic">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+   </div>
+</div>
+
+<script>
+layui.use('senior', layui.factory('senior'));
+layui.use(['admin', 'table','laydate'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,element = layui.element
+  ,router = layui.router();
+  element.render();
+});
+</script>

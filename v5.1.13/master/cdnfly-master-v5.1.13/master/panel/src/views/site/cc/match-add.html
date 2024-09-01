@@ -1,0 +1,268 @@
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1">名称</div>
+                <div class="layui-col-md3">
+                  <input type="text" name="name" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1">备注</div>
+                <div class="layui-col-md4">
+                  <input type="text" name="des" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1">规则</div>
+                <div class="layui-col-md11">
+                  <table class="layui-hide" id="matchlist" lay-filter="matchlist"></table>
+                  <script type="text/html" id="matchlist-toolbar">
+                      <div class="layui-row layui-col-space10">
+                        <div class="layui-col-md9">
+                          <button class="layui-btn layui-btn-xs" lay-event="add">新增</button>
+                          <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</button>
+                        </div>
+                      </div>
+                  </script>
+                   
+                  <script type="text/html" id="matchlist-bar">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                  </script>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1"></div>
+                <div class="layui-col-md2">
+                  <button id="save" type="button" class="layui-btn">确认</button>
+                </div>
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+<script>
+layui.data.sendParams = function(params){
+  var data = params.data
+  var table = layui.table
+  var admin = layui.admin
+  var view = layui.view
+  var form = layui.form
+  var  $ = layui.$
+  window.match_item_map = {"ip":"IP地址","host":"域名","req_uri":"请求URI","uri":"请求URI(不带参数)","req_method":"请求方法","user_agent":"浏览器UA","referer":"请求来源","country_iso_code":"国家代码"}
+  window.match_op_map = {"=":"等于","!=":"不等于","contain":"包含","!contain":"不包含","prefix":"前缀匹配","suffix":"后缀匹配","regex":"正则匹配"}
+
+  if (typeof(data) == "undefined") {
+    data = []
+  } else {
+    data = JSON.parse(data)
+    // 转换成数组
+    var new_data = []
+    for (i in data) {
+      var value = data[i]['value']
+      var operator = data[i]['operator']
+      if (operator == "AC" || operator == "!AC") {
+        value = value.join(",")
+      }
+      new_data.push({"type":i,"operator":operator,"value":value})
+    }
+    data = new_data
+    window.match_data = data
+  }
+
+  if (params) {
+    $("input[name='name']").val(params.name)
+    $("input[name='des']").val(params.des)
+  }
+
+  table.render({
+    elem: '#matchlist'
+    ,title: 'xx'
+    ,toolbar: '#matchlist-toolbar'
+    ,autoSort: false
+    ,defaultToolbar: []
+      ,size: 'sm' //小尺寸的表格
+
+    ,cols: [[ //表头
+      {type: 'checkbox', fixed: 'left'}
+      ,{type: 'numbers',title: '序号'}
+      ,{field: 'type', title: '匹配项',templet:function(d) {
+        return window.match_item_map[d.type]
+      }}
+      ,{field: 'operator', title: '操作符',templet:function(d) {
+        return window.match_op_map[d.operator]
+      }}
+      ,{field: 'value', title: '匹配值'}
+      ,{fixed: 'right', title:'操作', toolbar: '#matchlist-bar', width:120}
+
+    ]]
+    ,data: data
+    ,page: false
+    ,size:1000
+    
+  }); 
+
+    //头工具栏事件
+    table.on('toolbar(matchlist)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      var table_data = obj.config.data
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增匹配规则'
+            ,area: ['500px', '450px']
+            ,id: 'LAY-popup-matchlist-add'
+            ,success: function(layero, index){
+              view(this.id).render('site/cc/matchlist-add').done(function(){
+                var internal = layui.router().search.internal
+
+                //监听提交
+                form.on('submit(LAY-matchlist-add-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var type = field.type
+                  var operator = field.operator
+                  var value = ""
+                  if (operator == "regex") {
+                    value = $("input[name='value']").val()
+                  } else {
+                    value = $("textarea[name='value']").val()
+                  }
+
+                  if (type == "") {
+                    layer.alert("请选择匹配项")
+                    return
+                  }
+
+                  if (operator == "") {
+                    layer.alert("请选择操作符")
+                    return                    
+                  }
+
+                  if (value == "") {
+                    layer.alert("请输入匹配值")
+                    return                      
+                  }
+
+                  window.match_data.push({"type":type,"operator":operator,"value":value})
+                  var match_data = JSON.parse(JSON.stringify(window.match_data))
+                  table.reload('matchlist',{data:match_data}); //重载表格
+                  layer.close(index); //执行关闭 
+
+                });
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的匹配规则');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除所选的匹配规则，是否继续', function(index){
+              var match_data = []
+              for (i in table_data) {
+                if (!table_data[i]['LAY_CHECKED']) {
+                  match_data.push(table_data[i])
+                }
+              }
+
+              for (i in match_data) {
+                delete match_data[i]['LAY_TABLE_INDEX']
+                delete match_data[i]['LAY_CHECKED']
+              }
+
+              window.match_data = match_data
+              layui.table.reload('matchlist',{data: match_data}); //重载表格
+              layer.close(index); //执行关闭 
+   
+          });
+        break; 
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(matchlist)', function(obj){
+      var edit_index = $(obj.tr).data("index");
+      var table_data = obj.data
+      if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑匹配规则'
+            ,area: ['800px', '450px']
+            ,id: 'LAY-popup-matchlist-edit'
+          ,success: function(layero, index){
+            view(this.id).render('site/cc/matchlist-add',table_data).done(function(){
+              $("select[name='type']").val(table_data.type)
+              $("select[name='operator']").val(table_data.operator)
+              if (table_data.operator == "regex") {
+                $("input[name='value']").val(table_data.value)
+                $("input[name='value']").removeClass("layui-hide")
+                $("textarea[name='value']").addClass("layui-hide")
+
+              } else {
+                $("textarea[name='value']").val(table_data.value)
+                $("input[name='value']").addClass("layui-hide")
+                $("textarea[name='value']").removeClass("layui-hide")
+              }
+              form.render("select")
+
+                //监听提交
+                form.on('submit(LAY-matchlist-add-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var type = field.type
+                  var operator = field.operator
+                  var value = ""
+                  if (operator == "regex") {
+                    value = $("input[name='value']").val()
+                  } else {
+                    value = $("textarea[name='value']").val()
+                  }
+
+                  if (type == "") {
+                    layer.alert("请选择匹配项")
+                    return
+                  }
+
+                  if (operator == "") {
+                    layer.alert("请选择操作符")
+                    return                    
+                  }
+
+                  if (value == "") {
+                    layer.alert("请输入匹配值")
+                    return                      
+                  }
+
+                  window.match_data[edit_index] = {"type":type,"operator":operator,"value":value}
+                  var match_data = JSON.parse(JSON.stringify(window.match_data))
+                  table.reload('matchlist',{data:match_data}); //重载表格
+                  layer.close(index); //执行关闭 
+
+                });
+
+            });
+          }
+        });
+      }
+    });
+
+}  
+</script>  

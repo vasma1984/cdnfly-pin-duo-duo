@@ -1,0 +1,313 @@
+
+
+  <title>升级包 - 套餐管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>套餐管理</cite></a>
+      <a><cite>升级包</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md9">
+                    <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="enable">启用</button>
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="disable">禁用</button>
+                    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                  </div>
+                                 
+                </div>
+            </script>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/package-ups'
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,title: '套餐列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',   sort: true,width: 60}
+        ,{field:'name', title:'名称'}
+        ,{field:'type', title:'类型', templet: function(d){
+          if (d.type == "traffic") {
+            return '流量'
+          } else if (d.type == "domain") {
+            return '域名数'
+          } else if (d.type == "http_port") {
+            return 'HTTP自定义端口数'
+          } else if (d.type == "stream_port") {
+            return '转发端口数'
+          } else if (d.type == "custom_cc_rule") {
+            return '自定义CC规则'
+          } 
+        }}
+        ,{field:'amount', title:'数值'}
+        ,{field:'bind_package', title:'绑定的套餐'}
+        ,{field:'price', title:'价格(元/月)'}
+        ,{field:'create_at2', title:'创建时间'}
+        ,{field:'enable', title:'启用',width:80, templet: function(d){
+          if (d.enable) {
+              return '<span class="layui-badge layui-bg-green">已启用</span>'         
+          } else {
+              return '<span class="layui-badge layui-bg-orange">已禁用</span>'
+          }
+        }}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:120}
+      ]]
+      ,page: true
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增升级包'
+            ,area: ['400px', '500px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('package/upgrade/addform').done(function(){        
+
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var name = field.name
+                  var des = field.des
+                  var type = field.type
+                  var amount = field.amount
+                  var price = field.price
+                  var enable = field.enable && true || false
+                  var bind_package = $(".package-select").val()
+                  if (bind_package == null) {
+                    bind_package = ""
+                  } else {
+                    bind_package = bind_package.join(",")
+                  }
+
+                  admin.req({
+                    url: '/package-ups' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"name": name,"des":des, "type":type, "amount":amount, "price":price,"bind_package":bind_package, "enable":enable})
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+              });
+            }
+          });
+        break;
+        case 'enable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的升级包');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1})
+          }
+          admin.req({
+            url: '/package-ups' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('启用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'disable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的升级包');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0})
+          }
+          admin.req({
+            url: '/package-ups' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('禁用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的升级包');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')升级包，是否继续', function(index){
+            admin.req({
+              url: '/package-ups/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除升级包', function(index){
+          var id = data.id
+          admin.req({
+            url: '/package-ups/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑升级包'
+          ,area: ['400px', '500px']
+          ,id: 'LAY-popup-package-edit'
+          ,success: function(layero, index){
+            view(this.id).render('package/upgrade/addform',data).done(function(){
+                $("select[name='type']").val(data.type)     
+                if (data.type == "custom_cc_rule") {
+                  $(".amount").addClass("layui-hide")
+                }
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var name = field.name
+                  var des = field.des
+                  var type = field.type
+                  var amount = field.amount
+                  var price = field.price
+                  var enable = field.enable && true || false
+                  var id = field.id
+                  var bind_package = $(".package-select").val()
+                  if (bind_package == null) {
+                    bind_package = ""
+                  } else {
+                    bind_package = bind_package.join(",")
+                  }
+
+                  admin.req({
+                    url: '/package-ups/'+id //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"name": name,"des":des, "type":type, "amount":amount, "price":price,"bind_package":bind_package, "enable":enable})
+                    ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('更新成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });                
+
+            });
+          }
+        });
+      }
+    });  
+
+  });
+
+
+  </script>

@@ -1,0 +1,180 @@
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+<script src="/src/lib/select2.min.js"></script>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>网站管理</cite></a>
+    <a><cite>监控统计</cite></a>
+    <a><cite>用量查询</cite></a>
+  </div>
+</div>
+<style type="text/css">
+.select2-container .select2-selection--multiple {min-height: 37px;}
+.layui-card-body  {line-height: 18px;}
+.active-btn {
+  border: 1px solid #009688 ! important;
+  color: #009688
+}
+.select2-container .select2-search--inline .select2-search__field {padding-left: 5px;}
+</style>
+
+<div class="layui-fluid" id="component-tabs">
+  <div class="layui-row">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-tab layui-tab-brief" lay-filter="site-usage-tab">
+            <ul class="layui-tab-title">
+              <li class="layui-this">带宽</li>
+              <li>流量</li>
+            </ul>
+            <div class="layui-tab-content">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-form-item layui-form">
+                  <div class="layui-inline">
+                    <div class="layui-input-inline users layui-hide">
+                      <select lay-search lay-filter="users" id="users" name="users" >
+                        <option value="">请选择用户 (可搜索)</option>
+                      </select>
+                    </div>
+
+                    <div class="layui-input-inline">
+                      <input type="text" name="res" placeholder="输入域名,多个空格分隔"  class="layui-input">    
+                    </div>
+                    <div class="layui-input-inline">
+                      <input type="text" name="user_package" placeholder="输入套餐ID,多个空格分隔"  class="layui-input">    
+                    </div>
+
+                    <div class="layui-input-inline" style="width: 450px;">
+                      <div class="layui-btn-group">
+                        <button type="button" data-day="today" class="layui-btn layui-btn-primary layui-btn-sm hours active-btn">今天</button>
+                        <button type="button" data-day="yesterday" class="layui-btn layui-btn-primary layui-btn-sm hours">昨天</button>
+                        <button type="button" data-day="7" class="layui-btn layui-btn-primary layui-btn-sm hours">近7天</button>
+                        <button type="button" data-day="30" class="layui-btn layui-btn-primary layui-btn-sm hours">近30天</button>
+                        <button type="button" id="date_tip" class="layui-btn layui-btn-primary  layui-btn-sm">自定义 <i class="layui-icon">&#xe637;</i></button>
+                        <button type="button" id="date" class="layui-btn layui-btn-primary layui-btn-sm layui-hide"></button>
+                      </div>
+    
+                      <button id="query" type="button" class="layui-btn layui-btn-sm">查询</button>
+
+                    </div>
+
+                  </div>
+
+                </div>
+                                                
+
+              </div>               
+              <div class="layui-tab-item layui-show">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md4">
+                    </div>
+                    <div class="layui-col-md2">
+                      峰值：<span id="max-value"></span>
+                    </div>
+                    <div class="layui-col-md2">
+                      95%值：<span id="max-95-value"></span>
+                    </div>                    
+                  </div>
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="bandwidth">
+                        <div carousel-item id="bandwidth">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                      <table id="bandwidth-table" lay-filter="bandwidth-table"></table>
+                    </div>
+                  </div>
+
+              </div>
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="traffic">
+                        <div carousel-item id="traffic">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                      <table id="traffic-table" lay-filter="traffic-table"></table>
+                    </div>
+                  </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+   </div>
+</div>
+
+<script>
+layui.use('site-usage-senior', layui.factory('site-usage-senior'));
+layui.use(['admin', 'table','laydate'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,element = layui.element
+  ,form = layui.form
+  ,router = layui.router();
+  form.render()
+  element.render();
+
+  var show_all = layui.router().search.show_all
+  var uid_hide = true
+  if (show_all == "1") {
+    uid_hide = false
+  }
+
+  if (!uid_hide) {
+    $(".users").removeClass("layui-hide")
+    admin.req({
+      url: '/users?limit=0&type=2' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var data = res.data
+        for (i in data) {
+          var id = data[i]['id']
+          var name = data[i]['name']
+          var phone = data[i]['phone']
+          var email = data[i]['email']
+          var identify = id
+          if (name) {
+            identify = name 
+          } else if (phone) {
+            identify = phone
+          } else if (email) {
+            identify = email
+          }
+
+          $("#users").append("<option value='"+data[i]["id"]+"'>"+identify+"</option>");
+        }
+
+        form.render("select");
+      }
+    });     
+  } else {
+    $(".users").addClass("layui-hide")
+  }
+
+
+});
+
+</script>

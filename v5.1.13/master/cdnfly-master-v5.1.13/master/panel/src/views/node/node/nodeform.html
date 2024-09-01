@@ -1,0 +1,359 @@
+<style>
+  .layui-layer-page .layui-layer-content  {  overflow: visible !important;}
+
+</style>
+<div class="layui-tab">
+  <ul class="layui-tab-title">
+    <li class="layui-this">基本设置</li>
+    <li class="node-tab layui-hide">节点设置</li>
+    <li class="node-tab layui-hide">添加子IP</li>
+    <li class="node-tab proxy-tab layui-hide">代理设置</li>
+   </ul>
+  <div class="layui-tab-content">
+    <div class="layui-tab-item layui-show">
+      <div class="layui-form" lay-filter="layuiadmin-form-nodeadmin" style="padding: 20px 0 0 0;">
+        <script type="text/html" template>
+          <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+        </script>
+      
+        <div class="layui-form-item region-item">
+          <label class="layui-form-label">区域</label>
+          <div class="layui-input-inline">
+            <select class="regions" name="region_id" lay-verify="">
+              <option value="">请选择区域</option>
+            </select>           
+          </div>
+        </div>
+      
+        <div class="layui-form-item">
+          <label class="layui-form-label">名称</label>
+          <div class="layui-input-inline">
+            <script type="text/html" template>
+              <input type="text" name="name" value="{{ d.params.name || '' }}" lay-verify="required" placeholder="请输入节点名" autocomplete="off" class="layui-input">
+            </script>
+          </div>
+        </div>
+      
+        <div class="layui-form-item">
+          <label class="layui-form-label">备注</label>
+          <div class="layui-input-inline">
+            <script type="text/html" template>
+              <input type="text" name="des" value="{{ d.params.des || '' }}" placeholder="请输入备注" autocomplete="off" class="layui-input">
+            </script>
+          </div>
+        </div>
+      
+        <div class="layui-form-item">
+          <label class="layui-form-label">IP</label>
+          <div class="layui-input-inline">
+            <script type="text/html" template>
+              <input type="text" name="ip" value="{{ d.params.ip || '' }}" lay-verify="required" placeholder="请输入IP" autocomplete="off" class="layui-input">
+            </script>
+          </div>
+        </div>
+      
+        <div class="layui-form-item">
+          <label class="layui-form-label">端口</label>
+          <div class="layui-input-inline">
+            <script type="text/html" template>
+              <input type="text" name="port" value="{{ d.params.port || '5000' }}" lay-verify="required" placeholder="请输入端口" autocomplete="off" class="layui-input">
+            </script>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">域名</label>
+          <div class="layui-input-inline">
+            <script type="text/html" template>
+              <input type="text"  name="host" value="{{ d.params.host || '' }}" placeholder="可留空,当不能ip访问时填写" autocomplete="off" class="layui-input">
+            </script>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label"></label>
+          <div class="layui-input-inline">
+            <input type="button" lay-submit lay-filter="LAY-node-front-submit" value="确认" class="layui-btn">
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="layui-tab-item">
+      <div class="layui-form" lay-filter="layuiadmin-form-cache">
+        <div class="layui-form-item">
+          <label class="layui-form-label">缓存目录</label>
+          <div class="layui-input-inline">
+            <input type="text" name="proxy_cache_dir" value="" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+          <div class="layui-form-mid layui-word-aux">留空继承默认值</div>
+          
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">缓存上限</label>
+          <div class="layui-input-inline">
+              <input type="text" name="proxy_cache_max_size" value="" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+          <div class="layui-form-mid layui-word-aux">留空继承默认值</div>
+
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">日志目录</label>
+          <div class="layui-input-inline">
+              <input type="text" name="logs_dir" value="" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+          <div class="layui-form-mid layui-word-aux">留空继承默认值</div>
+
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">带宽限制</label>
+          <div class="layui-input-inline">
+              <input type="text" name="bw_limit" value="" placeholder="请输入带宽值,留空不限制" autocomplete="off" class="layui-input">
+          </div>
+          <div style="width: 80px;" class="layui-inline layui-form ">
+            <select name="bw_unit" lay-verify="required">
+              <option value="Mbps">Mbps</option>
+              <option value="Gbps">Gbps</option>
+            </select>
+          </div>
+                
+        </div>
+        
+        <div class="layui-form-item">
+          <label class="layui-form-label"></label>
+          <div class="layui-input-inline">
+            <input type="button" lay-submit lay-filter="LAY-node-cache-front-submit" value="确认" class="layui-btn">
+          </div>
+        </div>
+
+        
+      </div>      
+    </div>
+    <div class="layui-tab-item">
+      <textarea name="subip" required lay-verify="required" placeholder="一行一个IP" class="layui-textarea"></textarea>
+      <input type="button" lay-submit lay-filter="LAY-node-subip-front-submit" value="确认" class="layui-btn">
+
+    </div>
+
+
+
+    <div class="layui-tab-item">
+      <div class="layui-form-item">
+        <label class="layui-form-label">IP</label>
+        <div class="layui-input-inline">
+            <input type="text" name="proxy_ip" value="" lay-verify="required" placeholder="请输入IP" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">端口</label>
+        <div class="layui-input-inline">
+            <input type="text" name="proxy_port" value="" lay-verify="required" placeholder="请输入端口" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="proxy_user" value="" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-inline">
+            <input type="text" name="proxy_password" value="" lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item node-tab layui-hide">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+          <input type="button" lay-submit lay-filter="LAY-node-http-proxy-front-submit" value="确认" class="layui-btn">
+        </div>
+      </div>
+      
+    </div>
+
+
+  </div>
+</div>
+
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+<script>
+layui.data.sendParams = function(params){
+  var node_id = params["id"]
+  var region_id = params['region_id']
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,form = layui.form;
+    layui.form.render()
+
+    var data = window.region_list
+    for (var i = 0; i < data.length; i++) {
+      $(".regions").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+    };
+
+    if (node_id) {
+      $(".node-tab").removeClass("layui-hide")
+      $(".region-item").addClass("layui-hide")
+      
+      // 获取节点信息
+      admin.req({
+        url: '/nodes/' + node_id
+        ,type: "get"
+        ,done: function(res){
+          var data = res.data
+          var region_id = data['region_id']
+          var name = data['name']
+          var des = data['des']
+          var ip = data['ip']
+          var port = data['port']
+          var host = data['host']
+          var bw_limit = data['bw_limit']
+          var bw_times_disable = data['bw_times_disable']
+          var bw_times_enable = data['bw_times_enable']
+
+          var http_proxy = JSON.parse(data['http_proxy'])
+
+          $("select[name='region_id']").val(region_id)
+          $("input[name='name']").val(name)
+          $("input[name='des']").val(des)
+          $("input[name='ip']").val(ip)
+          $("input[name='port']").val(port)
+          $("input[name='host']").val(host)
+
+          if (bw_limit != "") {
+            $("input[name='bw_limit']").val(bw_limit.match(/[0-9]+/)[0])
+            $("select[name='bw_unit']").val(bw_limit.match(/[a-zA-Z]+/)[0])
+
+          }
+          
+          $("input[name='bw_times_disable']").val(bw_times_disable)
+          $("input[name='bw_times_enable']").val(bw_times_enable)
+
+          if (http_proxy) {
+            $("input[name='proxy_ip']").val(http_proxy['ip'])
+            $("input[name='proxy_port']").val(http_proxy['port'])
+            $("input[name='proxy_user']").val(http_proxy['user'])
+            $("input[name='proxy_password']").val(http_proxy['password'])
+          }
+
+
+          form.render("select")
+        }
+        }); 
+      
+      // 获取缓存信息
+      window.global_config = null
+      window.region_config = null
+      window.node_config = null
+
+      // 获取global
+      var global_ajax = admin.req({
+        url: '/configs/global-0-nginx_config-nginx-config-file' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,done: function(res){
+          if (res.data) {
+            window.global_config = res.data.value
+          }
+          
+        }
+      });
+
+      // 获取region
+      var region_ajax = admin.req({
+        url: '/configs/region-'+region_id+'-nginx_config-nginx-config-file' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,done: function(res){
+          if (res.data) {
+            window.region_config = res.data.value
+          }
+        }
+      });              
+
+      // 获取node
+      var node_ajax = admin.req({
+        url: '/configs/node-'+node_id+'-nginx_config-nginx-config-file' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,done: function(res){
+          if (res.data) {
+            window.node_config = res.data.value
+          }
+        }
+      });
+
+      $.when(global_ajax,region_ajax,node_ajax).then(function (argument) {
+        if (window.global_config) {
+          var global_config = JSON.parse(window.global_config)
+          var proxy_cache_dir = global_config['http']['proxy_cache_dir']
+          var proxy_cache_max_size = global_config['http']['proxy_cache_max_size']
+          var logs_dir = global_config['logs_dir']
+          $("input[name='proxy_cache_dir']").attr("placeholder",proxy_cache_dir)
+          $("input[name='proxy_cache_max_size']").attr("placeholder",proxy_cache_max_size)
+          $("input[name='logs_dir']").attr("placeholder",logs_dir)
+        }
+
+        if (window.region_config) {
+          var region_config = JSON.parse(window.region_config)
+          if (region_config['http']) {
+            var proxy_cache_dir = region_config['http']['proxy_cache_dir']
+            var proxy_cache_max_size = region_config['http']['proxy_cache_max_size']    
+            var logs_dir = region_config['logs_dir']    
+
+            if (proxy_cache_dir) {
+              $("input[name='proxy_cache_dir']").attr("placeholder",proxy_cache_dir)
+            }       
+
+            if (proxy_cache_max_size) {
+              $("input[name='proxy_cache_max_size']").attr("placeholder",proxy_cache_max_size)
+            }
+
+            if (logs_dir) {
+              $("input[name='logs_dir']").attr("placeholder",logs_dir)
+            }
+
+          }
+
+        }
+        
+        if (window.node_config) {
+          var node_config = JSON.parse(window.node_config)
+          if (node_config['http']) {
+            var proxy_cache_dir = node_config['http']['proxy_cache_dir']
+            var proxy_cache_max_size = node_config['http']['proxy_cache_max_size']    
+            var logs_dir = node_config['logs_dir']    
+
+            if (proxy_cache_dir) {
+              $("input[name='proxy_cache_dir']").val(proxy_cache_dir)
+            }       
+
+            if (proxy_cache_max_size) {
+              $("input[name='proxy_cache_max_size']").val(proxy_cache_max_size)
+            }
+
+            if (logs_dir) {
+              $("input[name='logs_dir']").val(logs_dir)
+            }
+
+          }
+
+        }
+
+      })
+      // 获取子IP
+
+
+    }
+
+  })
+}
+
+</script>

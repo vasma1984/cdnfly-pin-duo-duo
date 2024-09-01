@@ -1,0 +1,100 @@
+
+
+  <title>备份日志 - 系统日志 - 系统管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>系统管理</cite></a>
+      <a><cite>系统日志</cite></a>
+      <a><cite>备份日志</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form
+    ,laydate = layui.laydate;
+
+    laydate.render({
+      elem: '#date'
+      ,range: true
+      ,done: function(value, date, endDate){
+        var date_range = value
+        var start = date_range.split(" - ")[0]
+        var end = date_range.split(" - ")[1]
+        table.reload('test-table-toolbar',{where: {"start":start,"end":end}})        
+      }
+    });
+
+    form.render()
+    var show_all = layui.router().search.show_all
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var uid_hide = true
+    if (show_all == "1") {
+      uid_hide = false
+    }
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/jobs?type=backup'
+      ,headers: {"access-token":access_token}
+      ,title: '备份日志'
+      ,where: {"show_all": show_all}
+      ,cols: [[
+        {field:'id', title:'ID',   sort: true}
+        ,{field:'create_at2', title:'备份时间'}
+        ,{field:'end_at', title:'完成时间'}
+        ,{field:'state', title:'状态', templet: function(d){
+          if (d.state == 'pending') {
+              return '<span class="layui-badge layui-bg-orange">待备份</span>'   
+          } else if (d.state == 'process') {
+            return '<span class="layui-badge layui-bg-orange">备份中</span>'
+          } else if (d.state == "failed"){
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+          } else {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>' 
+          }
+
+        }}
+        ,{field:'ret', title:'结果'}
+      ]]
+      ,page: true
+      ,defaultToolbar: []
+    });
+
+    form.on('select(success)', function(data){
+      var success = data.value
+      table.reload('test-table-toolbar',{where: {"success":success}})
+    });       
+
+    $("input[name='uid']").on('change', function(){
+        var uid = $(this).val();
+        table.reload('test-table-toolbar',{where: {"uid":uid}})
+
+    });   
+
+    $("input[name='ip']").on('change', function(){
+        var ip = $(this).val();
+        table.reload('test-table-toolbar',{where: {"ip":ip}})
+
+    }); 
+
+
+  });
+  </script>

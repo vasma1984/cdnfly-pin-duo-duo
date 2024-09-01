@@ -1,0 +1,145 @@
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+<style>
+  .layui-anim-upbit {
+z-index: 20000000001 !important; }
+
+.select2-container {
+z-index: 100000000; }
+
+</style>
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+
+  <script src="/src/lib/select2.min.js"></script>
+
+<div class="layui-form" lay-filter="layuiadmin-form-nodeadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">名称</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="name" value="{{ d.params.name || '' }}"  placeholder="套餐名称" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">备注</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="des" value="{{ d.params.des || '' }}" placeholder="请输入备注" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">类型</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <select {{ d.params.id && 'disabled' }}  name="type" lay-filter="type" lay-verify="">
+          <option value="">请选择类型</option>
+          <option value="traffic">流量 (GB)</option>
+          <option value="domain">域名数</option>
+          <option value="http_port">HTTP端口数</option>
+          <option value="stream_port">转发端口数</option>
+          <option value="custom_cc_rule">自定义CC规则</option>
+        </select>   
+       </script>    
+    </div>
+  </div>
+
+  <div class="layui-form-item amount">
+    <label class="layui-form-label">数量</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="amount" value="{{ d.params.amount || '' }}"  placeholder="数量" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item amount">
+    <label class="layui-form-label">绑定套餐</label>
+    <div class="layui-input-inline">
+      <select lay-ignore class="package-select" multiple="multiple" style="width: 300px" name="packages">                
+      </select>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">价格(月/元)</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="price" value="{{ d.params.price || '' }}"  placeholder="价格
+        " autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>  
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">启用</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="checkbox" name="enable" checked lay-skin="switch" lay-text="启用|禁用">
+      </script>
+    </div>
+  </div> 
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-node-front-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+<script type="text/javascript">
+
+layui.data.sendParams = function(params){
+  var $ = layui.$
+  var form = layui.form
+  var admin = layui.admin
+  $(document).ready(function() {
+      $('.package-select').select2({
+        width: '190px'
+      });
+  });
+  var package_ajax = admin.req({
+    url: '/packages?limit=0' //实际使用请改成服务端真实接口
+    ,type: "get"
+    ,contentType:"application/json"
+    ,dataType: "json"
+    ,done: function(res){
+      var packages_data = res.data
+      for (i in packages_data) {
+        $(".package-select").append("<option value='"+packages_data[i]["id"]+"'>"+packages_data[i]["name"]+"</option>");
+      }
+
+      $('.package-select').select2({width: '190px'});
+    }
+  });
+
+  $.when(package_ajax).then(function () {
+    if (params.bind_package) {
+      $(".package-select").val(params.bind_package.split(","))
+      $('.package-select').select2({width: '190px'});
+    }
+  })
+
+  form.on('select(type)', function(data){
+    if (data.value == "custom_cc_rule") {
+      $(".amount").addClass("layui-hide")
+    } else {
+      $(".amount").removeClass("layui-hide")
+    }
+  });   
+
+}
+
+  
+</script>

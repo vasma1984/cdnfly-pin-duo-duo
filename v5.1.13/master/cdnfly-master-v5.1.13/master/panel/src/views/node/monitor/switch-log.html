@@ -1,0 +1,228 @@
+
+
+  <title>监控统计 - 切换日志</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>切换日志</cite></a>
+      <a><cite>监控统计</cite></a>
+    </div>
+  </div>
+  
+
+
+  <div class="layui-fluid">
+    <div class="layui-form">
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <select class="switch-type" lay-filter="switch-type" name="switch-type" lay-verify="">
+              <option value="">所有类型</option>
+              <option value="节点IP解析">节点IP解析</option>
+              <option value="带宽监控">带宽监控</option>
+              <option value="备用IP">备用IP</option>
+              <option value="备用默认解析">备用默认解析</option>
+              <option value="备用线路组">备用线路组</option>
+          </select>      
+        </div>
+        <div class="layui-inline">
+          <input type="text" name="node_group_id" required lay-verify="required" placeholder="输入线路组ID" autocomplete="off" class="layui-input">       
+        </div>   
+        <div class="layui-inline">
+          <input type="text" name="node_id" required lay-verify="required" placeholder="输入节点ID" autocomplete="off" class="layui-input">       
+        </div>    
+        <div class="layui-inline">
+          <input type="text" name="line_id" required lay-verify="required" placeholder="输入线路ID" autocomplete="off" class="layui-input">       
+        </div>         
+
+        <div class="layui-inline">
+          <input type="text" name="ip" required lay-verify="required" placeholder="输入节点IP" autocomplete="off" class="layui-input">       
+        </div>   
+
+        <div class="layui-inline">
+          <select class="action" lay-filter="action" name="action" lay-verify="">
+              <option value="">所有操作</option>
+              <option value="启用">启用</option>
+              <option value="禁用">禁用</option>
+          </select>      
+        </div>
+
+      </div>    
+    </div> 
+
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-xs" lay-event="send_detail">通知详情</a>
+            </script>          
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+    form.render()
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/log/ip-switch'
+      ,headers: {"access-token":access_token}
+      ,cols: [[
+        {field:'id', title:'ID'}
+        ,{field:'create_at', title:'切换时间'}
+        ,{field:'type', title:'类型'}
+        ,{field:'node_group_id', title:'线路组'}
+        ,{field:'node_id', title:'节点ID'}
+        ,{field:'line_id', title:'线路ID'}
+        ,{field:'ip', title:'IP'}
+        ,{field:'action', title:'动作'}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:90}
+      ]]
+      ,page: true
+    });
+
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'send_detail'){
+        admin.popup({
+            title: '通知详情'
+            ,area: ['450px', '520px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('node/monitor/send-detail').done(function(){
+                // 邮件发送
+                if (data.email_need_send == 0) {
+                  $(".email_need_send").removeClass("layui-icon-ok-circle")
+                  $(".email_need_send").addClass("layui-icon-close-fill")
+                  $(".email_need_send").css("color","#FF5722")
+
+                  $(".email_is_sent_block").addClass("layui-hide")
+                  $(".email_fail_times_block").addClass("layui-hide")
+                  $(".email_time_block").addClass("layui-hide")
+                  $(".email_send_state_block").addClass("layui-hide")
+                } else {
+                  $(".email_need_send").addClass("layui-icon-ok-circle")
+                  $(".email_need_send").removeClass("layui-icon-close-fill")
+                  $(".email_need_send").css("color","#009688")
+
+                  $(".email_is_sent_block").removeClass("layui-hide")
+                  $(".email_fail_times_block").removeClass("layui-hide")
+                  $(".email_time_block").removeClass("layui-hide")
+                  $(".email_send_state_block").removeClass("layui-hide")                  
+                }
+
+                if (data.email_is_sent == 0) {
+                  $(".email_is_sent").removeClass("layui-icon-ok-circle")
+                  $(".email_is_sent").addClass("layui-icon-close-fill")
+                  $(".email_is_sent").css("color","#FF5722")
+                } else {
+                  $(".email_is_sent").addClass("layui-icon-ok-circle")
+                  $(".email_is_sent").removeClass("layui-icon-close-fill")
+                  $(".email_is_sent").css("color","#009688")                  
+                }
+
+                $(".email_fail_times").text(data.email_fail_times+"次")
+                $(".email_ret").text(data.email_ret)
+                $(".email_time").text(data.email_time)
+                $(".email_send_state").text(data.email_send_state)
+
+                // 短信发送
+                if (data.phone_need_send == 0) {
+                  $(".phone_need_send").removeClass("layui-icon-ok-circle")
+                  $(".phone_need_send").addClass("layui-icon-close-fill")
+                  $(".phone_need_send").css("color","#FF5722")
+                  
+                  $(".phone_is_sent_block").addClass("layui-hide")
+                  $(".phone_fail_times_block").addClass("layui-hide")
+                  $(".phone_time_block").addClass("layui-hide")
+                  $(".phone_send_state_block").addClass("layui-hide")
+
+                } else {
+                  $(".phone_need_send").addClass("layui-icon-ok-circle")
+                  $(".phone_need_send").removeClass("layui-icon-close-fill")
+                  $(".phone_need_send").css("color","#009688")
+                  
+                  $(".phone_is_sent_block").removeClass("layui-hide")
+                  $(".phone_fail_times_block").removeClass("layui-hide")
+                  $(".phone_time_block").removeClass("layui-hide")
+                  $(".phone_send_state_block").removeClass("layui-hide")                  
+                }
+
+                if (data.phone_is_sent == 0) {
+                  $(".phone_is_sent").removeClass("layui-icon-ok-circle")
+                  $(".phone_is_sent").addClass("layui-icon-close-fill")
+                  $(".phone_is_sent").css("color","#FF5722")
+                } else {
+                  $(".phone_is_sent").addClass("layui-icon-ok-circle")
+                  $(".phone_is_sent").removeClass("layui-icon-close-fill")
+                  $(".phone_is_sent").css("color","#009688")
+                }
+
+                $(".phone_fail_times").text(data.phone_fail_times+"次")
+                $(".phone_ret").text(data.phone_ret)
+                $(".phone_time").text(data.phone_time)
+                $(".phone_send_state").text(data.phone_send_state)
+
+                $(".content").text(data.content)
+
+              });
+            }
+          });
+      }
+    });  
+
+    // type
+    form.on('select(switch-type)', function(data){
+      var v = data.value
+      table.reload("test-table-toolbar",{"where":{"type":v,"page":1}})
+    });    
+    
+    // node_group_id
+    $("input[name='node_group_id']").change(function () {
+      var v = $(this).val()
+      table.reload("test-table-toolbar",{"where":{"node_group_id":v,"page":1}})
+    })
+
+    // node_id
+    $("input[name='node_id']").change(function () {
+      var v = $(this).val()
+      table.reload("test-table-toolbar",{"where":{"node_id":v,"page":1}})
+    })
+
+    // line_id
+    $("input[name='line_id']").change(function () {
+      var v = $(this).val()
+      table.reload("test-table-toolbar",{"where":{"line_id":v,"page":1}})
+    })
+
+    // ip
+    $("input[name='ip']").change(function () {
+      var v = $(this).val()
+      table.reload("test-table-toolbar",{"where":{"ip":v,"page":1}})
+    })
+
+    // action
+    form.on('select(action)', function(data){
+      var v = data.value
+      table.reload("test-table-toolbar",{"where":{"action":v,"page":1}})
+    });
+    
+    
+
+  });
+
+  </script>

@@ -1,0 +1,103 @@
+<style type="text/css">
+.del-span {
+    padding: 8px;
+    border-radius: 8px;
+}
+.del {
+    border-radius: 10px !important;
+    height: 16px;
+    line-height: 16px;
+    font-size: 10px;
+    padding: 0 5px;
+    position: absolute;
+    margin-top: -14px;
+    margin-left: -2px;
+    color: White;
+    cursor: pointer;
+}
+.layui-layer-page .layui-layer-content {
+            position: relative;
+            overflow: visible !important;
+    }
+
+</style>  
+  <div class="layui-fluid">
+    <div class="layui-row layui-form layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2" style="padding-top: 10px;">IP</div>
+                <div class="layui-col-md10 match-item-list">
+                  <input type="text" name="ip" required lay-verify="required" placeholder="192.168.0.100或192.168.0.0/24" autocomplete="off" class="layui-input">    
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2">行为</div>
+                <div class="layui-col-md6">
+                  <input type="radio" name="action" value="allow" checked title="允许">
+                  <input type="radio" name="action" value="deny" title="拒绝" >
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2"></div>
+                <div class="layui-col-md2">
+                  <button id="add_match" type="button" class="layui-btn">确认</button>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+table = layui.table
+$ = layui.$
+form = layui.form
+form.render()
+
+$("#add-match-item").click(function () {
+  var match_item = $("select[name='match-item']").val()
+  var operator = $("select[name='operator']").val()
+  var value = $("input[name='value']").val()
+
+  if (match_item == "") {
+    layer.alert("请选择匹配项")
+    return
+  }
+
+  if (operator == "") {
+    layer.alert("请选择操作符")
+    return
+  }
+
+  if (value == "") {
+    layer.alert("请输入匹配值")
+    return
+  }
+
+  $("select[name='match-item']").find("option[value='"+match_item+"']").remove()
+
+  $("#matchers").remove()
+
+  $(".match-item-list").append('<div class="layui-form-mid match-item"><span class="layui-badge layui-bg-blue del-span">'+match_item+' '+operator +' '+value+'<span onclick=\'del_item(this)\' class="layui-badge del">x</span></span></div>')
+
+  $("select[name='match-item']").val("")
+  $("select[name='operator']").val("")
+  $("input[name='value']").val("")
+  form.render()
+
+})
+
+function del_item(ele) {
+    $(ele).parent().parent().remove()
+    if ($(".match-item").length == 0) {
+      $(".match-item-list").append('<span id="matchers" style="color:gray">待添加...</span>')
+    }
+}
+
+
+</script>  

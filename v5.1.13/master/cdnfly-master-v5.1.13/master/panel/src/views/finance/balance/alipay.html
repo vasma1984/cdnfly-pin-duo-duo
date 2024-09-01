@@ -1,0 +1,28 @@
+<style type="text/css">
+.money-diff {color:red;font-weight: 400; margin-top: 10px;}
+.money {
+    font-size: 35px;
+    margin-bottom: 15px;
+    text-align: center;
+    margin-right: 30px;
+}
+</style>
+<div  style="margin-left:20px;margin-top:20px;" class="layui-row layui-hide pc">
+    <iframe id="alipay_qrcode_url" src="" width="200" height="200" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
+</div>
+
+<div  style="margin-left:20px;margin-top:20px;" class="layui-row layui-hide f2f" id="qrcode">
+</div>
+
+<div style="margin-left:20px;margin-top:20px;" class="layui-row  layui-hide" id="alipay-codepay">
+    <p class="money"></p>
+    <img id="alipay-codepay-img" style="width:90%" src="">
+    <p class="layui-hide money-diff">为了您及时到账 请务必付款<span class="money2"></span>元</p>
+    <p style="margin-top: 10px;" class="layui-hide money-same">付款后自动到账 未到账可联系我们</p>
+</div>
+
+
+<div style="margin-left:40px;margin-top:10px;" class="layui-row tip-img layui-hide">
+  打开支付宝扫一扫付款
+</div>
+

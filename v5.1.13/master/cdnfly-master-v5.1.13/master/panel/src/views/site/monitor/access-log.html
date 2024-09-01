@@ -1,0 +1,383 @@
+<style type="text/css">
+.textarea__label {
+    font-size: 12px;
+    position: absolute;
+    bottom: 21px;
+    right: 11px;
+    color: #888;
+}
+</style>
+
+
+
+<title>日志下载 - 监控统计 - 网站管理</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>网站管理</cite></a>
+    <a><cite>监控统计</cite></a>
+    <a><cite>日志下载</cite></a>
+  </div>
+</div>
+
+<style type="text/css">
+.layui-elem-quote{padding: 6px;}
+.thin-gray{font-weight: 400;color: #999;} 
+.small-title{font-weight:700;font-size:14px}
+hr {margin-bottom: 30px}
+</style>
+
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+<script src="/src/lib/select2.min.js"></script>
+
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+         <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+          <ul class="layui-tab-title">
+            <li class="layui-this">日志查询</li>
+            <li lay-id="op">申请记录</li>
+          </ul>
+          <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+              <div class="layui-row layui-col-space15">
+                  <div class="layui-col-md1" style="text-align: center;">
+                    开始时间
+                  </div>
+                  <div class="layui-col-md2 layui-form">
+                    <input name="start" type="text" class="layui-input" autocomplete="off" id="start">
+                  </div>
+
+                  <div class="layui-col-md1" style="text-align: center;">
+                    结束时间
+                  </div>
+                  <div class="layui-col-md2 layui-form">
+                    <input name="end" type="text" class="layui-input" autocomplete="off" id="end">
+                  </div>
+
+                  <div class="layui-col-md1" style="text-align: center;">
+                    节点ID
+                  </div>
+                  <div class="layui-col-md2 layui-form">
+                    <input name="node_id" type="text" class="layui-input">
+                  </div>
+
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1" style="text-align: center;">
+                  域名
+                </div>
+                <div class="layui-col-md2 layui-form">
+                  <input name="host" placeholder="多个域名空格分隔" type="text" class="layui-input" autocomplete="off">
+                </div>
+
+                <div class="layui-col-md1" style="text-align: center;">
+                  端口
+                </div>
+                <div class="layui-col-md2 layui-form">
+                  <input placeholder="访问端口" name="server_port" type="text" class="layui-input">
+                </div>
+
+
+
+                  <div class="layui-col-md1" style="text-align: center;">
+                    URI
+                  </div>
+                  <div class="layui-col-md2 layui-form">
+                    <input placeholder="URL不包含域名的部分" name="req_uri" type="text" class="layui-input">
+                  </div>
+
+
+
+
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md1" style="text-align: center;">
+                  客户IP
+                </div>
+                <div class="layui-col-md2 layui-form">
+                  <input name="addr" type="text" class="layui-input">
+                </div>
+                <div class="layui-col-md1" style="text-align: center;">
+                  状态码
+                </div>
+                <div class="layui-col-md2 layui-form">
+                  <input name="status" type="text" class="layui-input">
+                </div>
+
+                <div class="layui-col-md1" style="text-align: center;">
+                  缓存命中
+                </div>
+                <div class="layui-col-md2 layui-form">
+                  <select name="cache_status" lay-verify="">
+                    <option value="">请选择</option>
+                    <option value="HIT">命中</option>
+                    <option value="MISS">未命中</option>
+                  </select>     
+                </div>
+
+
+
+            </div>
+
+              <div class="layui-row layui-col-space15">
+                  <div class="layui-col-md1" style="text-align: center;">
+                  </div>
+                  <div class="layui-col-md1" style="text-align: left;">
+                    <button type="button" class="layui-btn search">查询</button>
+
+                  </div>
+
+                <div class="layui-col-md1 layui-form search-btn" style="text-align: right;">
+                  <button type="button" id="apply-download" class="layui-btn layui-btn-primary">申请下载</button>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                  <div class="layui-card">
+                    <div class="layui-card-body">
+                      <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+       
+            </div>
+
+            <div class="layui-tab-item">        
+                <table id="apply-list" lay-filter="apply-list"></table>        
+                <script type="text/html" id="test-table-toolbar-toolbarDemo3">
+                    <div class="layui-row layui-col-space10">
+                      <div class="layui-col-md12">
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="refresh"><i class="layui-icon layui-icon-refresh-3"></i></button>
+                      </div>
+
+                    </div>
+                </script>  
+
+                <script type="text/html" id="test-table-toolbar-barDemo">
+                  <a class="layui-btn layui-btn-xs" lay-event="download">下载</a>
+                </script>
+
+            </div>
+        
+        </div>
+      </div>                 
+
+    </div>
+  </div>
+</div>
+</div>
+</div>  
+
+<script>
+  layui.use(['admin', 'table', 'laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,laydate = layui.laydate
+    ,form = layui.form;
+
+    form.render()    
+
+    var today=new Date();
+    var start = admin.formatDate(today,"YY-MM-DD 00:00:00")
+    var targetday_milliseconds=today.getTime()+1000*60*60*24;
+    today.setTime(targetday_milliseconds);
+    var end = admin.formatDate(today,"YY-MM-DD 00:00:00")
+
+    laydate.render({
+      elem: '#start' //指定元素
+      ,type: 'datetime'
+      ,value: start
+    });
+
+    laydate.render({
+      elem: '#end' //指定元素
+      ,type: 'datetime'
+      ,value: end
+    });
+
+    layui.element.on('tab(docDemoTabBrief)', function(data){
+      table.resize("test-table-toolbar");
+      table.resize("apply-list");
+    }); 
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/monitor/site/access-log'
+      ,where: {"start": start, "end":end}
+      ,headers: {"access-token":access_token}
+      ,title: '日志'
+      ,cols: [[
+        {field:'timestamp', title:'时间', templet: function(d){
+          return admin.formatDate(d.timestamp)
+        }}   
+        ,{field:'host', title:'域名'}        
+        ,{field:'server_port', title:'端口'}   
+        ,{field:'protocol', title:'协议'}
+        ,{field:'method', title:'方法'}
+        ,{field:'req_uri', title:'URI'}
+        ,{field:'status', title:'状态码'}
+        ,{field:'addr', title:'客户IP'}
+        ,{field:'content_type', title:'内容类型'}
+        ,{field:'referer', title:'来源'}
+        ,{field:'user_agent', title:'浏览器'}
+        ,{field:'up_resp_time', title:'回源耗时'}
+        ,{field:'bytes_sent', title:'返回字节数'}
+        ,{field:'cache_status', title:'缓存命中'}
+        ,{field:'nid', title:'节点ID'}
+      ]]
+      ,page: true
+
+    });
+
+    $(".search").click(function (argument) {
+      var start = $("input[name='start']").val()
+      var end = $("input[name='end']").val()
+      var addr = $("input[name='addr']").val()
+      var req_uri = $("input[name='req_uri']").val()
+      var status = $("input[name='status']").val()
+      var server_port = $("input[name='server_port']").val()
+      var cache_status = $("select[name='cache_status']").val()
+      var node_id = $("input[name='node_id']").val()
+      var where = {"start": start,"end":end, "addr": addr, "req_uri": req_uri,"status": status,"cache_status": cache_status,"server_port":server_port,"node_id":node_id}
+
+      // 域名
+      var host = $("input[name='host']").val()
+      where["host"] = host
+
+      table.reload("test-table-toolbar",{"where":where})
+
+    })
+
+    $("#apply-download").click(function (argument) {
+      var type = "down_http_access_log"
+
+      var start = $("input[name='start']").val()
+      var end = $("input[name='end']").val()
+
+      // 域名
+      var host = $("input[name='host']").val()
+
+      var addr = $("input[name='addr']").val()
+      if (addr == "") {
+        addr = undefined
+      }
+
+      var req_uri = $("input[name='req_uri']").val()
+      if (req_uri == "") {
+        req_uri = undefined
+      }
+
+      var status = $("input[name='status']").val()
+      if (status == "") {
+        status = undefined
+      }
+
+      var cache_status = $("select[name='cache_status']").val()
+      if (cache_status == "") {
+        cache_status = undefined
+      }
+
+      var node_id = $("input[name='node_id']").val()
+      if (node_id == "") {
+        node_id = undefined
+      }
+
+      var data = {"start": start,"end": end,  "host": host, "addr": addr, "req_uri": req_uri,"status": status,"cache_status": cache_status, "node_id":node_id}
+
+      var req_data = {"type": type, "data": data}
+
+      admin.req({
+        url: '/jobs' //实际使用请改成服务端真实接口
+        ,type: "post"
+        ,data: JSON.stringify(req_data)
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          table.reload("apply-list")
+          //登入成功的提示与跳转
+          layer.msg('申请成功，下载链接请到申请记录中等待获取', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 3000
+          });
+        }
+      });      
+    })
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#apply-list'
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo3'
+      ,where: {"type":"down_http_access_log"}
+      ,url: '/jobs' //数据接口
+      ,page: true //开启分页
+      ,cols: [[ //表头
+        {field: 'id', title: '任务ID'}
+        ,{field: 'create_at2', title: '申请时间'}
+        ,{field:'data', title:'日志时间', templet: function(d){
+          var data = JSON.parse(d.data)
+          return data.start + " - " + data.end 
+        }}   
+        ,{field:'data', title:'日志域名', templet: function(d){
+          var data = JSON.parse(d.data)
+          var host = data.host
+          if (host) {
+            return host
+          } else {
+            return ""
+          }
+        }}   
+        ,{field:'state', title:'状态',  width: 80, templet: function(d){
+          if (d.state == "pending") {
+            return '<span class="layui-badge layui-bg-orange">待处理</span>'
+          } else if (d.state == "process") {
+            return '<span class="layui-badge layui-bg-orange">处理中</span>'
+          } else if (d.state == "failed") {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>' 
+          } else {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'
+          }
+        }}          
+        ,{field: 'progress', title: '进度'}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:120}
+
+      ]]
+    });
+
+    table.on('toolbar(apply-list)', function(obj){
+      switch(obj.event){
+        case 'refresh':
+        table.reload("apply-list")
+        break;  
+      }  
+    });   
+
+    //监听行工具事件
+    table.on('tool(apply-list)', function(obj){
+      var data = obj.data;
+      var access_token = layui.data('layuiAdmin')['access-token']
+      access_token = access_token.replace(/\//g,"_")
+      access_token = access_token.replace(/\+/g,"-")
+      window.open("/monitor/site/download-access-log/" + data['id'] + "?access_token="+ access_token)
+    });  
+
+   }); 
+
+
+</script>    

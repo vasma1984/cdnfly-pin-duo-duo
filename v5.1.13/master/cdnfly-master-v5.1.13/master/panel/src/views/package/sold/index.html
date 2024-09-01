@@ -1,0 +1,457 @@
+
+
+  <title>已售套餐 - 套餐管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>套餐管理</cite></a>
+      <a><cite>已售套餐</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <script type="text/html" template lay-done="layui.data.done(d);">
+      <div class="layui-row layui-col-space15">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            用户ID
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <input type="text" name="uid" required lay-verify="required" placeholder="用户ID" autocomplete="off" class="layui-input">    
+          </div>      
+
+          <div class="layui-col-md2 layui-form search-btn">
+            <button type="button" class="layui-btn search">搜索</button>
+            <button type="button" class="layui-btn layui-btn-primary more-option">更多</button>
+          </div>
+
+      </div>
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            到期时间
+          </div>
+          <div class="layui-col-md10 layui-form">
+            <input type="radio" name="expire" value="" title="不限" checked>
+            <input type="radio" name="expire" value="30" title="一个月内">
+            <input type="radio" name="expire" value="7" title="一周内">
+          </div>
+      </div>
+
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            用户套餐
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <input type="text" name="user_package" required lay-verify="required" placeholder="ID或名称" autocomplete="off" class="layui-input">    
+          </div>      
+      </div>
+
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            基础套餐
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <select lay-filter="package"  name="package" lay-verify="required">
+            </select>
+          </div>      
+      </div>
+
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2 layui-form" style="padding-left:40px;">
+            <button type="button" class="layui-btn search">搜索</button>
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <button type="button" class="layui-btn layui-btn-normal reset">重置</button>
+            <button style="float: right;" type="button" class="layui-btn layui-btn-primary close-btn">关闭</button>
+          </div>
+      </div>
+
+    </script>
+
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md9">
+                    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="sync">同步数据</button>
+
+                  </div>
+                                 
+                </div>
+            </script>
+
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="detail">详情</a>
+              <a class="layui-btn layui-bg-green layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="up_down">升降配</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  layui.data.done = function(d){
+    layui.use(['form'], function(){
+      var $ = layui.$
+      ,admin = layui.admin
+      ,view = layui.view
+      ,table = layui.table
+      ,form = layui.form;
+
+      form.render()
+
+      $(".more-option").click(function (argument) {
+        $(".search-item").removeClass("layui-hide")
+        $(".search-btn").addClass("layui-hide")
+      })
+
+      $(".close-btn").click(function (argument) {
+        $(".search-item").addClass("layui-hide")
+        $(".search-btn").removeClass("layui-hide")      
+      })
+
+      // 获取基础套餐
+      admin.req({
+        url: '/packages?limit=0' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          var data = res.data
+          $("select[name='package']").append("<option value=''>请选择</option>");
+          for (i in data) {
+            $("select[name='package']").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+          }
+
+          form.render("select");      
+        }
+      }); 
+
+      // 搜索
+      $(".search").click(function (argument) {
+        var $ = layui.$
+        var table = layui.table
+
+        var uid = $("input[name='uid']").val()
+        var expire = $("input[name='expire']:checked").val()
+        var user_package = $("input[name='user_package']").val()
+        var base_package = $("select[name='package']").val()
+
+
+        table.reload('test-table-toolbar', {
+          where: {"uid":uid,"expire":expire,"user_package":user_package,"base_package":base_package}
+          , page: {curr: 1}
+        });
+
+      })
+
+      // 重置
+      $(".reset").click(function (argument) {
+        $("input[name='uid']").val("")
+        $("input[name='expire'][value='']").prop("checked",true)
+        var user_package = $("input[name='user_package']").val("")
+        var base_package = $("select[name='package']").val("")
+        form.render()
+      })
+
+    });
+  };
+</script>  
+  <script>
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/user-packages?show_all=1'
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,headers: {"access-token":access_token}
+      ,title: '套餐列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',   sort: true,width: 60}
+        ,{field:'user_name', title:'用户',templet: function(d){
+          return d.user_name + "(" + d.uid + ")"
+            
+         }}         
+        ,{field:'package', title:'基础套餐ID'}
+        ,{field:'package_name', title:'套餐名称',templet: function(d){
+            if (d.package_name == d.user_package_name) {
+              return d.package_name
+            } else {
+              return d.package_name + " (" + d.user_package_name + ")"
+            }
+            
+         }}         
+        ,{field:'start_at2', title:'购买时间'}
+        ,{field:'end_at2', title:'到期时间'}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:250}
+      ]]
+      ,page: true
+    });
+
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的用户套餐');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')套餐，是否继续', function(index){
+            admin.req({
+              url: '/user-packages/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;   
+        case 'sync':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择套餐');   
+            return
+          }
+          admin.popup({
+            title: '同步数据到网站和四层转发'
+            ,area: ['430px', '300px']
+            ,id: 'LAY-popup-user-package-sync'
+            ,success: function(layero, index){
+              view(this.id).render('package/sold/sync').done(function(){
+                $(".sync").click(function () {
+                  var item_list = []
+                  $("input[name='sync-item']:checked").each(function (index, ele) {
+                    var v = $(ele).val()
+                    item_list.push(v)
+                  })     
+                  
+                  if (item_list.length == 0) {
+                    layer.alert('请选择需要同步的项目');   
+                    return
+                  }
+                  var item_str = item_list.join(",")
+
+                  req_data = []
+                  for (i in data) {
+                    var id = data[i]['id']
+                    req_data.push({"id":id,"sync-item":item_str})
+                  }
+
+                  admin.req({
+                    url: '/user-packages' //实际使用请改成服务端真实接口
+                    ,type: "put"
+                    ,data: JSON.stringify(req_data)
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('同步成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                })
+              });
+            }
+          });
+        break;              
+      };
+    });
+
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+     if(obj.event === 'detail'){
+        admin.popup({
+          title: '套餐详情'
+          ,area: ['600px', '800px']
+          ,id: 'LAY-popup-package-detail'
+          ,success: function(layero, index){
+            view(this.id).render('package/my/detail',data).done(function(){
+            });
+          }
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑套餐'
+          ,area: ['700px', '620px']
+          ,id: 'LAY-popup-node-add'
+          ,success: function(layero, index){
+            view(this.id).render('package/sold/editform',data).done(function(){
+              form.render(null, 'layuiadmin-form-packagesoldeditadmin');
+              $("textarea[name='des']").val(data.des)
+
+              // 区域列表
+              var region_ajax = admin.req({
+                url: '/regions?limit=0' //实际使用请改成服务端真实接口
+                ,type: "get"
+                ,done: function(res){
+                  window.region_list = res.data
+                  for (var i = 0; i < res.data.length; i++) {
+                    $("select[name='region_id']").append("<option value='"+res.data[i]['id']+"'>"+res.data[i]['name']+"</option>")
+                  };
+
+                  $("select[name='region_id']").val(data.region_id)
+                  
+                  form.render("select")
+                }
+              });
+
+              // 线路分组
+              var node_group_ajax = admin.req({
+                url: '/node-groups?limit=0' //实际使用请改成服务端真实接口
+                ,type: "get"
+                ,contentType:"application/json"
+                ,dataType: "json"
+                ,done: function(res){
+                    var node_group_data = res.data
+                    var region_node_group = {}
+                    for (i in node_group_data) {
+                      var region_id = node_group_data[i]['region_id']
+                      var id = node_group_data[i]['id']
+                      var name = node_group_data[i]['name']
+                      if (region_node_group[region_id]) {
+                        region_node_group[region_id].push({"id":id,"name":name})
+                      } else {
+                        region_node_group[region_id] = [{"id":id,"name":name}]
+                      }
+
+                    }
+
+                    window.region_node_group = region_node_group
+                }
+              });   
+
+              $.when(node_group_ajax,region_ajax).then(function (argument) {
+                var region_node_group_data = window.region_node_group[data.region_id]
+                // 主线路组
+                for (var i = 0; i < region_node_group_data.length; i++) {
+                  $("select[name='node_group_id']").append("<option value='"+region_node_group_data[i]['id']+"'>"+region_node_group_data[i]['name']+"</option>")
+                };
+                $("select[name='node_group_id']").val(data.node_group_id)
+
+                // 备用线路组
+                for (var i = 0; i < region_node_group_data.length; i++) {
+                  $("select[name='backup_node_group']").append("<option value='"+region_node_group_data[i]['id']+"'>"+region_node_group_data[i]['name']+"</option>")
+                };
+                $("select[name='backup_node_group']").val(data.backup_node_group)
+
+                // cname模式
+                $("select[name='cname_mode']").val(data.cname_mode)
+
+                //监听区域
+                form.on('select(region_id)', function(data){
+                  $("select[name='node_group_id']").empty()
+                  $("select[name='node_group_id']").append("<option value=''>请选择线路分组</option>")
+                  var data = window.region_node_group[data.value]
+                  for (var i = 0; i < data.length; i++) {
+                    $("select[name='node_group_id']").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+                  };
+
+                  $("select[name='backup_node_group']").empty()
+                    $("select[name='backup_node_group']").append("<option value=''>请选择线路分组</option>")
+                    for (var i = 0; i < data.length; i++) {
+                      $("select[name='backup_node_group']").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+                    };
+
+                  form.render("select")
+                });   
+
+                form.render();     
+              })
+    
+
+              //监听提交
+              form.on('submit(LAY-edit-user-package-front-submit)', function(data){
+                var field = data.field; //获取提交的字段
+                var traffic = field.traffic
+                var bandwidth = field.bandwidth
+                var connection = field.connection
+                var domain = field.domain
+                var id = field.id
+                var http_port = field.http_port
+                var stream_port = field.stream_port
+                var custom_cc_rule = field.custom_cc_rule?1:0
+                var websocket = field.websocket?1:0
+                var month_price = field.month_price
+                var quarter_price = field.quarter_price
+                var year_price = field.year_price
+                var end_at = field.end_at
+                var region_id = field.region_id
+                var node_group_id = field.node_group_id
+                var backup_node_group = field.backup_node_group
+                var cname_hostname2 = field.cname_hostname2
+                var cname_domain = field.cname_domain
+                var cname_mode = field.cname_mode
+
+                admin.req({
+                  url: '/user-packages/' + id //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify({"connection": connection,"bandwidth": bandwidth,"region_id": region_id,"node_group_id": node_group_id,"backup_node_group": backup_node_group,"cname_hostname2": cname_hostname2,"cname_domain": cname_domain,"cname_mode": cname_mode,"traffic": traffic,"domain":domain,"http_port":http_port,"stream_port":stream_port,"custom_cc_rule":custom_cc_rule,"websocket":websocket,
+                                        "month_price":month_price,"quarter_price":quarter_price,"year_price":year_price,"end_at":end_at})
+                  ,type: "put"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('保存成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      layui.table.reload('test-table-toolbar'); //重载表格
+                      layer.close(index); //执行关闭 
+                    });
+                  }
+                });
+
+              });
+            });
+          }
+        });
+
+      }else if(obj.event === 'up_down'){
+        admin.popup({
+          title: '升降配'
+          ,area: ['700px', '700px']
+          ,id: 'LAY-popup-package-up_down'
+          ,success: function(layero, index){
+            view(this.id).render('package/sold/up_down',data).done(function(){
+            });
+          }
+        });
+      }
+    });  
+
+  });
+
+
+  </script>

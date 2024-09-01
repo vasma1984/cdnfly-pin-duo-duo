@@ -1,0 +1,207 @@
+
+
+  <title>分组 - 网站管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>网站管理</cite></a>
+      <a><cite>分组管理</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md9">
+                    <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                  </div>
+                </div>
+            </script>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/site-groups'
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,title: '节点列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',    sort: true,width: 60}
+        ,{field:'name', title:'名称'}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:200}
+      ]]
+      ,page: true
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增分组'
+            ,area: ['500px', '450px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('site/group/addform').done(function(){
+                form.render(null, 'layuiadmin-form-sitegroupadmin');
+                
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var name = field.name
+                  var des = field.des
+
+                  admin.req({
+                    url: '/site-groups' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"name": name,"des":des})
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的分组');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')分组，是否继续', function(index){
+            admin.req({
+              url: '/site-groups/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除分组', function(index){
+          var id = data.id
+          admin.req({
+            url: '/site-groups/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑分组'
+          ,area: ['500px', '450px']
+          ,id: 'LAY-popup-node-add'
+          ,success: function(layero, index){
+            view(this.id).render('site/group/addform',data).done(function(){
+              form.render(null, 'layuiadmin-form-sitegroupadmin');
+              $("textarea[name='des']").val(data.des)
+
+              //监听提交
+              form.on('submit(LAY-node-front-submit)', function(data){
+                var field = data.field; //获取提交的字段
+                var name = field.name
+                var des = field.des
+                var id = field.id
+
+                admin.req({
+                  url: '/site-groups/' + id //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify({"name": name,"des":des})
+                  ,type: "put"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('保存成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      layui.table.reload('test-table-toolbar'); //重载表格
+                      layer.close(index); //执行关闭 
+                    });
+                  }
+                });
+
+              });
+            });
+          }
+        });
+      }
+    });  
+
+  });
+
+
+  </script>

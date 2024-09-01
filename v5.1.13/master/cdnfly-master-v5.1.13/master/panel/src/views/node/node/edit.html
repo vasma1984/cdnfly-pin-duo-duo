@@ -1,0 +1,309 @@
+
+
+<title>节点管理 - 配置节点</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>节点管理</cite></a>
+    <a><cite>节点配置</cite></a>
+    <a><cite id="node-name"></cite></a>
+  </div>
+</div>
+
+<style type="text/css">
+.layui-elem-quote{padding: 6px;}
+.thin-gray{font-weight: 400;color: #999;} 
+.small-title{font-weight:700;font-size:14px}
+hr {margin-bottom: 30px}
+</style>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-tab">
+            <ul class="layui-tab-title">
+              <li class="layui-this">缓存配置</li>
+              <li>监控配置</li>
+            </ul>
+            <div class="layui-tab-content">
+              <div class="layui-tab-item layui-show">
+                <div class="layui-form" lay-filter="layuiadmin-form-nodeadmin">
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">缓存目录</label>
+                    <div class="layui-input-inline">
+                      <input type="text" name="proxy_cache_dir" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">留空继承默认值</div>
+                    
+                  </div>
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">缓存上限</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="proxy_cache_max_size" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">留空继承默认值</div>
+
+                  </div>
+  
+                </div>
+
+              </div>
+              <div class="layui-tab-item">
+                <div class="layui-form" lay-filter="layuiadmin-form-nodeadmin">
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">开关</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="check_on" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">1为开启,0为关闭</div>
+                  </div>
+                
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">协议</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="check_protocol" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">1为开启,0为关闭</div>
+                  </div>
+                
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">超时</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="check_timeout" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">单位为秒</div>
+                  </div>
+                
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">端口</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="check_port" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">仅HTTP协议</div>
+                  </div>
+                
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">域名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="check_host" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">仅HTTP协议</div>
+                  </div>
+                
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">URL路径</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="check_path" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">仅HTTP协议</div>
+                  </div>
+                
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">监控节点组</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="check_node_group" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">1为国内组,2为国外组</div>
+                  </div>
+                
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">触发</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="check_node_group" value="" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">1为国内组,2为国外组</div>
+                  </div>
+                
+                  <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-inline">
+                      <input type="button" lay-submit lay-filter="LAY-node-front-submit" value="确认" class="layui-btn">
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="layui-tab-item">内容3</div>
+              <div class="layui-tab-item">内容4</div>
+              <div class="layui-tab-item">内容5</div>
+            </div>
+          </div>               
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+  layui.use(['admin', 'table','form'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    var node_id = layui.router().search.id
+    var node_name = layui.router().search.name
+    var region_id = layui.router().region_id
+    $("#node-name").text(decodeURI(node_name))
+
+    form.render()
+
+    window.global_config = null
+    window.region_config = null
+    window.node_config = null
+    // 获取global
+    var global_ajax = admin.req({
+      url: '/configs/global-0-nginx_config-nginx-config-file' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        if (res.data) {
+          window.global_config = res.data.value
+        }
+        
+      }
+    });
+
+    // 获取region
+    var region_ajax = admin.req({
+      url: '/configs/region-'+region_id+'-nginx_config-nginx-config-file' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        if (res.data) {
+          window.region_config = res.data.value
+        }
+      }
+    });              
+
+    // 获取node
+    var node_ajax = admin.req({
+      url: '/configs/node-'+node_id+'-nginx_config-nginx-config-file' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        if (res.data) {
+          window.node_config = res.data.value
+        }
+      }
+    });
+
+    $.when(global_ajax,region_ajax,node_ajax).then(function (argument) {
+      if (window.global_config) {
+        var global_config = JSON.parse(window.global_config)
+        var proxy_cache_dir = global_config['http']['proxy_cache_dir']
+        var proxy_cache_max_size = global_config['http']['proxy_cache_max_size']
+        var resolver = global_config['resolver']
+        var worker_processes = global_config['worker_processes']
+        $("input[name='proxy_cache_dir']").attr("placeholder",proxy_cache_dir)
+        $("input[name='proxy_cache_max_size']").attr("placeholder",proxy_cache_max_size)
+        $("input[name='resolver']").attr("placeholder",resolver)
+        $("input[name='worker_processes']").attr("placeholder",worker_processes)
+      }
+
+      if (window.region_config) {
+        var region_config = JSON.parse(window.region_config)
+        if (region_config['http']) {
+          var proxy_cache_dir = region_config['http']['proxy_cache_dir']
+          var proxy_cache_max_size = region_config['http']['proxy_cache_max_size']    
+          if (proxy_cache_dir) {
+            $("input[name='proxy_cache_dir']").attr("placeholder",proxy_cache_dir)
+          }       
+
+          if (proxy_cache_max_size) {
+            $("input[name='proxy_cache_max_size']").attr("placeholder",proxy_cache_max_size)
+          }
+        }
+
+        var resolver = region_config['resolver']
+        if (resolver) {
+          $("input[name='resolver']").attr("placeholder",resolver)
+        }
+
+        var worker_processes = region_config['worker_processes']
+        if (worker_processes) {
+          $("input[name='worker_processes']").attr("placeholder",worker_processes)
+        }                
+
+
+      }
+      
+      if (window.node_config) {
+        var node_config = JSON.parse(window.node_config)
+        if (node_config['http']) {
+          var proxy_cache_dir = node_config['http']['proxy_cache_dir']
+          var proxy_cache_max_size = node_config['http']['proxy_cache_max_size']    
+          if (proxy_cache_dir) {
+            $("input[name='proxy_cache_dir']").val(proxy_cache_dir)
+          }       
+
+          if (proxy_cache_max_size) {
+            $("input[name='proxy_cache_max_size']").val(proxy_cache_max_size)
+          }
+        }
+
+        var resolver = node_config['resolver']
+        if (resolver) {
+          $("input[name='resolver']").val(resolver)
+        }     
+
+        var worker_processes = node_config['worker_processes']
+        if (worker_processes) {
+          $("input[name='worker_processes']").val(worker_processes)
+        }   
+
+      }
+
+    })
+
+    //监听提交
+    form.on('submit(LAY-node-front-submit)', function(data){
+      var field = data.field; //获取提交的字段
+      var proxy_cache_dir = field.proxy_cache_dir
+      var proxy_cache_max_size = field.proxy_cache_max_size
+      var resolver = field.resolver
+      var worker_processes = field.worker_processes
+
+      var req_data = {"http":{}}
+      if (proxy_cache_dir) {
+        req_data["http"]["proxy_cache_dir"] = proxy_cache_dir
+      }
+
+      if (proxy_cache_max_size) {
+        req_data["http"]["proxy_cache_max_size"] = proxy_cache_max_size
+      }
+
+      if (resolver) {
+        req_data["resolver"] = resolver
+      }
+
+      if (worker_processes) {
+        req_data["worker_processes"] = worker_processes
+      }
+
+      admin.req({
+        url: '/configs/node-'+node_id+'-nginx_config-nginx-config-file' //实际使用请改成服务端真实接口
+        ,data: JSON.stringify({"value": JSON.stringify(req_data)})
+        ,contentType:"application/json"
+        ,dataType: "json"                  
+        ,type: "put"
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('保存成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          }, function(){
+            layui.table.reload('test-table-toolbar'); //重载表格
+            layer.close(index); //执行关闭 
+          });
+        }
+      });
+
+    });
+    
+
+  });  
+
+</script>

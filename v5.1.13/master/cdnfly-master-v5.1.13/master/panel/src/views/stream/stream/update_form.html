@@ -1,0 +1,309 @@
+<style type="text/css">
+.small-title{font-weight:700;font-size:14px}
+.select2-container {
+z-index: 20000000000; }
+</style>
+  <script type="text/html" template>
+  <label style="line-height: 40px;">正在修改的转发：{{ d.params.stream_ids }}</label>
+  </script>
+<div class="layui-collapse" lay-filter="component-panel" lay-accordion>
+  <div class="layui-colla-item">
+    <h2 class="layui-colla-title">基本设置</h2>
+    <div class="layui-colla-content">
+          <div class="layui-row layui-col-space10">
+            <div class="layui-col-md2 layui-form" style="padding-top:10px">
+              <input id="stream-group-checked" type="checkbox" lay-filter="active" title="分组设置" lay-skin="primary">
+            </div>
+            <div class="layui-col-md10 layui-form layui-hide">
+                <select lay-ignore class="stream-group-select-update" multiple="multiple" style="width: 300px" name="update_stream_group"></select>
+            </div>
+          </div> 
+          <div class="layui-row layui-col-space10 update_http_listen">
+
+            <div class="layui-col-md2 layui-form" style="padding-top:10px">
+              <input id="user-package-checked" type="checkbox" lay-filter="active" title="套餐设置" lay-skin="primary">
+            </div> 
+            <div class="layui-col-md2 layui-hide layui-form">
+                <select disabled lay-search lay-filter="update_user_package" id="update_user_package" name="update_user_package" lay-verify="required"></select>
+            </div>
+          </div> 
+          <div class="layui-row layui-col-space10 ">
+            <div class="layui-col-md2" style="padding-top:10px"></div> <div class="layui-col-md1"><button id="update_base_btn" type="button" class="layui-btn">修改</button></div>
+          </div>
+
+    </div>
+  </div>
+
+  <div class="layui-colla-item">
+    <h2 class="layui-colla-title">源站设置</h2>
+    <div class="layui-colla-content">
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md2 layui-form" style="padding-top:10px">
+              <input type="checkbox" name="update_balance_way_on" lay-filter="active" title="负载方式" lay-skin="primary">
+            </div>
+            <div class="layui-col-md3 layui-form layui-hide">
+              <select lay-search lay-filter="update_balance_way" id="update_balance_way" name="update_balance_way" lay-verify="required">
+                <option value="">请选择</option>
+                <option value="ip_hash">ip hash</option>
+                <option value="rr">轮循</option>
+                <option value="least_conn">最少连接数</option>
+                <option value="random">随机</option>
+              </select>
+            </div>
+        </div>
+
+        <div class="layui-row layui-form  layui-col-space10">
+            <div class="layui-col-md2 layui-form" style="padding-top:10px">
+              <input type="checkbox"  name="update_backend_port_on" lay-filter="active" title="回源端口" lay-skin="primary">
+            </div>
+           <div class="layui-col-md2 layui-hide"><input type="text" name="update_backend_port"  placeholder="请输入端口" autocomplete="off" class="layui-input"></div>
+        </div> 
+
+        <div class="layui-row layui-col-space10">
+          <div class="layui-col-md3 layui-form" style="padding-top:10px">
+            <input type="checkbox" name="update_proxy_protocol_on" lay-filter="active" title="PROXY Protocol" lay-skin="primary">
+          </div>
+
+           <div class="layui-col-md2 layui-form layui-hide"><input type="checkbox" lay-filter="update_proxy_protocol" name="update_proxy_protocol" lay-skin="switch" lay-text="开启|关闭">
+          </div>
+        </div> 
+
+        <div class="layui-row layui-col-space10">
+          <div class="layui-col-md2 layui-form" style="padding-top:10px">
+            <input type="checkbox" name="update_backend_on" lay-filter="active" title="源站列表" lay-skin="primary">
+          </div>
+          <div class="layui-col-md10 layui-hide">
+            <textarea disabled name="update_backend" required lay-verify="required" placeholder="格式为&#13;&#10;192.168.0.1&#13;&#10;192.168.0.2 backup" class="layui-textarea"></textarea>        
+          </div>
+       </div>
+
+        <div class="layui-row layui-col-space10 ">
+          <div class="layui-col-md2" style="padding-top:10px"></div> <div class="layui-col-md1"><button id="update_backend_btn" type="button" class="layui-btn">修改</button></div>
+        </div>
+
+    </div>
+  </div>
+  <div class="layui-colla-item">
+    <h2 class="layui-colla-title">安全设置</h2>
+    <div class="layui-colla-content">
+        <div class="layui-row ">
+          <div class="layui-col-md2 layui-form" style="padding-top:10px">
+            <input type="checkbox" name="update_conn_limit_on" lay-filter="active" title="单IP连接数" lay-skin="primary">
+          </div>
+          <div class="layui-col-md3 layui-hide"><input type="text" name="update_conn_limit"  placeholder="连接数限制"  autocomplete="off" class="layui-input"></div>          
+        </div>      
+
+        <div class="layui-row layui-col-space10 ">
+          <div class="layui-col-md3 layui-form" style="padding-top:10px">
+            <input type="checkbox" name="update_default_action_on" lay-filter="active" title="ACL默认行为" lay-skin="primary">
+          </div>
+
+          <div class="layui-col-md9 layui-form layui-hide">
+            <input type="radio" name="update_default_action" lay-filter="update_default_action" value="allow" checked title="允许">
+            <input type="radio" name="update_default_action" lay-filter="update_default_action" value="deny" title="拒绝" >
+          </div>
+        </div>
+
+        <div class="layui-row layui-col-space10">
+          <div class="layui-col-md2 layui-form" style="padding-top:10px">
+            <input type="checkbox" name="update_rule_on" lay-filter="active" title="ACL规则" lay-skin="primary">
+          </div>
+          <div class="layui-col-md10 layui-hide">
+            <textarea disabled name="update_rule" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>    
+          </div>
+       </div>
+
+        <div class="layui-row layui-col-space10 ">
+          <div class="layui-col-md2" style="padding-top:10px"></div> <div class="layui-col-md1"><button id="update_acl_btn" type="button" class="layui-btn">修改</button></div>
+        </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+layui.use(['admin'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,element = layui.element
+  ,form = layui.form
+  ,router = layui.router();
+
+  element.render('collapse');
+
+  form.on('checkbox(active)', function(data){
+    var is_checked = data.elem.checked
+    var ele = data.elem
+    var next = $(ele).parent().next()
+    while (next.length) {
+      next.find("input,select,textarea").attr("disabled",!is_checked)
+      if (is_checked) {
+        next.removeClass("layui-hide")
+      } else {
+        next.addClass("layui-hide")
+      }
+      next = next.next()
+    }
+
+    form.render()
+
+  });  
+
+  // 基本设置
+  $("#update_base_btn").click(function () {
+    var stream_group_checked = $("#stream-group-checked").prop("checked")
+    var user_package_checked = $("#user-package-checked").prop("checked")
+
+    // 转发分组
+    var groups = undefined
+    if (stream_group_checked) {
+      groups = $("select[name='update_stream_group']").val()
+      if (groups) {
+        groups = groups.join(",")
+      } else {
+        groups = ""
+      } 
+
+    };
+
+    // 套餐
+    var user_package = undefined
+    if (user_package_checked) {
+      user_package = $("select[name='update_user_package']").val()
+    }
+
+    var req_data = []
+    for (i in window.stream_ids) {
+      req_data.push({"id":window.stream_ids[i],"groups":groups,"user_package":user_package})
+    }
+
+    update_streams(req_data)
+
+  })
+
+  // 源站设置
+  $("#update_backend_btn").click(function () {
+    // 负载均衡
+    var balance_way_is_checked = $("input[name='update_balance_way_on']").prop("checked")
+    var balance_way = undefined
+    if (balance_way_is_checked) {
+      balance_way = $("select[name='update_balance_way']").val()
+    } 
+
+    // 回源端口
+    var backend_port_is_checked = $("input[name='update_backend_port_on']").prop("checked")
+    var backend_port = undefined
+    if (backend_port_is_checked) {
+      backend_port = $("input[name='update_backend_port']").val()
+    } 
+
+    // proxy protocol
+    var proxy_protocol_is_checked = $("input[name='update_proxy_protocol_on']").prop("checked")
+    var proxy_protocol = undefined
+    if (proxy_protocol_is_checked) {
+      proxy_protocol = $("input[name='update_proxy_protocol']").prop("checked")
+    } 
+
+    // 源站
+    var backend_is_checked = $("input[name='update_backend_on']").prop("checked")
+    var backend = undefined
+    if (backend_is_checked) {
+      backend = []
+      var backend_ips = $("textarea[name='update_backend']").val().split("\n")
+      
+      for (i in backend_ips) {
+        if (backend_ips[i] == "") {
+          continue
+        }
+        var state = "up"
+        var ip_arr = backend_ips[i].split(/\s+/)
+        ip = ip_arr[0]
+        if (ip_arr.length == 2) {
+          state = ip_arr[1]
+        }
+        backend.push({"addr": ip,"weight":1,"state":state})
+      }
+
+      if (backend.length == 0) {
+        backend = undefined
+      }      
+    }    
+
+    var req_data = []
+    for (i in window.stream_ids) {
+      req_data.push({"id":window.stream_ids[i],"balance_way":balance_way,"backend_port":backend_port,"proxy_protocol":proxy_protocol,"backend":backend})
+    }
+
+    update_streams(req_data)
+  })
+
+  // 安全设置
+  $("#update_acl_btn").click(function () {
+    // 连接数限制
+    var conn_limit_is_checked = $("input[name='update_conn_limit_on']").prop("checked")
+    var conn_limit = undefined
+    if (conn_limit_is_checked) {
+      conn_limit = $("input[name='update_conn_limit']").val()
+    } 
+
+    // acl默认行为
+    var default_action_is_checked = $("input[name='update_default_action_on']").prop("checked")
+    var default_action = undefined
+    if (default_action_is_checked) {
+      default_action = $("input[name='update_default_action']:checked").val()
+    }     
+
+    // acl规则
+    var rule_is_checked = $("input[name='update_rule_on']").prop("checked")
+    var rule = undefined
+    if (rule_is_checked) {
+      var rule_ips = $("textarea[name='update_rule']").val().split("\n")
+      rule = []
+      for (i in rule_ips) {
+        var line = rule_ips[i]
+        if (line == "") {
+          continue
+        }
+        var ip = line.split(/\s+/)[0]
+        var action = line.split(/\s+/)[1]
+        rule.push({"ip": ip, "action":action})
+      }      
+
+      if (rule.length == 0) {
+        rule = undefined
+      }      
+
+    } 
+
+    var req_data = []
+    for (i in window.stream_ids) {
+      req_data.push({"id":window.stream_ids[i],"conn_limit":conn_limit,"acl":{"default_action":default_action,"rule":rule}})
+    }
+
+    update_streams(req_data)
+  })
+
+  function update_streams(data) {
+    admin.req({
+      url: '/streams' //实际使用请改成服务端真实接口
+      ,type: "put"
+      ,data: JSON.stringify(data)
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        //登入成功的提示与跳转
+        layer.msg('更新成功', {
+          offset: '15px'
+          ,icon: 1
+          ,time: 1000
+        });
+      }
+    });
+  }
+
+
+
+});
+</script>

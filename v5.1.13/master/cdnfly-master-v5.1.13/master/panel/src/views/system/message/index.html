@@ -1,0 +1,168 @@
+
+
+  <title>我的订单 - 系统管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>系统管理</cite></a>
+      <a><cite>消息查询</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <form class="layui-form" action="">
+      <div class="layui-form-item">
+        <script type="text/html" template>
+          {{# if(layui.router().search.show_all === '1'){ }}
+        <div class="layui-input-inline">
+          <input type="text" name="receive"  placeholder="消息所属,输入用户ID" autocomplete="off" class="layui-input">
+        </div>
+        {{# } }}
+        </script>
+        
+        <div class="layui-input-inline">
+          <select lay-filter="order_type" class="order_type" name="order_type" lay-verify="required">
+            <option value=''>消息类型</option>
+            <option value='bandwidth-exceed'>带宽超限</option>
+            <option value='coesnnection-exceed'>连接数超限</option>
+            <option value='cc-switch'>规则自动切换</option>
+            <option value='package-expire'>套餐已过期</option>
+            <option value='package-expiring'>套餐即将过期</option>
+            <option value='cert-expire'>证书已过期</option>
+            <option value='cert-expiring'>证书即将过期</option>
+            <option value='traffic-exceed'>流量已超限</option>
+            <option value='traffic-exceeding'>流量即将超限</option>
+          </select>
+        </div>
+
+        <div class="layui-input-inline">
+          <input type="text" name="user_package_id"  placeholder="用户套餐ID" autocomplete="off" class="layui-input">
+        </div>
+
+        <div class="layui-input-inline">
+          <input type="text" name="site_id"  placeholder="网站ID" autocomplete="off" class="layui-input">
+        </div>
+
+      </div>
+    </form>
+
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail">详情</a>
+            </script>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form
+    ,laydate = layui.laydate;
+
+    laydate.render({
+      elem: '#date'
+      ,range: true
+      ,done: function(value, date, endDate){
+        var date_range = value
+        var start = date_range.split(" - ")[0]
+        var end = date_range.split(" - ")[1]
+        table.reload('test-table-toolbar',{where: {"start":start,"end":end}})        
+      }
+    });
+
+    form.render()
+    var show_all_order = layui.router().search.show_all
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var uid_hide = true
+    if (show_all_order == "1") {
+      uid_hide = false
+    }
+
+    var msg_type = {"bandwidth-exceed":"带宽超限", "connection-exceed":"连接数超限","cc-switch":"规则自动切换", 
+                "package-expire":"套餐已过期", "package-expiring":"套餐即将过期", "cert-expire":"证书已过期", "cert-expiring":"证书即将过期", "traffic-exceed":"流量已超限","traffic-exceeding":"流量即将超限", "announcement":"公告"}
+
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/messages'
+      ,headers: {"access-token":access_token}
+      ,title: '消息列表'
+      ,cols: [[
+        {field:'id', title:'ID',width:90}
+        ,{field:'receive', title:'所属用户ID',hide: uid_hide}
+        ,{field:'type', title:'类型',templet:function(d) {
+          return msg_type[d.type]
+        }}
+        ,{field:'title', title:'标题'}
+        ,{field:'user_package_id', title:'用户套餐ID'}
+        ,{field:'site_id', title:'网站ID'}     
+        ,{field:'create_at2', title:'创建时间'}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:70}
+
+      ]]
+      ,page: true
+      ,defaultToolbar: []
+    });
+
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'detail'){
+        admin.popup({
+          title: '消息详情('+data.id+')'
+          ,area: ['600px', '350px']
+          ,id: 'LAY-popup-message-detail'
+          ,success: function(layero, index){
+            view(this.id).render('system/message/detail',data).done(function(){
+              admin.req({
+                url: '/messages/'+data.id
+                ,type: "get"
+                ,done: function(res){
+                  var data = res.data
+                  $(".title").html(data.title)
+                  $(".content").html(data.content)
+                  $(".phone-content").html(data.phone_content)
+                  
+                }
+              }); 
+          });
+        }
+      })}
+  })
+
+  form.on('select(order_type)', function(data){
+    var order_type = data.value
+    table.reload('test-table-toolbar',{where: {"type":order_type}, page: {curr: 1}})
+  });       
+
+  $("input[name='receive']").on('change', function(){
+      var receive = $(this).val();
+      table.reload('test-table-toolbar',{where: {"receive":receive}, page: {curr: 1}})
+
+  });   
+
+  $("input[name='user_package_id']").on('change', function(){
+      var user_package_id = $(this).val();
+      table.reload('test-table-toolbar',{where: {"user_package_id":user_package_id}, page: {curr: 1}})
+
+  });   
+
+  $("input[name='site_id']").on('change', function(){
+      var site_id = $(this).val();
+      table.reload('test-table-toolbar',{where: {"site_id":site_id}, page: {curr: 1}})
+
+  });
+
+
+});
+</script>

@@ -1,0 +1,243 @@
+
+
+  <title>购买套餐 - 套餐管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>套餐管理</cite></a>
+      <a><cite>购买套餐</cite></a>
+    </div>
+  </div>
+  <style type="text/css">
+    .alone-version-desc {
+        position: relative;
+        padding: 30px 50px 50px;
+        border-radius: 0;
+        border-top: 5px solid #ddd;
+        background-color: #fff;
+        text-align: center;
+        transition: all .3s;
+        -webkit-transition: all .3s;
+    }
+.alone-version-desc ul {
+    height: 300px;
+    margin-top: 15px;
+    text-align: left;
+}    
+
+.alone-buy {
+    position: relative;
+    text-align: center;
+}
+.li-title {
+  color:#999;
+  width:130px;
+  display: inline-block;
+}
+
+  </style>
+
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-btn-container groups">
+      </div>
+    </div>
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table lay-skin="line" class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar" ></table>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-xs" lay-event="buy">购买</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+layui.use(['admin', 'table','form'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,view = layui.view
+  ,table = layui.table
+  ,form = layui.form;
+
+  // 获取分组
+  var package_group_ajax = admin.req({
+      url: '/package-groups?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var data = res.data
+        for (i in data) {
+          var class_name = "layui-btn-primary"
+          var id = data[i]['id']
+          var name = data[i]['name']
+          if (i == 0) {
+            class_name = ""
+            window.default_group = id
+          }
+          $(".groups").append('<button type="button" data-id="'+id+'" class="layui-btn '+class_name+' group">'+name+'</button>');
+        }
+        $(".groups").append('<button type="button" data-id="mine" class="layui-btn layui-btn-primary group">专属套餐</button>');
+
+        $(".group").click(function (argument) {
+          $(".group").addClass("layui-btn-primary")
+          $(this).removeClass("layui-btn-primary")
+          var default_group = $(this).data("id")
+          if (default_group == "mine") {
+            table.reload("test-table-toolbar", {where: {"group":"", "mine": 1,"limit":0}}); //表格重载
+          } else {
+            table.reload("test-table-toolbar", {where: {"group": default_group,"mine":"", "limit":0}}); //表格重载
+          }
+          
+        })
+
+      }
+  });
+
+  $.when(package_group_ajax).then(function (argument) {
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var default_group = window.default_group
+    if (default_group == "mine") {
+      var where = {"group":"", "mine": 1,"limit":0}
+    } else {
+      var where = {"group": default_group,"mine":"","limit":0}
+    }
+    table.render({
+      elem: '#test-table-toolbar'
+      ,even: false
+      ,size: 'lg'
+      ,url:'/packages'
+      ,where: where
+      ,headers: {"access-token":access_token}
+      ,title: '套餐列表'
+      ,cols: [[
+        {field:'name', title:'套餐',width:250}
+        ,{field:'traffic', title:'流量(GB)',width:100, templet: function(d){
+          if (d.traffic == -1) {
+              return '不限制'         
+          } else {
+              return d.traffic
+          }
+        }}
+        ,{field:'bandwidth', title:'带宽',width:100, templet: function(d){
+          if (d.bandwidth == -1) {
+              return '不限制'         
+          } else {
+              return d.bandwidth
+          }
+        }}
+        ,{field:'connection', title:'连接数',width:100, templet: function(d){
+          if (d.connection == -1) {
+              return '不限制'         
+          } else {
+              return d.connection
+          }
+        }}                
+        ,{field:'domain', title:'域名数',width:100, templet: function(d){
+          if (d.domain == -1) {
+              return '不限制'         
+          } else {
+              return d.domain
+          }
+        }}
+        ,{field:'http_port', title:'HTTP端口数',width:120, templet: function(d){
+          if (d.http_port == -1) {
+              return '不限制'         
+          } else {
+              return d.http_port
+          }
+        }}
+        ,{field:'stream_port', title:'转发端口数',width:100, templet: function(d){
+          if (d.stream_port == -1) {
+              return '不限制'         
+          } else {
+              return d.stream_port
+          }
+        }}
+        ,{field:'custom_cc_rule', title:'自定义CC规则',width:130, templet: function(d){
+          if (d.custom_cc_rule) {
+              return '支持'         
+          } else {
+              return '不支持'
+          }
+        }}
+        ,{field:'websocket', title:'Websocket',width:130, templet: function(d){
+          if (d.websocket) {
+              return '支持'         
+          } else {
+              return '不支持'
+          }
+        }}        
+        ,{field:'month_price',width:90, title:'月价(元)'}
+        ,{field:'quarter_price',width:90, title:'季价(元)'}
+        ,{field:'year_price',width:90, title:'年价(元)'}
+        ,{fixed: 'right', title:'购买', toolbar: '#test-table-toolbar-barDemo', width:70}
+        ,{field:'des', title:'说明'}
+        
+      ]]
+      ,page: false
+    });
+
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'buy'){
+        var package = data.id
+        var name = data.name
+        admin.popup({
+          title: '购买'+name+'套餐'
+          ,area: ['400px', '250px']
+          ,id: 'LAY-popup-acl-add'
+          ,success: function(layero, index){
+            view(this.id).render('package/buy/duration').done(function(){
+              $("input[name='name']").val(name)
+              form.render("select")
+              $("#buy-confirm").click(function (argument) {
+                var duration = $("select[name='duration']").val()                
+                var name = $("input[name='name']").val()  
+                var req_data = {"package":package,"duration":duration,"name":name}
+                admin.req({
+                  url: '/user-packages' //实际使用请改成服务端真实接口
+                  ,type: "post"
+                  ,data: JSON.stringify(req_data)
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('购买成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      window.location.hash = "/package/my/"
+                    });
+                  }
+                  ,fail: function(res) {
+                    if (res.code == "user_package-13") {
+                      layer.alert('余额不足，点击"确定"跳转到充值页面', function(index){
+                        window.location.hash = "/account/balance/"
+                        layer.close(index);
+                      }); 
+                    }
+                    
+                  }
+                });
+              })
+            });
+          }
+        }); 
+
+      }
+    })  
+  })
+
+
+
+});
+
+</script>

@@ -1,0 +1,224 @@
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <script type="text/html" template>
+      <div class="layui-col-md12 hello" style="font-size:13px;margin-left:20px;margin-bottom:10px;">
+        
+      </div>
+     </script>
+  </div>
+  <div class="layui-row layui-col-space15">
+
+    <div class="layui-col-md12">
+      <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6">
+          <div class="layui-card">
+            <div class="layui-card-header">快捷方式</div>
+            <div class="layui-card-body">
+              
+              <div class="layui-carousel layadmin-carousel layadmin-shortcut">
+                <div carousel-item>
+                  <ul class="layui-row layui-col-space10">
+                      <li class="layui-col-xs3">
+                        <a lay-href="site/site/show_all=1/">
+                          <i class="layui-icon layui-icon-console"></i>
+                          <cite>网站列表</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="stream/stream/show_all=1/">
+                          <i class="layui-icon layui-icon-chart"></i>
+                          <cite>四层转发</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="finance/order/show_all=1/">
+                          <i class="layui-icon layui-icon-template-1"></i>
+                          <cite>所有订单</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="site/acl/show_all=1/">
+                          <i class="layui-icon layui-icon-chat"></i>
+                          <cite>所有ACL</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="system/task/">
+                          <i class="layui-icon layui-icon-find-fill"></i>
+                          <cite>后台任务</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="site/cert/cert/show_all=1">
+                          <i class="layui-icon layui-icon-survey"></i>
+                          <cite>证书列表</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="system/user/">
+                          <i class="layui-icon layui-icon-user"></i>
+                          <cite>用户管理</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="system/log/op/show_all=1">
+                          <i class="layui-icon layui-icon-set"></i>
+                          <cite>操作日志</cite>
+                        </a>
+                      </li>
+                    </ul>
+                  
+                  
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-card">
+            <div class="layui-card-header">使用统计</div>
+            <div class="layui-card-body">
+              <div class="layui-carousel layadmin-carousel layadmin-backlog">
+                <div carousel-item>
+                  <ul class="layui-row layui-col-space10">
+                    <li class="layui-col-xs6">
+                      <a class="layadmin-backlog-body">
+                        <h3>域名总数</h3>
+                        <p><cite id="domain"></cite></p>
+                      </a>
+                    </li>
+                    <li class="layui-col-xs6">
+                      <a class="layadmin-backlog-body">
+                        <h3>证书总数</h3>
+                        <p><cite id="cert"></cite></p>
+                      </a>
+                    </li>
+                    <li class="layui-col-xs6">
+                      <a class="layadmin-backlog-body">
+                        <h3>转发端口总数</h3>
+                        <p><cite id="stream_port"></cite></p>
+                      </a>
+                    </li>
+                    <li class="layui-col-xs6">
+                      <a class="layadmin-backlog-body">
+                        <h3>节点数量</h3>
+                        <p><cite id="node"></cite></p>
+                      </a>
+                    </li>                    
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md6">
+      <div class="layui-card">
+        <div class="layui-card-header">系统状态</div>
+        <div class="layui-card-body layui-text">
+          <table class="layui-table">
+            <colgroup>
+              <col width="200">
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <td>主控状态</td>
+                <td id="master_status">
+                  
+                </td>
+              </tr>
+              <tr>
+                <td>Elasticsearch连接</td>
+                <td id="es_status">
+                  
+                </td>
+              </tr>  
+              <tr>
+                <td>Agent状态</td>
+                <td id="agent_status">
+               </td>
+              </tr>                          
+              <tr>
+                <td>说明</td>
+                <td id="check_tip">
+               </td>
+              </tr>              
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+    <div class="layui-col-md6">
+      <div class="layui-card">
+        <div class="layui-card-header">系统授权</div>
+        <div class="layui-card-body layui-text">
+          <table class="layui-table">
+            <colgroup>
+              <col width="200">
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <td>授权节点</td>
+                <td id="nodes">
+                  
+                </td>
+              </tr>
+              <tr>
+                <td>当前节点</td>
+                <td id="curr-nodes">
+                  
+                </td>
+              </tr>              
+              <tr>
+                <td>到期时间</td>
+                <td id="end_at">
+                  
+                </td>
+              </tr>  
+              <tr>
+                <td>操作</td>
+                <td>
+                  <button id="get-auth" type="button" class="layui-btn layui-btn-normal layui-btn-xs">刷新授权</button>                  
+               </td>
+              </tr>                          
+              <tr>
+
+              </tr>              
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+//加载 controller 目录下的对应模块
+/*
+
+  小贴士：
+    这里 console 模块对应 的 console.js 并不会重复加载，
+    然而该页面的视图则是重新插入到容器，那如何保证能重新来控制视图？有两种方式：
+      1): 借助 layui.factory 方法获取 console 模块的工厂（回调函数）给 layui.use
+      2): 直接在 layui.use 方法的回调中书写业务代码，即:
+          layui.use('console', function(){ 
+            //同 console.js 中的 layui.define 回调中的代码 
+          });
+          
+  这里我们采用的是方式1。其它很多视图中采用的其实都是方式2，因为更简单些，也减少了一个请求数。
+  
+*/
+layui.use('console', layui.factory('console'));
+</script>
+

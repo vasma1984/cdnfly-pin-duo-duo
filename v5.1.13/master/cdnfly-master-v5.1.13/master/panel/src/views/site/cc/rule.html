@@ -1,0 +1,1019 @@
+
+
+  <title>节点 - 节点管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>网站管理</cite></a>
+      <a><cite>CC防护</cite></a>
+      <script type="text/html" template>
+        {{# if(layui.router().search.internal === '1'){ }}
+            <a><cite>内置规则</cite></a>
+        {{# } else { }}
+            <a><cite>自定义规则</cite></a>
+        {{# } }}
+      </script>
+    </div>
+  </div>
+  
+  <div class="layui-tab layui-tab-card" lay-filter="rule-tab">
+  <ul class="layui-tab-title">
+    <li class="layui-this">规则组</li>
+    <li>匹配器</li>
+    <li>过滤器</li>
+  </ul>
+  <div class="layui-tab-content">
+    <div class="layui-tab-item layui-show">
+      <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+          <div class="layui-col-md12">
+            <div class="layui-card">
+              <div class="layui-card-body">
+                <table class="layui-hide" id="rule" lay-filter="rule"></table>
+                
+                <script type="text/html" id="rule-toolbar">
+                    <div class="layui-row layui-col-space10">
+                      <div class="layui-col-md9">
+                      {{# if(layui.router().search.show_all != '1'){ }}
+                        <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                      {{# } }} 
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="enable">启用</button>
+                        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="disable">禁用</button>
+                        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                      </div>
+                                     
+                    </div>
+                </script>
+                 
+                <script type="text/html" id="rule-bar">
+                  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="layui-tab-item">
+      <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+          <div class="layui-col-md12">
+            <div class="layui-card">
+              <div class="layui-card-body">
+                <table class="layui-hide" id="match" lay-filter="match"></table>
+                
+                <script type="text/html" id="match-toolbar">
+                    <div class="layui-row layui-col-space10">
+                      <div class="layui-col-md9">
+                      {{# if(layui.router().search.show_all != '1'){ }}
+                        <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                      {{# } }}   
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="enable">启用</button>
+                        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="disable">禁用</button>
+                        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                      </div>
+                                     
+                    </div>
+                </script>
+                 
+                <script type="text/html" id="match-bar">
+                  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="layui-tab-item">
+      <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+          <div class="layui-col-md12">
+            <div class="layui-card">
+              <div class="layui-card-body">
+                <table class="layui-hide" id="filter" lay-filter="filter"></table>
+                
+                <script type="text/html" id="filter-toolbar">
+                    <div class="layui-row layui-col-space10">
+                      <div class="layui-col-md9">
+                      {{# if(layui.router().search.show_all != '1'){ }}
+                        <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                      {{# } }}   
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="enable">启用</button>
+                        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="disable">禁用</button>
+                        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                      </div>
+                                     
+                    </div>
+                </script>
+                 
+                <script type="text/html" id="filter-bar">
+                  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    // tab的table需要resize
+    layui.element.on('tab(rule-tab)', function(data){
+      table.resize("filter");
+      table.resize("match");
+    }); 
+
+
+    var internal = layui.router().search.internal
+    if (!internal) {
+      internal = "0"
+    }
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var show_all = layui.router().search.show_all
+    var uid_hide = true
+    if (show_all == "1") {
+      uid_hide = false
+    }
+
+    // 规则组
+    table.render({
+      elem: '#rule'
+      ,url:'/cc-rules?internal='+internal
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#rule-toolbar'
+      ,title: '规则组列表'
+      ,where: {"show_all": show_all}
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',   sort: true,width: 60}
+        ,{field:'sort', title:'排序', sort: true}
+        ,{field:'name', title:'用户', hide: uid_hide,templet: function (d) {
+          return d.username + "(" + d.uid + ")"
+        }}        
+        ,{field:'name', title:'名称'}
+        ,{field:'create_at2', title:'创建时间'}
+        ,{field:'update_at2', title:'更新时间'}
+        ,{field:'enable', title:'启用', templet: function(d){
+          if (d.enable == 1) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'            
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+          }
+        }}     
+        ,{field:'is_show', title:'显示', templet: function(d){
+          if (d.is_show == 1) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'            
+          } else {
+            return '<span class="layui-badge layui-bg-orange">隐藏</span>'
+          }
+        }}                  
+        ,{field:'enable', title:'配置同步', templet: function(d){
+          if (d.state == "pending") {
+            return '<span class="layui-badge layui-bg-orange">待同步</span>'
+          } else if (d.state == "process") {
+            return '<span class="layui-badge layui-bg-orange">同步中</span>'
+          } else if (d.state == "failed") {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'           
+          } else {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'  
+          }            
+          
+        }}       
+        ,{fixed: 'right', title:'操作', toolbar: '#rule-bar', width:120}
+      ]]
+      ,page: true
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(rule)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      window.rule_data = []
+
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增规则组'
+            ,area: ['900px', '650px']
+            ,id: 'LAY-popup-rulegroup-add'
+            ,success: function(layero, index){
+              view(this.id).render('site/cc/rule-add').done(function(){
+                $("#save").click(function (argument) {
+                  var name = $("input[name='name']").val()
+                  var des = $("input[des='des']").val()
+                  var sort = $("input[name='sort']").val()
+                  var is_show = $("input[name='is_show']").prop("checked")
+                  var data = window.rule_data
+                  var req_data = {"name":name,"des":des,"data":data,"sort":sort,"is_show":is_show}
+
+                  admin.req({
+                    url: '/cc-rules?internal='+internal //实际使用请改成服务端真实接口
+                    ,type: "post"
+                    ,data: JSON.stringify(req_data)
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('rule'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                })
+              });
+            }
+          });
+        break;
+        case 'enable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的规则组');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1})
+          }
+          admin.req({
+            url: '/cc-rules' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('启用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('rule'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'disable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的规则组');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0})
+          }
+          admin.req({
+            url: '/cc-rules' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('禁用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('rule'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的规则组');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')规则组，是否继续', function(index){
+            admin.req({
+              url: '/cc-rules/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('rule'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(rule)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除规则组', function(index){
+          var id = data.id
+          admin.req({
+            url: '/cc-rules/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('rule'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑规则组'
+          ,area: ['900px', '650px']
+          ,id: 'LAY-popup-rulegroup-add'
+          ,success: function(layero, index){
+            view(this.id).render('site/cc/rule-add',data).done(function(){
+              $("#save").click(function (argument) {
+                var name = $("input[name='name']").val()
+                var des = $("input[name='des']").val()
+                var sort = $("input[name='sort']").val()
+                var is_show = $("input[name='is_show']").prop("checked")                
+                var rule_data = window.rule_data
+                var req_data = {"name":name,"des":des,"data":rule_data,"sort":sort,"is_show":is_show}
+                admin.req({
+                  url: '/cc-rules/'+data.id //实际使用请改成服务端真实接口
+                  ,type: "put"
+                  ,data: JSON.stringify(req_data)
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('更新成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      layui.table.reload('rule'); //重载表格
+                      layer.close(index); //执行关闭 
+                    });
+                  }
+                });
+              })
+            });
+          }
+        });
+      }
+    });  
+
+   // 匹配器
+    table.render({
+      elem: '#match'
+      ,url:'/cc-matchs?internal='+internal
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#match-toolbar'
+      ,title: '匹配器列表'
+      ,where: {"show_all": show_all}
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',   sort: true,width: 60}
+        ,{field:'name', title:'用户', hide: uid_hide,templet: function (d) {
+          return d.username + "(" + d.uid + ")"
+        }}        
+        ,{field:'name', title:'名称'}
+        ,{field:'create_at2', title:'创建时间'}
+        ,{field:'update_at2', title:'更新时间'}
+        ,{field:'enable', title:'启用', templet: function(d){
+          if (d.enable == 1) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'            
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+          }
+        }}          
+        ,{field:'enable', title:'配置同步', templet: function(d){
+          if (d.state == "pending") {
+            return '<span class="layui-badge layui-bg-orange">待同步</span>'
+          } else if (d.state == "process") {
+            return '<span class="layui-badge layui-bg-orange">同步中</span>'
+          } else if (d.state == "failed") {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'           
+          } else {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'  
+          }            
+          
+        }}       
+        ,{fixed: 'right', title:'操作', toolbar: '#match-bar', width:120}
+      ]]
+      ,page: true
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(match)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      window.match_data = []
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增匹配器'
+            ,area: ['900px', '650px']
+            ,id: 'LAY-popup-matcher-add'
+            ,success: function(layero, index){
+              view(this.id).render('site/cc/match-add').done(function(){
+                $("#save").click(function (argument) {
+                  var name = $("input[name='name']").val()
+                  var des = $("input[des='des']").val()
+                  var data = window.match_data
+                  var new_data = {}
+                  for (i in data) {
+                    var value = data[i]['value']
+                    var operator = data[i]['operator']
+                    if (operator == "AC" || operator == "!AC") {
+                      value = value.split(",")
+                    }
+                    new_data[data[i]['type']] = {"operator":operator,"value": value}
+                  }
+                  var req_data = {"name":name,"des":des,"data":new_data}
+                  admin.req({
+                    url: '/cc-matchs?internal='+internal //实际使用请改成服务端真实接口
+                    ,type: "post"
+                    ,data: JSON.stringify(req_data)
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('match'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                })
+
+              });
+            }
+          });
+        break;
+        case 'enable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的匹配器');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1})
+          }
+          admin.req({
+            url: '/cc-matchs' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('启用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('match'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'disable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的匹配器');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0})
+          }
+          admin.req({
+            url: '/cc-matchs' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('禁用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('match'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的匹配器');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')匹配器，是否继续', function(index){
+            admin.req({
+              url: '/cc-matchs/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('match'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(match)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除匹配器', function(index){
+          var id = data.id
+          admin.req({
+            url: '/cc-matchs/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('match'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑匹配器'
+          ,area: ['900px', '650px']
+          ,id: 'LAY-popup-matcher-edit'
+          ,success: function(layero, index){
+            view(this.id).render('site/cc/match-add',data).done(function(){
+                $("#save").click(function (argument) {
+                  var name = $("input[name='name']").val()
+                  var des = $("input[des='des']").val()
+                  var match_data = window.match_data
+                  var new_data = {}
+                  for (i in match_data) {
+                    var value = match_data[i]['value']
+                    var operator = match_data[i]['operator']
+                    if (operator == "AC" || operator == "!AC") {
+                      value = value.split(",")
+                    }
+                    new_data[match_data[i]['type']] = {"operator":operator,"value": value}
+                  }
+                  var req_data = {"name":name,"des":des,"data":new_data}
+                  admin.req({
+                    url: '/cc-matchs/'+data.id //实际使用请改成服务端真实接口
+                    ,type: "put"
+                    ,data: JSON.stringify(req_data)
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('更新成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('match'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                })
+
+            });
+          }
+        });
+      }
+    });  
+
+   // 过滤器
+
+    table.render({
+      elem: '#filter'
+      ,url:'/cc-filters?internal='+internal
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#filter-toolbar'
+      ,title: '过滤器列表'
+      ,where: {"show_all": show_all}
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',   sort: true,width: 60}
+        ,{field:'name', title:'用户', hide: uid_hide,templet: function (d) {
+          return d.username + "(" + d.uid + ")"
+        }}        
+        ,{field:'name', title:'名称'}
+        ,{field:'type', title:'类型',templet: function(d){
+          if (d.type == "req_rate") {
+            return '请求速率'
+          } else if (d.type == "browser_verify_auto") {
+            return '浏览器识别'
+          } else if (d.type == "captcha_filter") {
+            return '验证码'
+          } else if (d.type == "slide_filter") {
+            return '滑动验证'
+          } else if (d.type == "302_challenge") {
+            return '302跳转'
+          } else if (d.type == "url_auth") {
+            return 'URL鉴权'
+          } else if (d.type == "click_filter") {
+            return '点击验证'
+          } else if (d.type == "delay_jump_filter") {
+            return '5秒盾'
+          } else if (d.type == "rotate_filter") {
+            return '旋转图片'
+          }
+        }}
+        ,{field:'within_second', title:'n秒内'}
+        ,{field:'max_req', title:'总次数'}
+        ,{field:'max_req_per_uri', title:'单URL次数',templet: function(d){
+            if (d.max_req_per_uri == 0) {
+              return ''
+            } else {
+              return d.max_req_per_uri
+            }
+        }}
+        ,{field:'create_at2', title:'创建时间'}
+        ,{field:'enable', title:'启用', templet: function(d){
+          if (d.enable == 1) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'            
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+          }
+        }}          
+        ,{field:'enable', title:'配置同步', templet: function(d){
+          if (d.state == "pending") {
+            return '<span class="layui-badge layui-bg-orange">待同步</span>'
+          } else if (d.state == "process") {
+            return '<span class="layui-badge layui-bg-orange">同步中</span>'
+          } else if (d.state == "failed") {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'           
+          } else {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'  
+          }            
+          
+        }}        
+        ,{fixed: 'right', title:'操作', toolbar: '#filter-bar', width:120}
+      ]]
+      ,page: true
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(filter)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增过滤器'
+            ,area: ['600px', '550px']
+            ,id: 'LAY-popup-filter-add'
+            ,success: function(layero, index){
+              view(this.id).render('site/cc/filter-add').done(function(){
+                // 初始化密钥
+                $("input[name='url_auth_key']").val(admin.rndStr(16))
+
+                $("#save").click(function (argument) {
+                  var name = $("input[name='name']").val()
+                  var des = $("input[name='des']").val()
+                  var type = $("select[name='type']").val()
+                  var within_second = $("input[name='within_second']").val()
+                  var max_req = $("input[name='max_req']").val()
+                  var max_req_per_uri = $("input[name='max_req_per_uri']").val()
+
+                  if (name == "") {
+                    layer.alert("请输入名称")
+                    return
+                  }
+
+                  if (type == "") {
+                    layer.alert("请选择类型")
+                    return
+                  }
+
+                  if (within_second == "") {
+                    layer.alert("请输入n秒内")
+                    return
+                  }
+
+                  if (max_req == "") {
+                    layer.alert("请输入最大次数")
+                    return
+                  }
+
+                  if (max_req_per_uri == "" && type == "req_rate") {
+                    layer.alert("请输入单URL最大次数")
+                    return
+                  }
+
+                  // extra
+                  var extra = {}
+                  if (type == "url_auth") {
+                    var key = $("input[name='url_auth_key']").val()
+                    var sign_name = $("input[name='url_auth_sign_name']").val()
+                    var time_name = $("input[name='url_auth_time_name']").val()
+                    var time_diff = $("input[name='url_auth_time_diff']").val()
+                    var sign_use_times = $("input[name='url_auth_sign_use_times']").val()
+                    var mode = $("input[name='url_auth_mode']:checked").val()
+                    extra = {"key":key,"sign_name":sign_name,"time_name":time_name,"time_diff":time_diff,"sign_use_times":sign_use_times,"mode":mode}
+
+                  };
+
+                  admin.req({
+                    url: '/cc-filters?internal='+internal //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"name": name,"des":des, "type":type, "within_second":within_second, "max_req":max_req, "max_req_per_uri":max_req_per_uri,"extra":extra})
+                    ,type: "post"
+                      ,contentType:"application/json"
+                      ,dataType: "json"
+                      ,done: function(res){
+                        //登入成功的提示与跳转
+                        layer.msg('新增成功', {
+                          offset: '15px'
+                          ,icon: 1
+                          ,time: 1000
+                        }, function(){
+                          layui.table.reload('filter'); //重载表格
+                          layer.close(index); //执行关闭 
+                        });
+                      }
+                    });
+
+                })
+
+              });
+            }
+          });
+        break;
+        case 'enable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的过滤器');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1})
+          }
+          admin.req({
+            url: '/cc-filters' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('启用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('filter'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'disable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的过滤器');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0})
+          }
+          admin.req({
+            url: '/cc-filters' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('禁用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('filter'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的过滤器');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')过滤器，是否继续', function(index){
+            admin.req({
+              url: '/cc-filters/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('filter'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(filter)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除过滤器', function(index){
+          var id = data.id
+          admin.req({
+            url: '/cc-filters/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('filter'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑过滤器'
+          ,area: ['600px', '550px']
+          ,id: 'LAY-popup-filter-add'
+          ,success: function(layero, index){
+            view(this.id).render('site/cc/filter-add',data).done(function(){
+              $("input[name='name']").val(data.name)
+              $("input[name='des']").val(data.des)
+              $("select[name='type']").val(data.type)
+              $("input[name='within_second']").val(data.within_second)
+              $("input[name='max_req']").val(data.max_req)
+              $("input[name='max_req_per_uri']").val(data.max_req_per_uri)
+
+              $(".max-req-tip").text("最大失败次数")
+              if (data.type == "req_rate") {
+                $(".max_req_per_uri").removeClass("layui-hide")
+                $(".url_auth").addClass("layui-hide")
+                $(".max-req-tip").text("最大请求次数")
+
+              } else if (data.type == "url_auth") {
+                $(".max_req_per_uri").addClass("layui-hide")
+                $(".url_auth").removeClass("layui-hide")
+                // 填充extra
+                var extra = JSON.parse(data.extra)
+                $("input[name='url_auth_key']").val(extra['key'])
+                $("input[name='url_auth_sign_name']").val(extra['sign_name'])
+                $("input[name='url_auth_time_name']").val(extra['time_name'])
+                $("input[name='url_auth_time_diff']").val(extra['time_diff'])
+                $("input[name='url_auth_sign_use_times']").val(extra['sign_use_times'])
+                $("input[name='url_auth_mode'][value='"+extra['mode']+"']").prop("checked",true)
+ 
+                var mode = extra['mode']
+                if (mode == "TypeA") {
+                  $(".url_auth_a").removeClass("layui-hide")
+                } else {
+                  $(".url_auth_a").addClass("layui-hide")
+                }
+
+
+              } else {
+                $(".max_req_per_uri").addClass("layui-hide")
+                $(".url_auth").addClass("layui-hide")
+              }
+
+              form.render()
+
+              $("#save").click(function (argument) {
+                var name = $("input[name='name']").val()
+                var des = $("input[name='des']").val()
+                var type = $("select[name='type']").val()
+                var within_second = $("input[name='within_second']").val()
+                var max_req = $("input[name='max_req']").val()
+                var max_req_per_uri = $("input[name='max_req_per_uri']").val()
+
+                if (name == "") {
+                  layer.alert("请输入名称")
+                  return
+                }
+
+                if (type == "") {
+                  layer.alert("请选择类型")
+                  return
+                }
+
+                if (within_second == "") {
+                  layer.alert("请输入n秒内")
+                  return
+                }
+
+                if (max_req == "") {
+                  layer.alert("请输入最大次数")
+                  return
+                }
+
+                if (max_req_per_uri == "" && type == "req_rate") {
+                  layer.alert("请输入单URL最大次数")
+                  return
+                }
+
+                // extra
+                var extra = {}
+                if (type == "url_auth") {
+                  var key = $("input[name='url_auth_key']").val()
+                  var sign_name = $("input[name='url_auth_sign_name']").val()
+                  var time_name = $("input[name='url_auth_time_name']").val()
+                  var time_diff = $("input[name='url_auth_time_diff']").val()
+                  var sign_use_times = $("input[name='url_auth_sign_use_times']").val()
+                  var mode = $("input[name='url_auth_mode']:checked").val()
+
+                  extra = {"key":key,"sign_name":sign_name,"time_name":time_name,"time_diff":time_diff,"sign_use_times":sign_use_times,"mode":mode}
+
+                };
+
+                admin.req({
+                  url: '/cc-filters/'+data.id //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify({"name": name,"des":des, "type":type, "within_second":within_second, "max_req":max_req, "max_req_per_uri":max_req_per_uri,"extra":extra})
+                  ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('更新成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('filter'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+              })
+
+            });
+          }
+        });
+      }
+    });  
+  });
+
+
+  </script>

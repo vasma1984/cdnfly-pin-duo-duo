@@ -1,0 +1,206 @@
+<style type="text/css">
+#more-setting {
+margin-left: 40px;
+    width: 300px;  
+}
+
+</style>
+
+<div class="layui-form" lay-filter="layuiadmin-form-cacheadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">类型</label>
+    <div class="layui-input-inline">
+        <select lay-filter="cache_type" id="cache_type"  name="cache_type" lay-verify="required">
+          <option value="suffix">后缀名</option>
+          <option value="dir">目录</option>
+          <option value="full_path">全路径</option>
+        </select>  
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">内容</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input placeholder="多个用|分隔" type="text" name="cache_content"  value="{{ d.params.content || '' }}" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">有效期</label>
+
+      <div class="layui-input-inline" style="width: 100px;">
+        <script type="text/html" template>
+          <input type="text" name="cache_expire" value="{{ d.params.expire || '' }}" autocomplete="off" class="layui-input">
+          </script>
+      </div>
+      <div class="layui-input-inline" style="width: 100px;">
+            <select lay-filter="cache_unit" id="cache_unit"  name="cache_unit" lay-verify="required">
+                <option value="s">秒</option>
+                <option value="h">时</option>
+                <option selected value="d">天</option>
+            </select> 
+      </div>  
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">忽略参数</label>
+    <div class="layui-input-inline">
+      <input name="cache_ignore_arg" type="checkbox"  lay-skin="switch" lay-text="是|否">
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">强制缓存</label>
+    <div class="layui-input-inline">
+      <input name="force_cache" type="checkbox"  lay-filter="force_cache" lay-skin="switch" lay-text="是|否">
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">分片回源</label>
+    <div class="layui-input-inline">
+      <input name="cache_range" type="checkbox" lay-skin="switch" lay-text="是|否">
+    </div>
+    <div class="layui-form-mid layui-word-aux">推荐单个缓存文件大于2M开启</div>
+  </div>
+
+  <div class="layui-form-item layui-hide">
+    <label class="layui-form-label">忽略响应头</label>
+    <div class="layui-input-inline">
+      <input type="checkbox" name="proxy_ignore_headers" value="X-Accel-Expires" title="X-Accel-Expires" lay-skin="primary"> 
+    </div>
+    <div class="layui-input-inline">
+      <input type="checkbox" name="proxy_ignore_headers" value="Expires" title="Expires" lay-skin="primary"> 
+    </div>  
+    <div class="layui-input-inline">
+      <input type="checkbox" name="proxy_ignore_headers" value="Cache-Control" title="Cache-Control" lay-skin="primary"> 
+    </div>  
+    <div class="layui-input-inline">
+      <input type="checkbox" name="proxy_ignore_headers" value="Set-Cookie" title="Set-Cookie" lay-skin="primary"> 
+    </div>    
+    <div class="layui-input-inline">  
+      <input type="checkbox" name="proxy_ignore_headers" value="Vary" title="Vary" lay-skin="primary">     
+    </div>    
+  </div>
+
+
+<style type="text/css">
+.del{border-radius: 10px !important;height: 16px;line-height: 16px;font-size: 10px;padding: 0 5px;position: absolute;margin-top: -14px;margin-left: -2px;color:White;cursor:pointer }
+.del-span{padding: 8px;border-radius: 8px;}
+</style>
+  <div class="layui-form-item no-cache ">
+    <label class="layui-form-label">不缓存条件</label>
+    <label class="layui-form-mid no-data">待添加...</label>
+
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <select name="variable" lay-verify="" lay-filter="variable">
+        <option value="">请选择匹配项</option>
+        <option value="$request_uri">请求URI</option>
+        <option value="$uri">请求URI(不带参数)</option>
+        <option value="$remote_addr">IP地址</option>
+        <option value="$scheme">请求协议</option>
+        <option value="$args">请求参数</option>
+        <option value="$host">域名</option>
+        <option value="custom">自定义</option>
+      </select>     
+
+      <input name="variable" type="text" placeholder="变量" class="layui-input layui-hide">
+    </div>
+    <div class="layui-input-inline">
+      <input name="string" type="text" placeholder="匹配值(支持正则)" class="layui-input">
+    </div>    
+    <div class="layui-input-inline">
+      <input type="button" id="add-cache-item" value="添加" class="layui-btn layui-bg-red layui-btn-sm">
+    </div>
+
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-site-site-edit-cache-add-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+var form = layui.form
+var $ = layui.$
+form.render()
+
+$("#add-cache-item").click(function () {
+  var variable = $("input[name='variable']").val()
+
+  var select_var = $("select[name='variable']").val()
+  if (select_var != "custom") {
+    variable = select_var
+  }
+
+  var string = $("input[name='string']").val()
+  if (variable == "") {
+    layer.alert("变量不能为空")
+    return
+  }
+
+  if (string == "") {
+    layer.alert("字符串不能为空")
+    return
+  }
+
+  $(".no-data").remove()
+
+  $(".no-cache").append('<div class="layui-form-mid no-cache-item"><span class="layui-badge layui-bg-blue del-span">'+variable+' ~ '+string+'<span onclick=\'del_item(this)\' class="layui-badge del">x</span></span></div>')
+
+})
+
+function del_item(ele) {
+    $(ele).parent().parent().remove()
+    if ($(".no-cache-item").length == 0) {
+      $(".no-cache").append('<label class="layui-form-mid no-data">待添加...</label>')
+    }
+}
+
+//监听强制缓存开关
+form.on('switch(force_cache)', function(data){
+  // 开启
+  if (data.elem.checked) {
+    $("input[name='proxy_ignore_headers'][value='X-Accel-Expires']").prop("checked",true)
+    $("input[name='proxy_ignore_headers'][value='Expires']").prop("checked",true)
+    $("input[name='proxy_ignore_headers'][value='Cache-Control']").prop("checked",true)
+    $("input[name='proxy_ignore_headers'][value='Set-Cookie']").prop("checked",true)
+
+  // 关闭
+  } else {
+    $("input[name='proxy_ignore_headers'][value='X-Accel-Expires']").prop("checked",false)
+    $("input[name='proxy_ignore_headers'][value='Expires']").prop("checked",false)
+    $("input[name='proxy_ignore_headers'][value='Cache-Control']").prop("checked",false)
+    $("input[name='proxy_ignore_headers'][value='Set-Cookie']").prop("checked",false)
+  }
+
+ 
+
+
+  form.render("checkbox")
+
+});
+
+form.on('select(variable)', function(data){
+    if (data.value == "custom") {
+      $("select[name='variable']").next().addClass("layui-hide")
+      $("input[name='variable']").removeClass("layui-hide")
+    }
+});     
+
+</script>

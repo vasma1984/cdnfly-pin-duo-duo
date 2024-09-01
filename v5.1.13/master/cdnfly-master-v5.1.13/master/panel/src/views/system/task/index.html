@@ -1,0 +1,357 @@
+
+
+  <title>后台任务 - 系统管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>系统管理</cite></a>
+      <a><cite>后台任务</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md2 layui-form" style="padding-left:40px;">
+          <input type="text" name="id"  placeholder="任务ID" autocomplete="off" class="layui-input">
+        </div> 
+
+        <div class="layui-col-md2 layui-form">
+          <select lay-filter="type" lay-search class="type" name="type" lay-verify="required">
+            <option value=''>任务类型</option>
+            <option value='record_repair'>DNS记录修复</option>
+            <option value='DNS记录同步'>DNS记录同步</option>
+            <option value='网站'>网站配置</option>
+            <option value='四层转发'>四层转发</option>
+            <option value='证书'>证书同步</option>
+            <option value='签发证书'>证书签发</option>
+            <option value='clean_dir'>缓存清理目录</option>
+            <option value='clean_url'>缓存清理URL</option>
+            <option value='允许端口范围配置'>端口范围配置</option>
+            <option value='nginx全局配置'>nginx全局配置</option>
+            <option value='openresty配置'>openresty配置</option>
+            <option value='默认80站点配置'>默认站点配置</option>
+            <option value='cc_rule'>CC规则</option>
+            <option value='acl'>ACL</option>
+            <option value='cc_match'>CC匹配器</option>
+            <option value='cc_filter'>CC过滤器</option>
+            <option value='获取黑名单'>获取黑名单</option>
+            <option value='502-error-page'>默认502页面</option>
+            <option value='504-error-page'>默认504页面</option>
+            <option value='504-error-page'>默认504页面</option>
+            <option value='网站带宽流量统计'>网站带宽流量统计</option>
+            <option value='转发带宽流量统计'>转发带宽流量统计</option>
+          </select>
+        </div>  
+
+        <div class="layui-col-md2 layui-form" style="padding-left:40px;">
+          <input type="text" name="res"  placeholder="资源ID" autocomplete="off" class="layui-input">
+        </div> 
+
+        <div class="layui-col-md2 layui-form">
+          <select lay-filter="task_state" class="state" name="state" lay-verify="required">
+            <option value=''>任务状态</option>
+            <option value='done'>成功</option>
+            <option value='failed'>失败</option>
+            <option value='process'>执行中</option>
+            <option value='pending'>待执行</option>
+          </select>
+        </div> 
+        <div class="layui-col-md1">
+          <button class="layui-btn layui-btn-normal layui-btn-sm" id="refresh"><i class="layui-icon layui-icon-refresh-3"></i></button>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail">详情</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="cancel">取消</a>
+            </script>
+
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-md6">
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="cancel">取消</button>
+                </div>
+                               
+              </div>
+          </script>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form
+    ,laydate = layui.laydate;
+
+    laydate.render({
+      elem: '#date'
+      ,range: true
+      ,done: function(value, date, endDate){
+        var date_range = value
+        var start = date_range.split(" - ")[0]
+        var end = date_range.split(" - ")[1]
+        table.reload('test-table-toolbar',{where: {"start":start,"end":end}, page: {curr: 1}})
+      }
+    });
+    form.render()
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var id = layui.router().search.id
+    if (id) {
+      $("input[name='id']").val(id)
+    }
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/tasks?pid=0'
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,headers: {"access-token":access_token}
+      ,title: '任务'
+      ,where : {"id": id}
+      ,cols: [[
+        {checkbox: true}
+        ,{field:'id', title:'ID',  sort: true, width:80}
+        ,{field:'pry', title:'优先级', width:80}
+        ,{field:'name', title:'名称'}
+       
+        ,{field:'type', title:'类型', templet: function(d){
+          var task_type = {"record_repair":"DNS记录修复","网站":"网站配置","证书":"证书同步","签发证书":"证书签发","网站缓存清理":"缓存清理","502-error-page":"默认502页面","504-error-page":"默认504页面"}
+          var type_str = task_type[d.type]
+          if (typeof(type_str) == "undefined") {
+            return d.type
+          } else {
+            return type_str
+          }
+        }}
+        ,{field:'res', title:'资源ID', width:80}
+        ,{field:'depend', title:'依赖'}
+        ,{field:'create_at2', title:'创建时间'}
+        ,{field:'start_at2', title:'开始时间'}
+        ,{field:'end_at2', title:'结束时间'}
+        ,{field:'state', title:'耗时', templet: function(d){
+          if (d.start_at2 == null || d.end_at2 == null) {
+            return "";
+          }
+          var start = parseInt(new Date(d.start_at2.replace(/-/g,'/')).getTime()/1000)
+          var end = parseInt(new Date(d.end_at2.replace(/-/g,'/')).getTime()/1000)
+          return (end-start)+"秒";
+
+        }}
+        ,{field:'state', title:'状态', templet: function(d){
+          if (d.enable == 0) {
+            return '<span class="layui-badge layui-bg-orange">已取消</span>'
+          }
+          
+          if (d.state == "done") {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'  
+
+          } else if (d.state == "failed") {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+
+          } else if (d.state == "pending") {
+            return '<span class="layui-badge layui-bg-blue">待执行</span>'
+
+          } else {
+            return '<span class="layui-badge layui-bg-orange">执行中</span>'
+          }            
+
+        }}
+        ,{field:'err_times', title:'失败次数', width:100}
+        ,{field:'retry_at2', title:'重试'}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:120}
+
+      ]]
+      ,page: true
+      ,defaultToolbar: []
+    });
+
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'cancel':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择取消的任务');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0})
+          }
+          admin.req({
+            url: '/tasks' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('取消成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;               
+      };
+    });
+
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'detail'){
+        var ret = data.ret
+        if (ret) {
+          layer.alert(ret)
+          return
+        } 
+
+        admin.popup({
+          title: '任务详情('+data.id+')'
+          ,area: ['1200px', '450px']
+          ,id: 'LAY-popup-task-detail'
+          ,success: function(layero, index){
+            view(this.id).render('system/task/detail',data).done(function(){
+              table.render({
+                elem: '#task-detail'
+                ,url:'/tasks?pid=' + data.id
+                ,headers: {"access-token":access_token}
+                ,title: '任务'
+                ,cols: [[
+                  {field:'id', title:'ID', sort: true, width:80}
+                  ,{field:'type', title:'类型'}
+                  ,{field:'res', title:'res', width:80}
+                  ,{field:'data', title:'data'}
+                  ,{field:'start_at2', title:'开始时间'}
+                  ,{field:'end_at2', title:'结束时间'}
+                  ,{field:'state', title:'耗时', templet: function(d){
+                    if (d.start_at2 == null || d.end_at2 == null) {
+                      return "";
+                    }
+                    var start = parseInt(new Date(d.start_at2.replace(/-/g,'/')).getTime()/1000)
+                    var end = parseInt(new Date(d.end_at2.replace(/-/g,'/')).getTime()/1000)
+                    return (end-start)+"秒";
+
+                  }}                  
+                  ,{field:'state', title:'状态', templet: function(d){
+                    if (d.enable == 0) {
+                      return '<span class="layui-badge layui-bg-orange">已取消</span>'
+                    }
+                    
+                  if (d.state == "done") {
+                      return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'  
+
+                    } else if (d.state == "failed") {
+                      return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+
+                    } else if (d.state == "pending") {
+                      return '<span class="layui-badge layui-bg-blue">待执行</span>'
+
+                    } else {
+                      return '<span class="layui-badge layui-bg-orange">执行中</span>'
+                    }            
+
+                  }}
+                  ,{field:'err_times', title:'失败次数', width:100}
+                  ,{fixed: 'right', title:'操作', toolbar: '#task-detail-toolbar', width:120}
+
+                ]]
+                ,page: true
+                ,defaultToolbar: []
+              });
+
+              table.on('tool(task-detail)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'ret'){
+                  var ret = data.ret
+                  if (!ret) {ret="无结果";}
+                  ret = "<pre>"+ret+"</pre>"
+                  layer.alert(ret)
+                } else if (obj.event === 'cancel') {
+                  admin.req({
+                    url: '/tasks/'+data.id //实际使用请改成服务端真实接口
+                    ,type: "put"
+                    ,data: JSON.stringify({"enable":0})
+                    ,contentType:"application/json"
+                    ,dataType: "json"        
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layui.layer.msg('取消成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        table.reload('task-detail')
+                        
+                      });
+                    }
+                  });                   
+                }
+              });  
+
+            });
+          }
+        });
+
+      } else if (obj.event === 'cancel') {
+        admin.req({
+          url: '/tasks/'+data.id //实际使用请改成服务端真实接口
+          ,type: "put"
+          ,data: JSON.stringify({"enable":0})
+          ,contentType:"application/json"
+          ,dataType: "json"        
+          ,done: function(res){
+            //登入成功的提示与跳转
+            layui.layer.msg('取消成功', {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              table.reload('test-table-toolbar')
+              
+            });
+          }
+        });        
+      }
+    });  
+
+    form.on('select(type)', function(data){
+      var type = data.value
+      table.reload('test-table-toolbar',{where: {"type":type}, page: {curr: 1}})
+    });       
+
+    $("input[name='id']").on('change', function(){
+        var id = $(this).val();
+        table.reload('test-table-toolbar',{where: {"id":id}, page: {curr: 1}})
+    });   
+
+    $("input[name='res']").on('change', function(){
+        var res = $(this).val();
+        table.reload('test-table-toolbar',{where: {"res":res}, page: {curr: 1}})
+    });  
+
+    form.on('select(task_state)', function(data){
+      var state = data.value
+      table.reload('test-table-toolbar',{where: {"state":state}, page: {curr: 1}})
+    }); 
+
+    $("#refresh").click(function (argument) {
+      table.reload('test-table-toolbar')
+    })
+
+
+  });
+  </script>

@@ -1,0 +1,737 @@
+
+
+  <title>分组 - 网站管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>网站管理</cite></a>
+      <a><cite>CC防护</cite></a>
+      <a><cite>参数配置</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <div class="layui-tab" lay-filter="region-tab" style="margin-bottom:20px">
+              <ul class="layui-tab-title regions">
+                <li data-id="0" class="layui-this">全局</li>
+              </ul>
+
+            </div>
+
+          <form class="layui-form node-config layui-hide" action="">
+            <div class="layui-form-item" style="margin-left: 10px;">
+              <div class="layui-input-inline" style="width: 230px;">
+                <input type="radio" name="config" lay-filter="config" value="region" title="区域默认" checked>
+                <input type="radio" name="config" lay-filter="config" value="node" title="配置节点">
+              </div>        
+              <div class="layui-input-inline node layui-hide">
+                <select name="node" lay-filter="node" lay-verify="required" lay-search>
+
+                </select>
+              </div>
+            </div>
+          </form> 
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">防火墙开关</div>
+                <div class="layui-col-lg1">
+                  <input type="text" name="cc_enable" autocomplete="off" class="layui-input">  
+                </div>
+                <div class="layui-col-lg3" style="padding-top:15px;">1为开启,0为关闭</div>
+              </div>
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">黑名单时间</div>
+                <div class="layui-col-lg2 layui-col-md3">
+                  <input type="text" name="block_time" required lay-verify="required"  autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">秒</div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">临时白名单时间</div>
+                <div class="layui-col-lg2 layui-col-md3">
+                  <input type="text" name="white_time" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">秒</div>
+              </div>
+             
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">白名单IP</div>
+                <div class="layui-col-md4">
+                  <textarea rows="8" name="custom_white" required lay-verify="required" placeholder="一行一个，支持/8 /16 /24子掩码" class="layui-textarea"></textarea>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">黑名单IP</div>
+                <div class="layui-col-md4">
+                  <textarea rows="8" name="custom_black" required lay-verify="required" placeholder="一行一个，支持/8 /16 /24子掩码" class="layui-textarea"></textarea>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">禁止默认页及未绑定域名访问</div>
+                <div class="layui-col-lg2 layui-col-md3">
+                  <input type="text" name="default_page_refuse" required lay-verify="required"  autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">1为禁止,0为允许</div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">默认页规则组</div>
+                <div class="layui-col-lg2 layui-col-md3">
+                  <input type="text" name="default_page_rule" required lay-verify="required"  autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">填规则组ID</div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">禁ping</div>
+                <div class="layui-col-lg2 layui-col-md3">
+                  <input type="text" name="icmp_drop" required lay-verify="required"  autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">1为禁止,0为允许 (需要一分钟生效)</div>
+              </div>
+
+              <hr style="margin-top:20px;">
+              <div class="layui-row layui-col-space15">
+                <div style="padding-top: 15px;" class="layui-col-lg1 layui-col-md2">自动切换</div>
+                <div class="layui-col-lg2 layui-col-md4 layui-form auto-set layui-hide">
+                  <input type="radio" lay-filter="auto-set" name="auto-set" value="1" title="自定义">
+                  <input type="radio" lay-filter="auto-set" name="auto-set" value="0" title="不修改">
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-md2 layui-form">
+                  <input type="text" name="switch_enable" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">开关,1为开启，0为关闭</div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-md2">
+                  <input type="text" name="switch_qps_50x" required lay-verify="required"  autocomplete="off" class="layui-input auto-item">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">502和504的QPS (切换条件)</div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-md2">
+                  <input type="text" name="switch_qps_total" required lay-verify="required"  autocomplete="off" class="layui-input auto-item">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">总QPS (切换条件)</div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-md2 layui-form">
+                  <input type="text" name="switch_rule" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">切换规则组，填规则组ID</div>
+              </div>
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-md2">
+                  <input type="text" name="switch_seconds" required lay-verify="required"  autocomplete="off" class="layui-input auto-item">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">切换时长 (秒)</div>
+              </div>
+              <hr style="margin-top:20px;">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">滑动HTML</div>
+                <div class="layui-col-md9">
+                  <textarea rows="8" name="slider_html" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">验证码HTML</div>
+                <div class="layui-col-md9">
+                  <textarea rows="8" name="captcha_html" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">点击HTML</div>
+                <div class="layui-col-md9">
+                  <textarea rows="8" name="click_html" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">5秒盾HTML</div>
+                <div class="layui-col-md9">
+                  <textarea rows="8" name="delay_jump_html" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3">旋转图片</div>
+                <div class="layui-col-md9">
+                  <textarea rows="8" name="rotate_html" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                </div>
+              </div>
+
+              <hr style="margin-top:20px;">
+
+              <div class="layui-row layui-col-space15">
+                <div style="padding-top: 15px;" class="layui-col-lg1 layui-col-md2">日志设置</div>
+                <div class="layui-col-lg2 layui-col-md4 layui-form log-set layui-hide">
+                  <input type="radio" lay-filter="log-set" name="log-set" value="1" title="自定义">
+                  <input type="radio" lay-filter="log-set" name="log-set" value="0" title="不修改">
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-lg2 layui-col-md3 layui-form">
+                  <input type="text" name="log_level" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">日志等级,可选debug, info, warning, error</div>
+
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-md2">
+                  <input type="text" name="debug_ip" required lay-verify="required"  autocomplete="off" class="layui-input log-item">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">Debug IP</div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-md2">
+                  <input type="text" name="host" required lay-verify="required"  autocomplete="off" class="layui-input log-item">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">rsyslog ip</div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-md2">
+                  <input type="text" name="port" required lay-verify="required"  autocomplete="off" class="layui-input log-item">  
+                </div>
+                <div class="layui-col-lg2 layui-col-md3" style="padding-top:15px;">rsyslog port</div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg2 layui-col-md3"></div>
+                <div class="layui-col-md2">
+                  <button id="save" type="button" class="layui-btn">确认</button>
+                </div>
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,element = layui.element
+    ,form = layui.form;
+
+    // 获取所有区域
+    admin.req({
+      url: '/regions?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        window.region_list = data
+        for (var i = 0; i < data.length; i++) {
+          $(".regions").append("<li data-id='"+data[i]['id']+"'>"+data[i]['name']+"</li>")
+        };
+        element.render()
+      }
+    });
+
+    // 清空配置
+    function clean_input (argument) {
+      $("input[type='text']").each(function (index, ele) {
+        if (!$(ele).parent().hasClass("layui-select-title")) {
+          $(ele).val("")
+        }
+      })
+    }
+
+    // 监听radio
+    form.on('radio(config)', function(data){
+      if (data.value == "region" ) {
+        $(".node").addClass("layui-hide")
+        $("input[type='text']").attr("disabled",false)
+        $("textarea").attr("disabled",false)
+
+        clean_input()
+        $("textarea").val("")
+        // 获取全局配置
+        var global_ajax = get_config("global","0", true)
+
+        // 获取该区域配置
+        var scope_id = $(".regions").find(".layui-this").data("id")
+        $.when(global_ajax).then(function (params) {
+          get_config("region",scope_id, false)
+        })
+        
+
+      } else {
+        $(".node").removeClass("layui-hide")
+        
+        var node = $("select[name='node']").val()
+        if (node) {
+          $("input[type='text']").attr("disabled",false)
+          $("textarea").attr("disabled",false)
+          clean_input()
+          $("textarea").val("")
+
+          // 获取该区域配置
+          var scope_id = $(".regions").find(".layui-this").data("id")
+          var region_ajax = get_config("region",scope_id, true)          
+
+          // 获取节点配置
+          $.when(region_ajax).then(function (params) {
+            get_config("node",node, false)
+          })
+          
+        } else {
+          $("input[type='text']").attr("disabled",true)
+          $("textarea").attr("disabled",true)
+        }
+
+      }
+    });  
+
+    // 监听select
+    form.on('select(node)', function(data){
+      var v = data.value
+      if (v) {
+        $("input[type='text']").attr("disabled",false)
+        $("textarea").attr("disabled",false)
+        clean_input()
+
+        // 获取当前区域配置
+        var scope_id = $(".regions").find(".layui-this").data("id")
+        var region_ajax = get_config("region",scope_id, true)           
+
+        // 获取该节点的配置
+        $.when(region_ajax).then(function (params) {
+          get_config("node",v, false)
+        })
+        
+      } else {
+        $("input[type='text']").attr("disabled",true)
+        $("textarea").attr("disabled",true)
+      }
+    });
+
+
+    // 监听tab
+    element.on('tab(region-tab)', function(data){
+      var scope_id = $(this).data("id")
+      // 清空input
+      clean_input()
+      $("textarea").val("")
+
+      var scope_name = "global"
+      if (scope_id != "0") {
+        scope_name = "region"
+        $(".node-config").removeClass("layui-hide")
+        // 获取该区域节点
+        admin.req({
+          url: '/nodes?limit=0&region_id=' + scope_id //实际使用请改成服务端真实接口
+          ,type: "get"
+          ,done: function(res){
+            $("select[name='node']").empty()
+            $("select[name='node']").append("<option value=''>请选择节点</option>")
+            var data = res.data
+            for (var i = 0; i < data.length; i++) {
+              $("select[name='node']").append("<option value='"+data[i]['id']+"'>("+data[i]['id']+") " + data[i]['name']+"</option>")
+            };
+            form.render("select")
+          }
+        });     
+
+        // 获取全局配置
+        var global_ajax = get_config("global","0",true)
+
+        // 获取区域配置
+        $.when(global_ajax).then(function (params) {
+          get_config(scope_name,scope_id,false)
+        })
+        
+
+      } else {
+        $(".node-config").addClass("layui-hide")
+        // 获取全局配置
+        get_config(scope_name,scope_id,false)
+      }
+
+      
+
+    });
+
+    // 监听日志设置
+    form.on('radio(log-set)', function(data){
+      if (data.value == "1") {
+        $(".log-item").removeClass("layui-disabled")
+        $(".log-item").attr("disabled",false)       
+        var debug_ip = $("input[name='debug_ip']").attr("placeholder")
+        $("input[name='debug_ip']").val(debug_ip)
+
+        var host = $("input[name='host']").attr("placeholder")
+        $("input[name='host']").val(host)        
+
+        var port = $("input[name='port']").attr("placeholder")
+        $("input[name='port']").val(port)  
+
+        var log_level = $("input[name='log_level']").attr("placeholder")
+        $("input[name='log_level']").val(log_level)  
+
+      } else {
+        $(".log-item").addClass("layui-disabled")
+        $(".log-item").attr("disabled",true)     
+        $("input[name='debug_ip']").val("")
+        $("input[name='host']").val("") 
+        $("input[name='port']").val("")
+        $("input[name='log_level']").val("")
+      }
+
+      form.render()
+
+    });  
+
+
+    // 监听自动切换
+    form.on('radio(auto-set)', function(data){
+      if (data.value == "1") {
+        $(".auto-item").removeClass("layui-disabled")
+        $(".auto-item").attr("disabled",false)       
+        var switch_qps_50x = $("input[name='switch_qps_50x']").attr("placeholder")
+        $("input[name='switch_qps_50x']").val(switch_qps_50x)
+
+        var switch_qps_total = $("input[name='switch_qps_total']").attr("placeholder")
+        $("input[name='switch_qps_total']").val(switch_qps_total)        
+
+        var switch_seconds = $("input[name='switch_seconds']").attr("placeholder")
+        $("input[name='switch_seconds']").val(switch_seconds)  
+
+        var switch_enable = $("input[name='switch_enable']").attr("placeholder")
+        $("input[name='switch_enable']").val(switch_enable)  
+        
+        var switch_rule = $("input[name='switch_rule']").attr("placeholder")
+        $("input[name='switch_rule']").val(switch_rule)      
+
+      } else {
+        $(".auto-item").addClass("layui-disabled")
+        $(".auto-item").attr("disabled",true)     
+        $("input[name='switch_qps_50x']").val("")
+        $("input[name='switch_qps_total']").val("") 
+        $("input[name='switch_seconds']").val("")
+        $("input[name='switch_enable']").val("")
+        $("input[name='switch_rule']").val("")
+      }
+
+      form.render()
+
+    }); 
+
+    function get_config(scope_name,scope_id,placeholder) {
+      if (scope_name == "global") {
+        $(".log-set").addClass("layui-hide")
+        $(".auto-set").addClass("layui-hide")
+      } else {
+        $(".log-set").removeClass("layui-hide")
+        $(".auto-set").removeClass("layui-hide")        
+      }
+
+      var config_ajax = admin.req({
+        url: '/configs/' + scope_name + "-" + scope_id + "-openresty_config-openresty-config" //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          var value
+          if (!res.data) {
+            value = '{}'
+          } else {
+            value = res.data.value
+          }
+
+          window.data = JSON.parse(value)
+          var data = window.data
+
+          if (placeholder == true) {
+            $("textarea[name='slider_html']").attr("placeholder",data.slider_html)
+            $("textarea[name='captcha_html']").attr("placeholder",data.captcha_html)
+            $("textarea[name='click_html']").attr("placeholder",data.click_html)
+            $("textarea[name='rotate_html']").attr("placeholder",data.rotate_html)
+            $("textarea[name='delay_jump_html']").attr("placeholder",data.delay_jump_html)
+            $("input[name='block_time']").attr("placeholder",data.block_time)
+            $("input[name='white_time']").attr("placeholder",data.white_time)
+            $("input[name='default_page_rule']").attr("placeholder",data.default_page_rule)
+            $("input[name='icmp_drop']").attr("placeholder",data.icmp_drop)
+            
+            $("input[name='default_page_refuse']").attr("placeholder",data.default_page_refuse)
+            $("textarea[name='custom_white']").attr("placeholder",data.custom_white)
+            $("textarea[name='custom_black']").attr("placeholder",data.custom_black)
+            if (typeof(data.cc_enable) != "undefined") {
+              $("input[name='cc_enable']").attr("placeholder",data.cc_enable?1:0)
+            }
+          } else {
+            $("textarea[name='slider_html']").val(data.slider_html)
+            $("textarea[name='captcha_html']").val(data.captcha_html)
+            $("textarea[name='click_html']").val(data.click_html)
+            $("textarea[name='rotate_html']").val(data.rotate_html)
+            $("textarea[name='delay_jump_html']").val(data.delay_jump_html)
+            $("input[name='block_time']").val(data.block_time)
+            $("input[name='white_time']").val(data.white_time)
+            $("input[name='default_page_rule']").val(data.default_page_rule)
+            $("input[name='icmp_drop']").val(data.icmp_drop)
+            $("input[name='default_page_refuse']").val(data.default_page_refuse)
+            $("textarea[name='custom_white']").val(data.custom_white)
+            $("textarea[name='custom_black']").val(data.custom_black)
+            if (typeof(data.cc_enable) != "undefined") {
+              $("input[name='cc_enable']").val(data.cc_enable?1:0)
+            }
+            
+          }
+
+          // 日志
+          $(".log-item").removeClass("layui-disabled")
+          $(".log-item").attr("disabled",false)              
+          if (data.log) {
+            console.log(data.log)
+            if (placeholder == true) {
+              $("input[name='debug_ip']").attr("placeholder",data.log.debug_ip)
+              $("input[name='host']").attr("placeholder",data.log.host)
+              $("input[name='port']").attr("placeholder",data.log.port)  
+              $("input[name='log_level']").attr("placeholder",data.log.log_level)     
+            } else {
+              $("input[name='log_level']").val(data.log.log_level)
+              $("input[name='debug_ip']").val(data.log.debug_ip)
+              $("input[name='host']").val(data.log.host)
+              $("input[name='port']").val(data.log.port)
+            }
+
+            $("input[name='log-set'][value='1']").prop("checked",true)
+
+
+            if (scope_name != "global") {
+              $(".log-item").removeClass("layui-disabled")
+              $(".log-item").attr("disabled",false)              
+            }
+
+
+          } else {
+            $("input[name='log-set'][value='0']").prop("checked",true)
+            if (scope_name != "global") {
+              $(".log-item").addClass("layui-disabled")
+              $(".log-item").attr("disabled",true)              
+            }
+
+          }
+
+          $(".auto-item").removeClass("layui-disabled")
+          $(".auto-item").attr("disabled",false)     
+
+          // 自动切换
+          var switch_data = data["auto_switch"]
+          if (switch_data) {
+            if (placeholder == true) {
+              $("input[name='switch_qps_50x']").attr("placeholder",switch_data["qps_50x"])
+              $("input[name='switch_qps_total']").attr("placeholder",switch_data["qps_total"])
+              $("input[name='switch_seconds']").attr("placeholder",switch_data["seconds"])
+              $("input[name='switch_rule']").attr("placeholder",switch_data["rule"])       
+              $("input[name='switch_enable']").attr("placeholder",switch_data["enable"]?1:0)
+            } else {
+              $("input[name='switch_enable']").val(switch_data["enable"]?1:0)
+              $("input[name='switch_qps_50x']").val(switch_data["qps_50x"])
+              $("input[name='switch_qps_total']").val(switch_data["qps_total"])
+              $("input[name='switch_seconds']").val(switch_data["seconds"])
+              $("input[name='switch_rule']").val(switch_data["rule"])
+            }
+
+            $("input[name='auto-set'][value='1']").prop("checked",true)
+
+            if (scope_name != "global") {
+              $(".auto-item").removeClass("layui-disabled")
+              $(".auto-item").attr("disabled",false)              
+            }
+
+          } else {
+            $("input[name='auto-set'][value='0']").prop("checked",true)
+            if (scope_name != "global") {
+              $(".auto-item").addClass("layui-disabled")
+              $(".auto-item").attr("disabled",true)              
+            }
+
+          }
+
+
+          form.render()
+        }
+        
+      });
+      return config_ajax;
+    }
+    get_config("global","0", false) 
+
+    $("#save").click(function (argument) {
+      var req_data = window.data
+
+      var scope_name = "global"
+      var scope_id = $(".regions").find(".layui-this").data("id")
+      if (scope_id != "0") {
+        // 检查是区域默认还是节点
+        if ($("input[name='config']:checked").val() == "node") {
+          scope_name = "node"
+          scope_id = $("select[name='node']").val()
+          if (!scope_id) {
+            layer.alert("请先选择节点")
+            return
+          }
+        } else {
+          scope_name = "region"
+        }
+
+        req_data = {}
+      }
+
+      var slider_html = $("textarea[name='slider_html']").val()
+      var captcha_html = $("textarea[name='captcha_html']").val()
+      var click_html = $("textarea[name='click_html']").val()
+      var rotate_html = $("textarea[name='rotate_html']").val()
+      var delay_jump_html = $("textarea[name='delay_jump_html']").val()
+
+      var block_time = $("input[name='block_time']").val()
+      var white_time = $("input[name='white_time']").val()
+      var custom_white = $("textarea[name='custom_white']").val()
+      var custom_black = $("textarea[name='custom_black']").val()
+      var cc_enable = $("input[name='cc_enable']").val()
+      var default_page_rule = $("input[name='default_page_rule']").val()
+      var icmp_drop = $("input[name='icmp_drop']").val()
+      var default_page_refuse = $("input[name='default_page_refuse']").val()
+
+      var log_level = $("input[name='log_level']").val()
+      var debug_ip = $("input[name='debug_ip']").val()
+
+      var host = $("input[name='host']").val()
+      var port = $("input[name='port']").val()
+
+      var switch_enable = $("input[name='switch_enable']").val()
+      var switch_qps_50x = $("input[name='switch_qps_50x']").val()
+      var switch_qps_total = $("input[name='switch_qps_total']").val()
+      var switch_rule = $("input[name='switch_rule']").val()
+      var switch_seconds = $("input[name='switch_seconds']").val()
+
+      if (slider_html) {
+        req_data['slider_html'] = slider_html
+      };
+      
+      if (captcha_html) {
+        req_data['captcha_html'] = captcha_html
+      }
+      
+      if (click_html) {
+        req_data['click_html'] = click_html
+      }
+
+      if (rotate_html) {
+        req_data['rotate_html'] = rotate_html
+      }
+
+      if (delay_jump_html) {
+        req_data['delay_jump_html'] = delay_jump_html
+      }
+      
+      if (block_time) {
+        req_data['block_time'] = parseInt(block_time)
+      }
+      
+      if (white_time) {
+        req_data['white_time'] = parseInt(white_time)
+      }
+
+      if (default_page_rule) {
+        req_data['default_page_rule'] = default_page_rule
+      }
+
+      if (icmp_drop) {
+        req_data['icmp_drop'] = icmp_drop
+      }
+
+      if (default_page_refuse) {
+        req_data['default_page_refuse'] = default_page_refuse
+      }
+      
+      req_data['custom_white'] = custom_white
+      req_data['custom_black'] = custom_black
+    
+      
+      if (cc_enable) {
+        req_data['cc_enable'] = cc_enable == "1"?true:false
+      }
+
+      req_data['log'] = {}
+      req_data['log']['log_level'] = log_level
+      req_data['log']['debug_ip'] = debug_ip
+      req_data['log']['host'] = host
+      req_data['log']['port'] = parseInt(port)
+
+      if (scope_name != "global") {
+        var log_set = $("input[name='log-set']:checked").val()
+        if (log_set == "0") {
+          delete req_data['log']
+        } 
+      }
+
+      req_data['auto_switch'] = {}
+      req_data['auto_switch']['enable'] = switch_enable == "1"?true:false
+      req_data['auto_switch']['qps_50x'] = parseInt(switch_qps_50x)
+      req_data['auto_switch']['qps_total'] = parseInt(switch_qps_total)
+      req_data['auto_switch']['rule'] = switch_rule
+      req_data['auto_switch']['seconds'] = parseInt(switch_seconds)
+
+      if (scope_name != "global") {
+        var auto_set = $("input[name='auto-set']:checked").val()
+        if (auto_set == "0") {
+          delete req_data['auto_switch']
+        } 
+      }
+
+      admin.req({
+        url: '/configs/' + scope_name + "-" + scope_id + "-openresty_config-openresty-config" //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,data: JSON.stringify({"value": JSON.stringify(req_data)})
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          layer.msg('保存成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          });          
+        }
+      });    
+    })
+
+  });
+
+
+  </script>

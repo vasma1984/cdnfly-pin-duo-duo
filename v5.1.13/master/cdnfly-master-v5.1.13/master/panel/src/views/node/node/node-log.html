@@ -1,0 +1,107 @@
+<div class="layui-tab layui-form" lay-filter="log-tab">
+  <div class="layui-form-item monitor-type layui-hide">
+    <div class="layui-input-inline">
+      <select name="monitor_type" lay-filter="monitor_type" lay-verify="required">
+        <option value="aval">可用性</option>
+        <option value="bw">带宽</option>
+      </select>
+    </div>
+    <div class="layui-form-mid layui-word-aux">日志类型</div>
+  </div>    
+
+  <ul class="layui-tab-title">
+    <li class="layui-this monitor-tab">监控日志</li>
+    <li class="switch-tab">切换日志</li>
+      <button style="float:right;margin-top: 8px;margin-right: 10px;" type="button" class="refresh layui-btn layui-btn-xs"><i class="layui-icon layui-icon-refresh-3"></i>   
+    </button>
+
+  </ul>
+
+  <div class="layui-form layui-tab-content">
+    <div class="layui-tab-item layui-show">
+      <div class="layui-inline-block">
+        <input type="text" class="layui-input" lay-filter="time-range" id="time-range">
+      </div>
+      <table class="layui-hide" id="monitor-table" lay-filter="monitor-table"></table>
+    </div>
+    <div class="layui-tab-item">
+      <table class="layui-hide" id="switch-table" lay-filter="switch-table"></table>
+    </div>
+  </div>
+</div>
+<script>
+layui.use(['admin', 'table','laydate'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,view = layui.view
+  ,table = layui.table
+  ,element = layui.element
+  ,form = layui.form
+  ,laydate = layui.laydate;
+  form.render()
+
+  
+  function formatDate(time,format='YY-MM-DD hh:mm:ss'){
+        var date = new Date(time);
+     
+        var year = date.getFullYear(),
+            month = date.getMonth()+1,//月份是从0开始的
+            day = date.getDate(),
+            hour = date.getHours(),
+            min = date.getMinutes(),
+            sec = date.getSeconds();
+        var preArr = Array.apply(null,Array(10)).map(function(elem, index) {
+            return '0'+index;
+        });//开个长度为10的数组 格式为 ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"]
+     
+        var newTime = format.replace(/YY/g,year)
+            .replace(/MM/g,preArr[month]||month)
+            .replace(/DD/g,preArr[day]||day)
+            .replace(/hh/g,preArr[hour]||hour)
+            .replace(/mm/g,preArr[min]||min)
+            .replace(/ss/g,preArr[sec]||sec);
+     
+        return newTime;
+    };
+  
+  
+
+  $(".refresh").click(function () {
+    var type = $("select[name='monitor_type']").val()
+    if ($(".monitor-tab").hasClass("layui-this")) {
+      laydate.render({
+        elem: '#time-range' //指定元素
+        ,format : 'yyyy-MM-dd HH:mm:ss'
+        ,range: true
+        ,type: 'datetime'
+        ,value: formatDate(new Date().getTime() - 3600000) + " - " + formatDate(new Date().getTime())
+
+      });
+
+      var date_range = $("#time-range").val()
+      var start = date_range.split(" - ")[0]
+      var end = date_range.split(" - ")[1]      
+
+      table.reload("monitor-table",{"where":{"type":type,"start":start,"end":end}})
+    } else {
+      var switch_type
+      if (type == "bw") {
+        switch_type = "带宽监控"
+      } else if (type == "aval") {
+        switch_type = "节点IP解析"
+      }
+      table.reload("switch-table",{"where":{"type":switch_type}})
+    }
+  })
+
+  form.on('select(monitor_type)', function(data){
+    $(".refresh").click()
+  });      
+
+  element.on('tab(log-tab)', function(data){
+    $(".refresh").click()
+  });
+
+})
+
+</script>

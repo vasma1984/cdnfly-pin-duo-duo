@@ -1,0 +1,204 @@
+
+
+<title>系统设置 - 系统管理</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>系统管理</cite></a>
+    <a><cite>系统设置</cite></a>
+  </div>
+</div>
+
+<style type="text/css">
+.layui-elem-quote{padding: 6px;}
+.thin-gray{font-weight: 400;color: #999;} 
+.small-title{font-weight:700;font-size:14px}
+hr {margin-bottom: 30px}
+.layui-form-switch {margin-top: 0px;}
+</style>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+         <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+          <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+
+              <div class="layui-row ">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">API密钥设置</span></div>
+              </div>
+
+              <div class="layui-row layui-col-space10  ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">密钥状态：</div>
+                <div class="layui-col-lg1 layui-col-md2 layui-form">
+                  <input style="margin-top: 0px;" type="checkbox" name="api-key-enable" lay-filter="api-key-enable" lay-skin="switch" lay-text="开启|关闭">
+                </div>
+                <div class="layui-col-lg2 layui-col-md4 layui-hide api-key-section"> <button id="reset-api-key" type="button" class="layui-btn  layui-btn-sm">重置密钥</button></div>
+              </div>
+
+              <div class="layui-row layui-col-space10 layui-hide api-key-section ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">api_key：</div>
+                <div class="layui-col-lg2 layui-col-md4 layui-form api-key">
+                  
+                </div>
+              </div> 
+
+              <div class="layui-row layui-col-space10 layui-hide api-key-section ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">api_secret：</div>
+                <div class="layui-col-lg2 layui-col-md4 layui-form api-secret">
+                  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space10 layui-hide api-key-section ignore-fill">
+                <div class="layui-col-lg2 layui-col-md4">IP白名单：</div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" placeholder="多个IP以|分隔" name="api-ip" autocomplete="off" class="layui-input">
+                </div>
+
+              </div>
+
+            </div>
+        </div>
+      </div>                 
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+  layui.use(['admin', 'table','form'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    form.render()
+
+    // 填充api-key
+    admin.req({
+      url: '/api-key'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = res.data
+        if (data) {
+          var api_key = data['api_key']
+          var api_secret = data['api_secret']
+          var api_ip = data['api_ip']
+
+          $(".api-key").text(api_key)
+          $(".api-secret").text(api_secret)
+          $("input[name='api-ip']").val(api_ip)
+          $(".api-key-section").removeClass("layui-hide")
+          $("input[name='api-key-enable']").prop("checked",true) 
+          form.render()
+
+        };
+      }
+    });
+
+    // 开启和关闭api key
+    form.on('switch(api-key-enable)', function(data){
+      var checked = data.elem.checked?1:0
+      if (checked) {
+        admin.req({
+          url: '/api-key' //实际使用请改成服务端真实接口
+          ,type: "post"
+          ,contentType:"application/json"
+          ,dataType: "json"        
+          ,done: function(res){
+            //登入成功的提示与跳转
+            layer.msg('成功开启', {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              var data = res.data
+              var api_key = data['api_key']
+              var api_secret = data['api_secret']
+
+              $(".api-key").text(api_key)
+              $(".api-secret").text(api_secret)
+              $(".api-key-section").removeClass("layui-hide")
+            });
+          }
+        });
+      } else {
+        admin.req({
+          url: '/api-key' //实际使用请改成服务端真实接口
+          ,type: "delete"
+          ,contentType:"application/json"
+          ,dataType: "json"        
+          ,done: function(res){
+            //登入成功的提示与跳转
+            layer.msg('成功关闭', {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              $(".api-key-section").addClass("layui-hide")
+            });
+          }
+        });
+      }
+
+    });     
+
+    // ip白名单
+    $("input[name='api-ip']").on('change', function(){
+      var ip = $(this).val();
+      admin.req({
+        url: '/api-key' //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,data: JSON.stringify({"ip":ip})
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('更新成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          });
+        }
+      });
+
+    });
+
+    // 重置密钥
+    $("#reset-api-key").click(function (argument) {
+      admin.req({
+        url: '/api-key' //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,data: JSON.stringify({"reset":1})
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('重置成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          }, function(){
+              var data = res.data
+              var api_key = data['api_key']
+              var api_secret = data['api_secret']
+
+              $(".api-key").text(api_key)
+              $(".api-secret").text(api_secret)
+            
+          });
+        }
+      });
+    })
+
+  });  
+
+</script>

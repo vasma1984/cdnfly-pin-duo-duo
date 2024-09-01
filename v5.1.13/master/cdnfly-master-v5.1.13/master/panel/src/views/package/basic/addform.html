@@ -1,0 +1,378 @@
+<style type="text/css">
+.textarea__label {
+    font-size: 12px;
+    position: absolute;
+    bottom: 21px;
+    right: 11px;
+    color: #888;
+}
+.small-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 
+}
+.label {
+  text-align: right;
+  padding-right: 20px;
+  padding-top: 12px;
+}
+
+.label2 {
+  text-align: right;
+  padding-top: 12px;
+}
+
+.select2-container {
+z-index: 20000000000; }
+</style>
+  <form class="layui-form" action="">
+      <fieldset class="layui-elem-field layui-field-title">
+        <legend>基本设置</legend>
+      </fieldset>
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">名称</label>
+          <div class="layui-input-inline">
+            <input type="text" name="name" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">描述</label>
+          <div class="layui-input-inline">
+            <input type="text" name="des" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">套餐分组</label>
+          <div class="layui-input-inline">
+              <select lay-ignore class="group-select" multiple="multiple" style="width: 300px" name="groups">                
+              </select>
+          </div>
+        </div>
+
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">区域</label>
+          <div class="layui-input-inline">
+            <select lay-filter="region_id" name="region_id" lay-verify="">
+              <option value="">请选择区域</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">线路分组</label>
+          <div class="layui-input-inline">
+            <select name="node_group_id" lay-verify="">
+              <option value="">请选择</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">备用线路组</label>
+          <div class="layui-input-inline">
+            <select name="backup_node_group" lay-verify="">
+              <option value="">请选择</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <fieldset class="layui-elem-field layui-field-title" style="margin-top:30px;">
+        <legend>资源限制</legend>
+      </fieldset>
+
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">月流量(G)</label>
+          <div class="layui-input-inline">
+            <input type="text" value="-1" placeholder="-1表示不限制" name="traffic" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">带宽</label>
+          <div class="layui-input-inline">
+            <input type="text" name="bandwidth" value="-1" placeholder="-1不限，单位为Mbps,Gbps" value="" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">连接数</label>
+          <div class="layui-input-inline">
+            <input type="text" name="connection" value="-1" placeholder="-1表示不限制" value="" class="layui-input">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">四层端口数</label>
+          <div class="layui-input-inline">
+            <input type="text" name="stream_port" value="0" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">域名数</label>
+          <div class="layui-input-inline">
+            <input type="text" name="domain" value="0" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label" style="font-size: 12px;padding: 0px 15px;">HTTP非80,443端口数</label>
+          <div class="layui-input-inline">
+            <input type="text" name="http_port" value="0" class="layui-input">
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label" style="font-size:12px;">自定义CC规则</label>
+          <div class="layui-input-inline">
+            <input type="checkbox" name="custom_cc_rule" lay-skin="switch" lay-text="允许|禁止">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label" style="font-size:12px;">Websocket</label>
+          <div class="layui-input-inline">
+            <input type="checkbox" name="websocket" lay-skin="switch" lay-text="允许|禁止">
+          </div>
+        </div>
+
+      </div>
+      <fieldset class="layui-elem-field layui-field-title" style="margin-top:30px;">
+        <legend>定价</legend>
+      </fieldset>
+
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">月付(元)</label>
+          <div class="layui-input-inline">
+            <input type="text" value="0" name="month_price" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label" >季度付(元)</label>
+          <div class="layui-input-inline">
+            <input type="text"  value="0" name="quarter_price" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label" >年付(元)</label>
+          <div class="layui-input-inline">
+            <input type="text"  value="0" name="year_price" class="layui-input">
+          </div>
+        </div>
+
+      </div>
+
+      <fieldset class="layui-elem-field layui-field-title" style="margin-top:30px;">
+        <legend class="cname-title" style="cursor: pointer">CNAME设置 <i class="layui-icon layui-icon-down"></i> </legend>
+      </fieldset> 
+       
+      <div style="margin-left:40px;font-size:12px;" class="layui-form-item layui-hide cname">
+         网站CNAME的格式为 <b>随机字符.主机名.CNAME域名</b>，如果主机名为空，则为<b>随机字符.CNAME域名</b><br>
+      </div>
+      <div style="margin-left:40px;font-size:12px;" class="layui-form-item layui-hide cname">
+        CNAME模式尽量使用按网站生成，按套餐生成的CNAME,网站不支持更换线路分组，不支持更换套餐。
+     </div>
+
+      <div class="layui-form-item layui-hide cname">
+        <div class="layui-inline">
+          <label class="layui-form-label">主机名</label>
+          <div class="layui-input-inline">
+            <input type="text" name="cname_hostname2" placeholder="留空则使用一级域名" class="layui-input">
+          </div>
+        </div> 
+
+        <div class="layui-inline">
+          <label class="layui-form-label">CNAME域名</label>
+          <div class="layui-input-inline">
+            <input type="text" name="cname_domain" placeholder="留空则使用主域名" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">CNAME模式</label>
+          <div class="layui-input-inline">
+            <select lay-filter="cname_mode" name="cname_mode" lay-verify="">
+              <option value="site">按网站生成(推荐)</option>
+              <option value="package">按套餐生成</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <fieldset class="layui-elem-field layui-field-title" style="margin-top:30px;">
+        <legend class="buy-limit-title" style="cursor: pointer">购买限制 <i class="layui-icon layui-icon-down"></i> </legend>
+      </fieldset>
+
+      <div class="layui-form-item layui-hide buy-limit">
+        <div class="layui-inline">
+          <label style="font-size: 12px;padding: 0px 15px;" class="layui-form-label">单个用户购买数量限制</label>
+          <div class="layui-input-inline">
+            <input type="text" placeholder="-1表示不限制,默认不限制" name="buy_num_limit" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label style="font-size: 12px;padding: 0px 15px;" class="layui-form-label">有效期至 (默认永久有效)</label>
+          <div class="layui-input-inline">
+            <input type="text" name="expire" id="expire" value="" class="layui-input" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label" style="font-size:12px;">要求实名认证</label>
+          <div class="layui-input-inline">
+            <input type="checkbox" name="id_verify" lay-skin="switch" lay-text="要求|不要求">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="layui-form-item  layui-hide buy-limit">
+        <div class="layui-inline">
+          <label style="font-size: 12px;padding: 0px 15px;" class="layui-form-label">到期前N天才能续费</label>
+          <div class="layui-input-inline">
+            <input type="text" name="before_exp_days_renew" placeholder="-1表示不限制,默认不限制" value="" class="layui-input">
+          </div>
+        </div>
+      </div>
+
+      <fieldset class="layui-elem-field layui-field-title" style="margin-top:30px;">
+        <legend class="other-title" style="cursor: pointer">其它 <i class="layui-icon layui-icon-down"></i> </legend>
+      </fieldset>
+      <div class="layui-form-item layui-hide other ">
+        <div class="layui-inline">
+          <label class="layui-form-label">分配给用户</label>
+          <div class="layui-input-inline">
+            <input type="text" name="owner" placeholder="填用户id，多个以逗号分隔" class="layui-input">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">排序</label>
+          <div class="layui-input-inline">
+            <input type="text" name="sort" placeholder="默认100，数字小的靠前" class="layui-input">
+          </div>
+        </div>
+
+
+        <div class="layui-inline">
+          <label class="layui-form-label" >状态</label>
+          <div class="layui-input-inline">
+            <input type="checkbox" name="enable" lay-skin="switch" checked lay-text="启用|禁用">
+          </div>
+        </div>     
+   
+
+      </div>
+
+      <div class="layui-form-item layui-hide other ">
+        
+        <div class="layui-inline">
+          <label class="layui-form-label" >源IP限制</label>
+          <div class="layui-input-inline">
+            <textarea name="backend_ip_limit" placeholder="一行一个IP或IP段&#13;&#10;如192.168.1.0/24" class="layui-textarea"></textarea>
+          </div>
+        </div>     
+
+      </div>
+
+  </form>
+
+
+  <div class="layui-row layui-col-space30">   
+    <div class="layui-col-md2 layui-col-md-offset10">
+      <button type="button" class="layui-btn add">确定</button>
+    </div>    
+  </div>
+
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+
+  <script src="/src/lib/select2.min.js"></script>
+
+<script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,laydate = layui.laydate
+    ,form = layui.form;
+
+    laydate.render({
+      elem: '#expire',
+      type: 'datetime'
+    });
+
+    $(document).ready(function() {
+        $('.group-select').select2({
+          width: '190px'
+        });
+    });
+
+    $(".cname-title").click(function () {
+      var $icon = $(this).find(".layui-icon")
+      if ($icon.hasClass("layui-icon-down")) {
+        $icon.removeClass("layui-icon-down")
+        $icon.addClass("layui-icon-up")
+        $(".cname").removeClass("layui-hide")
+      } else {
+        $icon.removeClass("layui-icon-up")
+        $icon.addClass("layui-icon-down")    
+        $(".cname").addClass("layui-hide")    
+      }
+    })
+
+    $(".buy-limit-title").click(function () {
+      var $icon = $(this).find(".layui-icon")
+      if ($icon.hasClass("layui-icon-down")) {
+        $icon.removeClass("layui-icon-down")
+        $icon.addClass("layui-icon-up")
+        $(".buy-limit").removeClass("layui-hide")
+      } else {
+        $icon.removeClass("layui-icon-up")
+        $icon.addClass("layui-icon-down")    
+        $(".buy-limit").addClass("layui-hide")    
+      }
+    })
+
+    $(".other-title").click(function () {
+      var $icon = $(this).find(".layui-icon")
+      if ($icon.hasClass("layui-icon-down")) {
+        $icon.removeClass("layui-icon-down")
+        $icon.addClass("layui-icon-up")
+        $(".other").removeClass("layui-hide")
+      } else {
+        $icon.removeClass("layui-icon-up")
+        $icon.addClass("layui-icon-down")    
+        $(".other").addClass("layui-hide")    
+      }
+    })
+
+    layui.form.render()
+
+   
+  }); //重载表格  
+
+
+</script>    

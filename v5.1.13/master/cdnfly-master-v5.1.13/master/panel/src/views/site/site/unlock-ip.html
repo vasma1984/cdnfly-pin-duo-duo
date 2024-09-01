@@ -1,0 +1,238 @@
+<style type="text/css">
+.textarea__label {
+    font-size: 12px;
+    position: absolute;
+    bottom: 21px;
+    right: 11px;
+    color: #888;
+}
+</style>
+  <script type="text/html" template>
+  <span style="color:#009688">已选网站：</span><span id="site_id">{{ d.params.site_ids }}</span>
+  </script>  
+
+    <div class="layui-tab layui-tab-brief" lay-filter="unlock_ip_tab">
+
+
+      <ul class="layui-tab-title">
+        <li class="layui-this">解锁IP</li>
+        <li>操作记录</li>
+      </ul>
+      <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+          <div class="layui-row layui-col-space10">   
+            <div class="layui-col-md12 layui-form">
+              <input type="radio" lay-filter="unlock-type" name="unlock-type" value="specify" title="指定IP" checked>
+              <input type="radio" lay-filter="unlock-type" name="unlock-type" value="all_site" title="全站">
+            </div>  
+          </div>          
+          <div class="layui-row ip-input layui-col-space10">    
+            <div class="layui-col-md12">
+              <textarea rows="8" name="ip" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+              <span class="textarea__label unlock-per-max"></span>              
+            </div>
+          </div>
+          <div class="layui-row" style="margin-bottom:30px;">    
+            <div class="layui-col-md12">
+              <span class="remain_times" style="color:#bbb"></span>
+            </div>
+          </div>
+          <div class="layui-row layui-col-space30">   
+            <div class="layui-col-md12">
+              <button type="button" class="layui-btn unlock_ip">提交清理</button>
+            </div>
+          </div>
+        </div>
+        <div class="layui-tab-item">
+            <table id="unlock_ip_table" lay-filter="unlock_ip_table"></table>
+            <script type="text/html" id="unlock-ip-toolbar">
+                  <div class="layui-col-md3">
+                    <input style="height:30px" type="text" name="search_site_id" placeholder="网站ID" autocomplete="off" class="layui-input">
+
+                  </div>
+                  <div class="layui-col-md1" style="margin-left:10px">
+                    <button class="layui-btn  layui-btn-sm" onclick="unlock_ip_search()">
+                      <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                  </div>
+                                 
+            </script>            
+        </div>
+      </div>
+    </div>     
+
+<script>
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    form.render("radio")
+
+    form.on('radio(unlock-type)', function(data){
+      if (data.value == "all_site") {
+        $(".ip-input").addClass("layui-hide")
+      } else {
+        $(".ip-input").removeClass("layui-hide")
+      }
+    });  
+
+    layui.element.on('tab(unlock_ip_tab)', function(data){
+      table.resize("unlock_ip_table");
+    }); 
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#unlock_ip_table'
+      ,toolbar: '#unlock-ip-toolbar'
+      ,headers: {"access-token":access_token}
+      ,url: '/jobs?type=unlock_ip' //数据接口
+      ,page: true //开启分页
+      ,size: 'sm'
+      ,cols: [[ //表头
+        {field: 'key1', title: '网站ID',  width: 70}
+        ,{field:'data', title:'IP', templet: function(d){
+          var data = JSON.parse(d.data)
+          var ip = data['ip']
+          if (ip == "__all__") {
+            return '全站'
+          } else {
+            return ip
+          }
+          
+        }}   
+        ,{field:'state', title:'状态',  width: 80, templet: function(d){
+          if (d.state == "pending") {
+            return '<span class="layui-badge layui-bg-orange">待解锁</span>'
+          } else if (d.state == "process") {
+            return '<span class="layui-badge layui-bg-orange">解锁中</span>'
+          } else if (d.state == "failed") {
+            return '<span class="layui-badge layui-bg-orange">解锁失败</span>'            
+          } else {
+            return '<span class="layui-badge layui-bg-green">完成</span>'   
+          }
+        }}  
+        ,{field: 'create_at2', title: '创建时间'}
+      ]]
+    });
+
+    $(".unlock_ip").click(function (argument) {
+      var site_ids = $("#site_id").text()
+      if (site_ids == "") {
+        layer.alert("请先选择需要解锁IP的网站")
+        return
+      }
+
+      var ip = undefined
+      var unlock_type = $("input[name='unlock-type']:checked").val()
+      if (unlock_type == "specify") {
+        ip = $("textarea[name='ip']").val()
+      }
+
+      var req_data = []
+      var site_ids_arr = site_ids.split(", ")
+      for (i in site_ids_arr) {
+        var site_id = site_ids_arr[i]
+        var job_type = "unlock_ip"
+        var data = {"site_id":site_id,"ip": ip,"key1":"site_id"} 
+        req_data.push({"type":job_type,"data":data})
+      }
+
+      admin.req({
+        url: '/jobs' //实际使用请改成服务端真实接口
+        ,data: JSON.stringify(req_data)
+        ,type: "post"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('解锁IP任务提交成功，请稍等几分钟左右.', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 3000
+          }, function(){
+            $("textarea[name='ip']").val("")
+
+          });
+        }
+      });
+
+
+    })
+
+    // 获取单次清缓存条数
+    admin.req({
+      url: '/configs/global-0-site-ip-unlock-max-per-limit' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        window.per_max = res.data.value
+        $(".unlock-per-max").text("0/" + window.per_max)
+      }
+    }); 
+
+    // 获取今日清缓存次数
+    var day = new Date();
+    day.setTime(day.getTime());
+    var today = day.getFullYear()+"-" + (day.getMonth()+1) + "-" + day.getDate();
+
+    var today_job_ajax = admin.req({
+      url: '/jobs?type=unlock_ip&start=' + today //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        window.today_count = res.count
+      }
+    });
+
+    // 获取配置允许次数
+    var max_allow_ajax = admin.req({
+      url: '/configs/global-0-site-ip-unlock-max-limit' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        window.max_allow = parseInt(res.data.value)
+      }
+    }); 
+
+    $.when(today_job_ajax,max_allow_ajax).then(function (argument) {
+      $(".remain_times").text("今日剩余解锁量"+(window.max_allow-window.today_count)+"个")
+      
+    })
+
+
+    // 监听textarea输入，统计行数
+    $(".layui-textarea").keydown(function (event) {
+        var data = $(this).val()
+        var line = data.split("\n")
+        var num = 0
+        for (i in line) {
+          if (! line[i].match(/^\s*$/)) {
+            num = num + 1
+          }
+        }
+        $(this).next().text(num + "/" + window.per_max)
+    })
+
+   }); 
+
+function unlock_ip_search (argument) {
+  var site_id = layui.$("input[name='search_site_id']").val()
+
+  layui.table.reload('unlock_ip_table',{
+    where:{"key1":site_id},
+    done: function (argument) {
+      // 保持搜索状态
+      layui.$("input[name='search_site_id']").val(site_id)
+
+    }      
+  }); //重载表格  
+}
+
+
+</script>    

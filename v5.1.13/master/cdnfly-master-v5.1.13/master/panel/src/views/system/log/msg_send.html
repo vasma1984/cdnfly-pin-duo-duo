@@ -1,0 +1,144 @@
+
+
+  <title>登录日志 - 系统日志 - 系统管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>系统管理</cite></a>
+      <a><cite>系统日志</cite></a>
+      <a><cite>发信日志</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">    
+        <div class="layui-col-md2 layui-form">
+          <input type="text" name="uid"  placeholder="用户ID" autocomplete="off" class="layui-input">
+        </div> 
+
+        <div class="layui-col-md2 layui-form">
+          <input type="text" name="msg_id"  placeholder="消息ID" autocomplete="off" class="layui-input">
+        </div> 
+
+        <div class="layui-col-md2 layui-form">
+          <select lay-filter="msg_type" name="msg_type">
+            <option value=''>消息类型</option>
+            <option value='traffic-exceeding'>流量即将用尽</option>
+            <option value='traffic-exceed'>流量已用尽</option>
+            <option value='package-expiring'>套餐即将到期</option>
+            <option value='package-expire'>套餐已到期</option>
+          </select>
+        </div>  
+
+        <div class="layui-col-md2 layui-form">
+          <select lay-filter="media" name="media">
+            <option value=''>媒介</option>
+            <option value='email'>电子邮件</option>
+            <option value='phone'>手机短信</option>
+          </select>
+        </div>  
+
+        <div class="layui-col-md2 layui-form">
+          <select lay-filter="state"  name="state">
+            <option value=''>状态</option>
+            <option value='done'>成功</option>
+            <option value='failed'>失败</option>
+          </select>
+        </div> 
+
+    </div>
+
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form
+    ,laydate = layui.laydate;
+
+    form.render()
+    var access_token = layui.data('layuiAdmin')['access-token']
+
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/log/msg-send'
+      ,headers: {"access-token":access_token}
+      ,title: '登录日志'
+      ,cols: [[
+        {field:'uid', title:'用户ID'}
+        ,{field:'msg_id', title:'消息ID'}
+        ,{field:'title', title:'标题'}
+        ,{field:'media', title:'媒介',templet:function (d) {
+          if (d.media == "email") {
+            return "电子邮件"
+          } else {
+            return "手机短信  "
+          }
+          // body...
+        }}
+        ,{field:'failed_times', title:'失败次数'}
+        ,{field:'state', title:'状态', templet: function(d){
+          if (d.state == "done") {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'  
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+          }            
+
+        }}
+        ,{field:'ret', title:'原因'}
+        ,{field:'create_at2', title:'发送时间'}
+
+      ]]
+      ,page: true
+      ,defaultToolbar: []
+    });
+
+    // uid
+    $("input[name='uid']").on('change', function(){
+        var uid = $(this).val();
+        table.reload('test-table-toolbar',{where: {"uid":uid}, page: {curr: 1}})
+
+    }); 
+
+    // msg_id
+    $("input[name='msg_id']").on('change', function(){
+        var msg_id = $(this).val();
+        table.reload('test-table-toolbar',{where: {"msg_id":msg_id}, page: {curr: 1}})
+
+    }); 
+
+    // 消息类型
+    form.on('select(msg_type)', function(data){
+      var msg_type = data.value
+      table.reload('test-table-toolbar',{where: {"msg_type":msg_type}, page: {curr: 1}})
+    });       
+
+    // 媒介
+    form.on('select(media)', function(data){
+      var media = data.value
+      table.reload('test-table-toolbar',{where: {"media":media}, page: {curr: 1}})
+    }); 
+
+    // 状态
+    form.on('select(state)', function(data){
+      var state = data.value
+      table.reload('test-table-toolbar',{where: {"state":state}, page: {curr: 1}})
+    }); 
+
+
+  });
+
+  </script>

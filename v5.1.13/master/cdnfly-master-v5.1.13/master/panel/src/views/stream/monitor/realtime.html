@@ -1,0 +1,88 @@
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+<script src="/src/lib/select2.min.js"></script>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>四层转发</cite></a>
+    <a><cite>监控统计</cite></a>
+    <a><cite>实时监控</cite></a>
+  </div>
+</div>
+<style type="text/css">
+.select2-container .select2-selection--multiple {min-height: 30px;}
+.layui-card-body  {line-height: 18px;}
+.active-btn {
+  border: 1px solid #009688 ! important;
+  color: #009688
+}
+.select2-container .select2-search--inline .select2-search__field {padding-left: 5px;}
+</style>
+
+<div class="layui-fluid" id="component-tabs">
+  <div class="layui-row">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-tab layui-tab-brief" lay-filter="stream-monitor-tab">
+            <ul class="layui-tab-title">
+              <li class="layui-this">带宽流量</li>
+            </ul>
+            <div class="layui-tab-content">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md3 ports-select ">
+                  <input style="display:none" type="password" name="pass"/>
+                  <select lay-ignore class="ports form-control" multiple="multiple" style="width: 100%;height:30px;" name="ports">
+                  </select>
+                </div>  
+                <div class="layui-col-md8">
+                  <div class="layui-btn-group">
+                    <button type="button" data-hour=1 class="layui-btn layui-btn-primary layui-btn-sm hours active-btn">1小时实时</button>
+                    <button type="button" data-hour=6 class="layui-btn layui-btn-primary layui-btn-sm hours">近6小时</button>
+                    <button type="button" data-hour=12 class="layui-btn layui-btn-primary layui-btn-sm hours">近12小时</button>
+                    <button type="button" id="date_tip" class="layui-btn layui-btn-primary  layui-btn-sm">自定义 <i class="layui-icon">&#xe637;</i></button>
+                    <button type="button" id="date" class="layui-btn layui-btn-primary layui-btn-sm layui-hide"></button>
+                  </div>
+
+                  <button id="query" type="button" class="layui-btn layui-btn-sm">查询</button>
+                </div>
+              </div>               
+              <div class="layui-tab-item layui-show">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="stream-bandwidth">
+                        <div carousel-item id="stream-bandwidth">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="stream-traffic">
+                        <div carousel-item id="stream-traffic">
+                          <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+   </div>
+</div>
+
+<script>
+layui.use('stream_senior', layui.factory('stream_senior'));
+layui.use(['admin', 'table','laydate'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,element = layui.element
+  ,router = layui.router();
+  element.render();
+});
+</script>

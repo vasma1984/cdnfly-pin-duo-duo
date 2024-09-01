@@ -1,0 +1,167 @@
+
+
+  <title>套餐监控 - 套餐管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>套餐管理</cite></a>
+      <a><cite>套餐监控</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md2 layui-form" style="padding-left:40px;">
+          <input type="text" name="upids"  placeholder="用户套餐ID，多个以逗号分隔" autocomplete="off" class="layui-input">
+        </div> 
+
+        <div class="layui-col-md2 layui-form" style="padding-left:40px;">
+          <input type="text" name="uid"  placeholder="用户ID" autocomplete="off" class="layui-input">
+        </div> 
+ 
+
+        <div class="layui-col-md2 layui-form" style="padding-left:40px;">
+          <input type="text" name="node_ids"  placeholder="节点ID，多个以逗号分隔" autocomplete="off" class="layui-input">
+        </div> 
+
+        <div class="layui-col-md2 layui-form">
+          <select name="order_by" lay-verify="required">
+            <option value="">选择排序</option>
+            <option value="bandwidth">按带宽</option>
+            <option value="connection">按连接数</option>
+          </select>
+        </div> 
+        <div class="layui-col-md1 layui-form">
+          <button style="margin-top: 3px;" class="layui-btn layui-btn-normal layui-btn-sm" id="refresh">查询</button>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail">查看节点分布</a>
+            </script>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form
+    ,laydate = layui.laydate;
+
+    form.render()
+    var access_token = layui.data('layuiAdmin')['access-token']
+
+    function byte_to_readable_bit(byte) {
+      if (byte >= 125000000) {
+        return (byte * 8/1000/1000/1000.0).toFixed(2) + "Gbps"
+
+      } else {
+        return (byte * 8/1000/1000.0).toFixed(2) + "Mbps"
+      }  
+    }
+
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/monitor/user-package'
+      ,limit: 10
+      ,headers: {"access-token":access_token}
+      ,cols: [[
+        {checkbox: true}
+        ,{field:'id', title:'套餐',templet: function(d) {
+          return d.id+" ("+d.name+")"
+        }}
+        ,{field:'uid', title:'用户ID'}
+        ,{field:'bandwidth', title:'当前带宽 / 总限制', templet: function(d){
+          var curr = byte_to_readable_bit(d.bandwidth_usage)
+          var usage = "不限"
+          if (d.bandwidth_limit != "-1" ) {
+            usage = d.bandwidth_limit
+          }
+
+          return curr+" / "+usage
+
+        }}
+        ,{field:'connection', title:'当前连接数 / 总限制', templet: function(d){
+          var curr = d.connection_usage
+          var usage = "不限"
+          if (d.connection_limit != "-1" ) {
+            usage = d.connection_limit
+          }
+
+          return curr+" / "+usage
+
+        }}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo'}
+
+      ]]
+      ,page: true
+      ,defaultToolbar: []
+    });
+
+    function getLocalTime(nS) {  
+      return new Date(parseInt(nS) * 1000).toLocaleString();  
+    }
+
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'detail'){
+        admin.popup({
+          title: '用户套餐('+data.id+')资源用量节点分布'
+          ,area: ['800px', '450px']
+          ,id: 'LAY-popup-package-node'
+          ,success: function(layero, index){
+            view(this.id).render('package/monitor/detail',data).done(function(){
+              table.render({
+                elem: '#package-node'
+                ,url:'/monitor/user-package/nodes?upid=' + data.id
+                ,headers: {"access-token":access_token}
+                ,cols: [[
+                  {field:'node_id', title:'节点ID',sort: true}
+                  ,{field:'bandwidth', title:'带宽',sort: true,templet:function(d) {
+                    return byte_to_readable_bit(d.bandwidth)
+                  }}
+                  ,{field:'connection', title:'连接数',sort: true}
+                  ,{field:'time', title:'上报时间',sort: true,templet:function(d) {
+                      return getLocalTime(d.time)
+                  }}
+                ]]
+                ,page: false
+                ,defaultToolbar: []
+              });
+
+            });
+          }
+        });
+
+      }
+    });  
+
+    $("#refresh").click(function (argument) {
+      var upids = $("input[name='upids']").val()
+      var uid = $("input[name='uid']").val()
+      var node_ids = $("input[name='node_ids']").val()
+      var order_by = $("select[name='order_by']").val()
+
+      table.reload('test-table-toolbar', {
+          where: {"upids":upids, "uid":uid,"node_ids":node_ids,"order_by":order_by}
+          , page: {curr: 1}
+        })
+    })
+
+
+  });
+  </script>

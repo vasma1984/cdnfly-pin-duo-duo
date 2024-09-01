@@ -1,0 +1,45 @@
+<style type="text/css">
+.textarea__label {
+    font-size: 12px;
+    position: absolute;
+    bottom: 21px;
+    right: 11px;
+    color: #888;
+}
+</style>
+  <script type="text/html" template>
+  <span style="color:#009688">已选网站：</span><span id="site_id">{{ d.params.site_ids }}</span>
+  </script>  
+
+<div class="layui-form" lay-filter="layuiadmin-form-node-group" style="padding: 20px 0 0 0;">
+  <div class="layui-form-item">
+    <label class="layui-form-label">状态</label>
+    <div class="layui-input-inline layui-form">
+        <select  id="site_cname_mode">
+          <option value="">请选择模式</option>
+          <option value="site">按网站生成</option>
+          <option value="package">按套餐生成</option>
+        </select>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit id="update" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script>
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+    form.render()
+
+  })
+
+</script>    

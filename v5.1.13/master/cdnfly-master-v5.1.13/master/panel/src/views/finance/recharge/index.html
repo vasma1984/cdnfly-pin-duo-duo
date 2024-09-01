@@ -1,0 +1,81 @@
+<div class="layui-form" lay-filter="layuiadmin-form-nodeadmin" style="padding: 20px 0 0 0;">
+  <div class="layui-form-item">
+    <label class="layui-form-label">类型</label>
+    <div class="layui-input-inline">
+      <input type="radio" name="type" value="add" title="充值" checked>
+      <input type="radio" name="type" value="reduce" title="扣款" >
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">用户ID</label>
+    <div class="layui-input-inline">
+      <input type="text" name="user"  placeholder="用户ID" autocomplete="off" class="layui-input"> 
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">金额</label>
+    <div class="layui-input-inline">
+        <input type="text" name="amount"  placeholder="单位为元" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">备注</label>
+    <div class="layui-input-inline">
+        <input type="text" name="des" placeholder="请输入备注" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" id="recharge" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    form.render()
+    $("#recharge").click(function (argument) {
+      var user_id = $("input[name='user']").val()
+      if (user_id == "") {
+        layer.alert("请输入用户id")
+        return
+      }
+
+      var amount = $("input[name='amount']").val()
+      if (amount == "") {
+        layer.alert("请输入金额")
+        return
+      }
+
+      var des = $("input[name='des']").val()
+      var type = $("input[name='type']:checked").val()
+
+      req_data = {"amount":amount,"des":des,"type":type}
+      admin.req({ 
+        url: '/user/'+user_id+'/recharge' //实际使用请改成服务端真实接口
+        ,type: "post"
+        ,data: JSON.stringify(req_data)
+        ,done: function(res){
+          layer.msg(res.msg, {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          }, function(){
+            $("input[name='user']").val("")
+            $("input[name='amount']").val("")
+          });
+        }
+      });      
+    })
+
+  })  
+</script>

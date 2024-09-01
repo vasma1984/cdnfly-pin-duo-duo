@@ -1,0 +1,65 @@
+
+
+<div class="layui-form" lay-filter="layuiadmin-form-ruleadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">匹配器</label>
+    <div class="layui-input-inline">
+      <select name="matcher" lay-verify="">
+        <option value="">请选择匹配器</option>
+      </select>     
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">过滤器1</label>
+    <div class="layui-input-inline">
+      <select class="filter" name="filter1" lay-verify="">
+        <option value="">请选择过滤器1</option>
+      </select>     
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">过滤器2</label>
+    <div class="layui-input-inline">
+      <select class="filter" name="filter2" lay-verify="">
+        <option value="">过滤器2(可选)</option>
+      </select>     
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">动作</label>
+    <div class="layui-input-inline">
+      <select name="action" lay-verify="">
+        <option value="">请选择动作</option>
+        <option value="ipset">ipset</option>
+        <option value="exit">exit</option>
+        <option value="log">log</option>
+      </select>     
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">状态</label>
+    <div class="layui-input-inline">
+      <input type="checkbox" name="state" lay-skin="switch" checked lay-text="开启|关闭">  
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-rulelist-add-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+var form = layui.form
+form.render()
+
+</script>

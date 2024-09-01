@@ -1,0 +1,705 @@
+
+
+  <title>基础套餐 - 套餐管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>套餐管理</cite></a>
+      <a><cite>基础套餐</cite></a>
+    </div>
+  </div>
+
+  <div class="layui-fluid">
+    <div class="layui-row">
+      <div class="layui-col-md12">
+        <div class="layui-form">
+          <div class="layui-form-item">
+            <div class="layui-inline">
+              <select class="region-list" lay-filter="region-list" name="region-list" lay-verify="">
+                  <option value="">所有区域</option>
+              </select>      
+            </div>
+            <div class="layui-inline">
+              <select lay-filter="package-group" name="package-group" lay-verify="">
+                  <option value="">所有套餐分组</option>
+              </select>      
+            </div>      
+          </div>    
+        </div> 
+      </div>  
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md9">
+                    <div class="layui-btn-group">
+                      <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                      <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>  
+                    </div>
+
+                    <div class="layui-btn-group">
+                      <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="enable">启用</button>
+                      <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="disable">禁用</button>
+                    </div>
+                    <div class="layui-btn-group">
+                      <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="sync">同步数据</button>
+                    </div>
+                  </div>
+                </div>
+            </script>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+              <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="assign">分配</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+    
+    // 获取分组
+    var package_group_ajax = admin.req({
+        url: '/package-groups?limit=0' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          var data = res.data
+          for (i in data) {
+            var id = data[i]['id']
+            var name = data[i]['name']
+            $("select[name='package-group']").append('<option value="'+id+'">'+name+'</option>');
+          }
+          form.render("select")
+
+        }
+    });
+
+    // 获取所有区域
+    admin.req({
+      url: '/regions?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        window.region_list = data
+        for (var i = 0; i < data.length; i++) {
+          $(".region-list").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+        };
+        form.render("select")
+      }
+    });
+
+    form.on('select(package-group)', function(data){
+      table.reload("test-table-toolbar",{where:{"group":data.value} })
+    });      
+
+    form.on('select(region-list)', function(data){
+      table.reload("test-table-toolbar",{where:{"region_id":data.value} })
+    });
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/packages'
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,title: '套餐列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',   sort: true,width: 60}
+        ,{field:'name', title:'名称'}
+        ,{field:'sort', title:'排序',width:60}
+        ,{field:'region_name', title:'区域'}
+        ,{field:'node_group_name', title:'主线路组'}
+        ,{field:'backup_node_group_name', title:'备线路组'}
+        ,{field:'traffic', title:'流量(GB)',width:90,templet: function(d){
+          if (d.traffic == -1) {
+              return '不限制'         
+          } else {
+              return d.traffic
+          }
+        }}
+        ,{field:'bandwidth', title:'带宽',width:90,templet: function(d){
+          if (d.bandwidth == -1) {
+              return '不限'         
+          } else {
+              return d.bandwidth
+          }
+        }}
+        ,{field:'connection', title:'连接数',width:90,templet: function(d){
+          if (d.connection == -1) {
+              return '不限'         
+          } else {
+              return d.connection
+          }
+        }}                
+        ,{field:'domain', title:'域名数',width:80,templet: function(d){
+          if (d.domain == -1) {
+              return '不限制'         
+          } else {
+              return d.domain
+          }
+        }}
+        ,{field:'http_port', title:'HTTP端口数',width:120,templet: function(d){
+          if (d.http_port == -1) {
+              return '不限制'         
+          } else {
+              return d.http_port
+          }
+        }}
+        ,{field:'stream_port', title:'转发端口数',width:120,templet: function(d){
+          if (d.stream_port == -1) {
+              return '不限制'         
+          } else {
+              return d.stream_port
+          }
+        }}
+        ,{field:'custom_cc_rule', title:'自定义cc规则',templet: function(d){
+          if (d.custom_cc_rule) {
+              return '允许'         
+          } else {
+              return '禁止'
+          }
+        }}
+        ,{field:'websocket', title:'websocket',templet: function(d){
+          if (d.websocket) {
+              return '允许'         
+          } else {
+              return '禁止'
+          }
+        }}
+
+        ,{field:'month_price', title:'月价',width:80}
+        ,{field:'quarter_price', title:'季价',width:80}
+        ,{field:'year_price', title:'年价',width:80}
+        ,{field:'enable', title:'启用',width:90, templet: function(d){
+          if (d.enable) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'       
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+          }
+        }}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:160}
+      ]]
+      ,page: true
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增套餐'
+            ,area: ['1020px', '720px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('package/basic/addform').done(function(){
+                // 填充区域列表
+                var region_data = window.region_list
+                for (var i = 0; i < region_data.length; i++) {
+                  $("select[name='region_id']").append("<option value='"+region_data[i]['id']+"'>"+region_data[i]['name']+"</option>")
+                };
+
+                form.render("select")
+
+                admin.req({
+                  url: '/node-groups?limit=0' //实际使用请改成服务端真实接口
+                  ,type: "get"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    var data = res.data
+                    var region_node_group = {}
+                    for (i in data) {
+                      var region_id = data[i]['region_id']
+                      var id = data[i]['id']
+                      var name = data[i]['name']
+                      if (region_node_group[region_id]) {
+                        region_node_group[region_id].push({"id":id,"name":name})
+                      } else {
+                        region_node_group[region_id] = [{"id":id,"name":name}]
+                      }
+
+                    }
+
+                    window.region_node_group = region_node_group
+                  }
+                });
+
+                admin.req({
+                  url: '/package-groups?limit=0' //实际使用请改成服务端真实接口
+                  ,type: "get"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    var data = res.data
+                    for (i in data) {
+                      $(".group-select").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+                    }
+                    $("select[name='groups']").val(data[0]['id'])
+                    $('.group-select').select2({width: '190px'});
+                  }
+                });
+
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                
+                //监听区域
+                form.on('select(region_id)', function(data){
+                  $("select[name='node_group_id']").empty()
+                  $("select[name='node_group_id']").append("<option value=''>请选择线路分组</option>")
+                  var data = window.region_node_group[data.value]
+                  for (var i = 0; i < data.length; i++) {
+                    $("select[name='node_group_id']").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+                  };
+
+                  $("select[name='backup_node_group']").empty()
+                  $("select[name='backup_node_group']").append("<option value=''>请选择线路分组</option>")
+                  for (var i = 0; i < data.length; i++) {
+                    $("select[name='backup_node_group']").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+                  };
+
+                  form.render("select")
+                });      
+
+                //监听提交
+                $(".add").click(function (argument) {
+                  var name = $("input[name='name']").val()
+                  var des = $("input[name='des']").val()
+                  var region_id = $("select[name='region_id']").val()
+                  var node_group_id = $("select[name='node_group_id']").val()
+                  var backup_node_group = $("select[name='backup_node_group']").val()
+                  var cname_hostname2 = $("input[name='cname_hostname2']").val()
+                  var cname_domain = $("input[name='cname_domain']").val()
+                  var cname_mode = $("select[name='cname_mode']").val()
+                  var traffic = $("input[name='traffic']").val()
+                  var bandwidth = $("input[name='bandwidth']").val()
+                  var connection = $("input[name='connection']").val()
+                  var domain = $("input[name='domain']").val()
+                  var http_port = $("input[name='http_port']").val()
+                  var stream_port = $("input[name='stream_port']").val()
+                  var custom_cc_rule = $("input[name='custom_cc_rule']").is(":checked")
+                  var month_price = $("input[name='month_price']").val()
+                  var quarter_price = $("input[name='quarter_price']").val()
+                  var year_price = $("input[name='year_price']").val()
+                  var enable = $("input[name='enable']").is(":checked")
+                  var groups = $("select[name='groups']").val()
+                  if (groups) {
+                    groups = groups.join(",")
+                  } else {
+                    groups = ""
+                  }  
+
+                  var owner = $("input[name='owner']").val()
+                  var sort = $("input[name='sort']").val()
+
+                  var websocket = $("input[name='websocket']").is(":checked")
+                  var buy_num_limit = $("input[name='buy_num_limit']").val()
+                  var backend_ip_limit = $("textarea[name='backend_ip_limit']").val()
+                  var expire = $("input[name='expire']").val()
+                  var id_verify = $("input[name='id_verify']").is(":checked")
+                  var before_exp_days_renew = $("input[name='before_exp_days_renew']").val()
+
+                  admin.req({
+                    url: '/packages' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"backend_ip_limit":backend_ip_limit, "connection":connection,"bandwidth":bandwidth,"backup_node_group":backup_node_group, "region_id":region_id, "cname_mode":cname_mode, "name": name,"des":des, "node_group_id":node_group_id, "cname_hostname2":cname_hostname2,"cname_domain":cname_domain,"traffic":traffic,"connection":connection,"bandwidth":bandwidth, "domain":domain, "http_port":http_port, "stream_port":stream_port, "custom_cc_rule":custom_cc_rule, "month_price":month_price, "quarter_price":quarter_price, "year_price":year_price, "enable":enable,"groups":groups,"owner":owner,"sort":sort,"websocket":websocket, "buy_num_limit":buy_num_limit,"expire":expire,"id_verify":id_verify,"before_exp_days_renew":before_exp_days_renew})
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                })
+
+              });
+            }
+          });
+        break;
+        case 'sync':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择套餐');   
+            return
+          }
+          admin.popup({
+            title: '同步数据到已售套餐'
+            ,area: ['430px', '420px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('package/basic/sync').done(function(){
+                $(".sync").click(function () {
+                  var item_list = []
+                  $("input[name='sync-item']:checked").each(function (index, ele) {
+                    var v = $(ele).val()
+                    item_list.push(v)
+                  })     
+                  
+                  if (item_list.length == 0) {
+                    layer.alert('请选择需要同步的项目');   
+                    return
+                  }
+                  var item_str = item_list.join(",")
+
+                  req_data = []
+                  for (i in data) {
+                    var id = data[i]['id']
+                    req_data.push({"id":id,"sync-item":item_str})
+                  }
+
+                  admin.req({
+                    url: '/packages' //实际使用请改成服务端真实接口
+                    ,type: "put"
+                    ,data: JSON.stringify(req_data)
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('同步成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                })
+              });
+            }
+          });
+        break;        
+        case 'enable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的套餐');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1})
+          }
+          admin.req({
+            url: '/packages' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('启用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'disable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的套餐');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0})
+          }
+          admin.req({
+            url: '/packages' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('禁用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的套餐');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')套餐，是否继续', function(index){
+            admin.req({
+              url: '/packages/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      console.log(data)
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除套餐', function(index){
+          var id = data.id
+          admin.req({
+            url: '/packages/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      }
+      else if(obj.event === 'assign'){
+        admin.popup({
+          title: '分配套餐'
+          ,area: ['400px', '350px']
+          ,id: 'LAY-popup-assign-package'
+          ,success: function(layero, index){
+            view(this.id).render('package/basic/assign',data).done(function(){
+
+
+            });
+          }
+        });        
+      }      
+    else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑套餐'
+          ,area: ['1020px', '720px']
+          ,id: 'LAY-popup-node-add'
+          ,success: function(layero, index){
+            view(this.id).render('package/basic/addform').done(function(){
+              // 填充区域列表
+              var region_data = window.region_list
+              for (var i = 0; i < region_data.length; i++) {
+                $("select[name='region_id']").append("<option value='"+region_data[i]['id']+"'>"+region_data[i]['name']+"</option>")
+              };
+
+              var node_group_ajax = admin.req({
+                url: '/node-groups?limit=0' //实际使用请改成服务端真实接口
+                ,type: "get"
+                ,contentType:"application/json"
+                ,dataType: "json"
+                ,done: function(res){
+                    var node_group_data = res.data
+                    var region_node_group = {}
+                    for (i in node_group_data) {
+                      var region_id = node_group_data[i]['region_id']
+                      var id = node_group_data[i]['id']
+                      var name = node_group_data[i]['name']
+                      if (region_node_group[region_id]) {
+                        region_node_group[region_id].push({"id":id,"name":name})
+                      } else {
+                        region_node_group[region_id] = [{"id":id,"name":name}]
+                      }
+
+                    }
+
+                    window.region_node_group = region_node_group
+                }
+              });         
+
+              var package_group_ajax = admin.req({
+                  url: '/package-groups?limit=0' //实际使用请改成服务端真实接口
+                  ,type: "get"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    var package_group_data = res.data
+                    for (i in package_group_data) {
+                      $(".group-select").append("<option value='"+package_group_data[i]["id"]+"'>"+package_group_data[i]["name"]+"</option>");
+                    }
+
+                    $('.group-select').select2({width: '190px'});
+                  }
+                });
+
+              $.when(node_group_ajax,package_group_ajax).then(function (argument) {
+                $("input[name='name']").val(data.name)
+                $("input[name='des']").val(data.des)
+                $("select[name='region_id']").val(data.region_id)
+                $("input[name='cname_hostname2']").val(data.cname_hostname2)
+                $("select[name='cname_mode']").val(data.cname_mode)
+                $("input[name='cname_domain']").val(data.cname_domain)
+                $("input[name='traffic']").val(data.traffic)
+                $("input[name='bandwidth']").val(data.bandwidth)
+                $("input[name='connection']").val(data.connection)
+                $("input[name='domain']").val(data.domain)
+                $("input[name='http_port']").val(data.http_port)
+                $("input[name='stream_port']").val(data.stream_port)
+                $("input[name='custom_cc_rule']").prop("checked",data.custom_cc_rule)
+                $("input[name='websocket']").prop("checked",data.websocket)
+                $("input[name='buy_num_limit']").val(data.buy_num_limit)
+                $("input[name='expire']").val(data.expire2)
+                $("input[name='id_verify']").prop("checked",data.id_verify)
+                $("input[name='before_exp_days_renew']").val(data.before_exp_days_renew)
+                $("textarea[name='backend_ip_limit']").val(data.backend_ip_limit)
+
+                $("input[name='month_price']").val(data.month_price)
+                $("input[name='quarter_price']").val(data.quarter_price)
+                $("input[name='year_price']").val(data.year_price)
+                $("input[name='enable']").prop("checked",data.enable)         
+                $("input[name='owner']").val(data.owner)
+                $("input[name='sort']").val(data.sort)
+                var groups = data.groups
+                if (groups) {
+                  $("select[name='groups']").val(data.groups.split(","))
+                  $('.group-select').select2({width: '190px'});                  
+                }
+
+                var region_node_group_data = window.region_node_group[data.region_id]
+                for (var i = 0; i < region_node_group_data.length; i++) {
+                  $("select[name='node_group_id']").append("<option value='"+region_node_group_data[i]['id']+"'>"+region_node_group_data[i]['name']+"</option>")
+                };
+                $("select[name='node_group_id']").val(data.node_group_id)
+
+                for (var i = 0; i < region_node_group_data.length; i++) {
+                  $("select[name='backup_node_group']").append("<option value='"+region_node_group_data[i]['id']+"'>"+region_node_group_data[i]['name']+"</option>")
+                };
+                $("select[name='backup_node_group']").val(data.backup_node_group)
+
+                form.render();     
+              })
+
+              //监听区域
+              form.on('select(region_id)', function(data){
+                $("select[name='node_group_id']").empty()
+                $("select[name='node_group_id']").append("<option value=''>请选择线路分组</option>")
+                var data = window.region_node_group[data.value]
+                for (var i = 0; i < data.length; i++) {
+                  $("select[name='node_group_id']").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+                };
+
+                $("select[name='backup_node_group']").empty()
+                  $("select[name='backup_node_group']").append("<option value=''>请选择线路分组</option>")
+                  for (var i = 0; i < data.length; i++) {
+                    $("select[name='backup_node_group']").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+                  };
+
+                form.render("select")
+              });     
+
+              //监听提交
+              $(".add").click(function (argument) {
+                var name = $("input[name='name']").val()
+                var des = $("input[name='des']").val()
+                var region_id = $("select[name='region_id']").val()
+                var node_group_id = $("select[name='node_group_id']").val()
+                var backup_node_group = $("select[name='backup_node_group']").val()
+
+                var cname_domain = $("input[name='cname_domain']").val()
+                var cname_hostname2 = $("input[name='cname_hostname2']").val()
+                var cname_mode = $("select[name='cname_mode']").val()
+                var traffic = $("input[name='traffic']").val()
+                var bandwidth = $("input[name='bandwidth']").val()
+                var connection = $("input[name='connection']").val()
+                var domain = $("input[name='domain']").val()
+                var http_port = $("input[name='http_port']").val()
+                var stream_port = $("input[name='stream_port']").val()
+                var custom_cc_rule = $("input[name='custom_cc_rule']").is(":checked")
+                var month_price = $("input[name='month_price']").val()
+                var quarter_price = $("input[name='quarter_price']").val()
+                var year_price = $("input[name='year_price']").val()
+                var enable = $("input[name='enable']").is(":checked")
+                var groups = $("select[name='groups']").val()
+                if (groups) {
+                  groups = groups.join(",")
+                } else {
+                  groups = ""
+                }  
+
+                var owner = $("input[name='owner']").val()
+                var sort = $("input[name='sort']").val()
+
+                var websocket = $("input[name='websocket']").is(":checked")
+                var buy_num_limit = $("input[name='buy_num_limit']").val()
+                var backend_ip_limit = $("textarea[name='backend_ip_limit']").val()
+
+                var expire = $("input[name='expire']").val()
+                var id_verify = $("input[name='id_verify']").is(":checked")
+                var before_exp_days_renew = $("input[name='before_exp_days_renew']").val()
+
+                admin.req({
+                  url: '/packages/'+data.id //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify({"backend_ip_limit":backend_ip_limit, "connection":connection,"bandwidth":bandwidth,"backup_node_group":backup_node_group, "cname_hostname2":cname_hostname2,"cname_mode":cname_mode, "name": name,"des":des,"region_id":region_id, "node_group_id":node_group_id,"cname_domain":cname_domain,"traffic":traffic, "domain":domain, "http_port":http_port, "stream_port":stream_port, "custom_cc_rule":custom_cc_rule, "month_price":month_price, "quarter_price":quarter_price, "year_price":year_price, "enable":enable,"groups":groups,"owner":owner,"sort":sort,"websocket":websocket, "buy_num_limit":buy_num_limit,"expire":expire,"id_verify":id_verify,"before_exp_days_renew":before_exp_days_renew})
+                  ,type: "put"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('更新成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      layui.table.reload('test-table-toolbar'); //重载表格
+                      layer.close(index); //执行关闭 
+                    });
+                  }
+                });
+
+              })
+
+            });
+          }
+        });
+      }
+    });  
+
+  });
+
+
+  </script>

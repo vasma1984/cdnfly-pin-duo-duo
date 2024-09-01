@@ -1,0 +1,1018 @@
+<style>
+ .master-ip-icon{
+  margin-left:8px;font-size:14px;
+ } 
+
+.pointer {
+  color:#1E9FFF;
+  cursor:pointer  
+}
+.monitor-config {
+  margin-right: 8px;
+}
+</style>
+
+  <title>节点 - 节点管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>节点管理</cite></a>
+      <a><cite>节点</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <div class="layui-tab" lay-filter="region-tab" style="margin-bottom:20px">
+              <ul class="layui-tab-title regions">
+                <li data-id="" class="layui-this">所有区域</li>
+              </ul>
+
+            </div>
+
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md9">
+                    <div class="layui-btn-group">
+                      <button class="layui-btn layui-btn-sm"  lay-event="add">新增</button>
+
+                    </div>
+                    <div class="layui-btn-group">
+                      <button class="layui-btn layui-btn-normal layui-btn-sm" title="只启用当前IP" lay-event="enable">启用IP</button>
+                      <button class="layui-btn layui-btn-warm layui-btn-sm" title="只禁用当前IP" lay-event="disable">禁用IP</button>
+                      <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除IP</button>
+                    </div>  
+                    <div class="layui-btn-group">
+                      <button class="layui-btn layui-btn-normal layui-btn-sm" title="启用该节点所有IP" lay-event="enable-node">启用节点</button>
+                      <button class="layui-btn layui-btn-warm layui-btn-sm" title="禁用该节点所有IP" lay-event="disable-node">禁用节点</button>
+                    </div>  
+                    <div class="layui-btn-group">
+                      <button class="layui-btn layui-btn-sm layui-btn-normal"  lay-event="monitor">监控</button>
+                    </div>
+                    <div class="layui-btn-group">
+                      <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="set_mgmt">设为管理IP</button>
+                      <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="cancel_mgmt">取消管理IP</button>
+                    </div>  
+
+                  </div>
+
+                  <div class="layui-col-md2">
+                    <input style="height:30px" type="text" name="search" placeholder="输入ip或节点名称搜索" autocomplete="off" class="layui-input">
+
+                  </div>
+                  <div class="layui-col-md1">
+                    <button class="layui-btn  layui-btn-sm" onclick="search()">
+                      <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                  </div>
+                                 
+                </div>
+            </script>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              {{#  if(d.pid == 0){ }}
+                <a class="layui-btn layui-btn-xs" lay-event="config">配置</a>
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="sub_ip">子IP</a>
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>
+              {{#  } }}
+
+
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table', 'laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,element = layui.element
+    ,laydate = layui.laydate
+    ,form = layui.form;
+    
+
+    // 获取所有区域
+    admin.req({
+      url: '/regions?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        window.region_list = data
+        for (var i = 0; i < data.length; i++) {
+          $(".regions").append("<li data-id='"+data[i]['id']+"'>"+data[i]['name']+"</li>")
+        };
+        element.render()
+      }
+    });
+
+    // 监听tab
+    element.on('tab(region-tab)', function(data){
+      var region_id = $(this).data("id")
+
+      table.reload('test-table-toolbar', {
+        where: {"region_id":region_id}
+        , page: {curr: 1}
+      });
+
+    });
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/nodes?sub-ip=1'
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,title: '节点列表'
+      ,cols: [[
+        {type: 'checkbox'}
+        ,{field:'id', title:'ID', width: 60}
+        ,{field:'name', title:'名称',templet:function(d) {
+          if (d.pid == 0) {
+            return '<span title="点击修改节点配置" data-region-id="'+d.region_id+'"  data-id="'+d.id+'" class="config-node pointer">'+d.name+'</span>'
+          } else {
+            return ''
+          }
+        }}
+        ,{field:'pid', title:'pid',hide:true}
+        ,{field:'region_name', title:'区域',templet: function (d) {
+          if (d.pid == 0) {
+            return d.region_name + ' <span data-id="'+d.id+'"  class="view-node-group pointer">线路组('+d.node_group_count+'个)</span>'
+          } else {
+            return ''
+          }
+        }}
+        ,{field:'ip', title:'节点',templet:function(d) {
+          if (d.is_mgmt == false) {
+            d.ip = d.ip + " (非管理IP)"
+          }          
+          if (d.pid == 0) {
+            if (d.total_ip > 1) {
+              return '<span class="master-ip pointer">'+d.ip+ '<i class="layui-icon layui-icon-down master-ip-icon"></i> </span> '
+            } else {
+              return d.ip
+            }
+          } else {
+            return '<span title="修改子IP" data-id='+d.id+' class="config-sub-ip pointer">'+d.ip+ '</span>'
+          }
+          
+        }}
+        ,{field:'check_on', title:'监控',templet:function(d) {
+          var name = "未开启"
+          if (d.check_on) {
+            name = d.check_protocol
+          }
+          if (d.bw_limit != "" && d.pid == 0) {
+            return '<span title="点击修改监控配置" data-id="'+d.id+'" class="monitor-config pointer">'+name+'</span>' + '<span data-id="'+d.id+'" class="config-node pointer">'+d.bw_limit+'</span>' + ' <span data-bwlimit="'+d.bw_limit+'" data-id="'+d.id+'" data-ip="'+d.ip+'" class="node-log pointer">[日志]</span>'
+
+          } else {
+            return '<span title="点击修改监控配置" data-id="'+d.id+'" class="monitor-config pointer">'+name+'</span>'  + '<span data-id="'+d.id+'" data-ip="'+d.ip+'" class="node-log pointer">[日志]</span>'
+
+          }
+
+          
+        }}        
+        ,{field:'state', title:'同步', templet: function(d){
+          if (d.enable == 0) {
+            return'<i class="layui-icon layui-icon-ok-circle" style="font-size: 20px; color: #009688;vertical-align: bottom;"></i>' 
+          }
+          if (d.pid == 0) {
+            var ret = ""
+            if (d.state == "pending") {
+              ret = '<span class="layui-badge layui-bg-orange">待配置</span>'
+            } else if (d.state == "process") {
+              ret = '<span class="layui-badge layui-bg-orange">配置中</span>'
+            } else if (d.state == "done") {
+              ret = '<i class="layui-icon layui-icon-ok-circle" style="font-size: 20px; color: #009688;vertical-align: bottom;"></i>' 
+            } else {
+              ret = '<i class="layui-icon layui-icon-close-fill" style="font-size: 20px; color: #FF5722;vertical-align: bottom;"></i>'
+            }   
+
+            return ret + '<span style="padding-left:8px" lay-href="/system/task/id='+d.config_task+'/" class="pointer">[任务]</span>'  
+
+          } else {
+            return ''
+          }
+         
+        }}          
+        ,{field:'state', title:'启用', templet: function(d){
+          if (d.enable == 1) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 20px; color: #009688;"></i>'             
+          } else {
+            var ret= '<i class="layui-icon layui-icon-close-fill" style="font-size: 20px; color: #FF5722;"></i>'
+            if (d.disable_by == "ip_down") {
+              ret += " <span>禁用原因：IP不可用</span>"
+            } else if (d.disable_by == "bandwidth") {
+              ret += " <span>禁用原因：带宽超限</span>"
+            }
+            return ret
+          }
+        }}        
+  
+      ]]
+      ,page: true
+      ,done: function(res, curr, count){
+        node_listen()
+      }
+   
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增节点'
+            ,area: ['500px', '520px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('node/node/nodeform').done(function(){
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                $(".proxy-tab").removeClass("layui-hide")
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var name = field.name
+                  var des = field.des
+                  var ip = field.ip
+                  var port = field.port
+                  var host = field.host
+                  var region_id = field.region_id
+
+                  var proxy_ip = $("input[name='proxy_ip']").val()
+                  var proxy_port = $("input[name='proxy_port']").val()
+                  var proxy_user = $("input[name='proxy_user']").val()
+                  var proxy_password = $("input[name='proxy_password']").val()
+
+
+                  var http_proxy = {}
+                  if (proxy_ip != "" || proxy_port != "" || proxy_user != "" || proxy_password != "") {
+                    http_proxy = {"ip":proxy_ip,"port":proxy_port,"user":proxy_user,"password":proxy_password}
+                  }                  
+
+                  admin.req({
+                    url: '/nodes' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"region_id":parseInt(region_id), "name": name,"des":des, "ip":ip, "port":port,"host":host,"http_proxy":http_proxy})
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+              });
+            }
+          });
+        break;
+        case 'monitor':
+          var check_data = checkStatus.data;
+          if (check_data.length == 0) {
+            layer.alert('请选择需要修改的节点');   
+            return
+          }
+
+          admin.popup({
+              title: '修改监控'
+              ,area: ['450px', '400px']
+              ,id: 'LAY-popup-node-monitor'
+              ,success: function(layero, index){
+                view(this.id).render('node/node/monitor-config').done(function(){
+                  form.render(null, 'layuiadmin-form-nodeadmin');
+                  // 显示cb
+                  $(".cb").removeClass("layui-hide")
+
+                  //监听提交
+                  form.on('submit(LAY-node-front-submit)', function(data){
+                    var check_on = undefined
+                    var check_protocol = undefined
+                    var check_timeout = undefined
+                    var check_port = undefined
+                    var check_host = undefined
+                    var check_path = undefined
+                    var check_action = undefined
+                    var check_node_group = undefined
+                    if($("input[name='check_on']").parent().parent().find(".cb input").prop("checked")) {
+                      check_on = $("input[name='check_on']").prop("checked")
+                    }
+
+                    if($("input[name='check_protocol']").parent().parent().find(".cb input").prop("checked")) {
+                      check_protocol = $("input[name='check_protocol']:checked").val()
+                    }
+     
+                    if($("input[name='check_timeout']").parent().parent().find(".cb input").prop("checked")) {
+                      check_timeout = $("input[name='check_timeout']").val()
+                    }
+                    if($("input[name='check_port']").parent().parent().find(".cb input").prop("checked")) {
+                      check_port = $("input[name='check_port']").val()
+                    }
+                    
+                    if($("input[name='check_host']").parent().parent().find(".cb input").prop("checked")) {
+                      check_host = $("input[name='check_host']").val()
+                    }
+
+                    if($("input[name='check_path']").parent().parent().find(".cb input").prop("checked")) {
+                      check_path = $("input[name='check_path']").val()
+                    }
+
+                    if($("input[name='check_action']").parent().parent().find(".cb input").prop("checked")) {
+                      check_action = $("input[name='check_action']:checked").val()
+                    }
+
+                    if($("input[name='check_node_group']").parent().parent().find(".cb input").prop("checked")) {
+                      var node_group_arr = []
+                      $("input[name='check_node_group']").each(function (index,ele) {
+                        if ($(ele).prop("checked")) {
+                          node_group_arr.push($(ele).val())
+                        }
+                      })
+                      check_node_group = node_group_arr.join(",")
+                    }
+
+                    req_data = []
+                    for (i in check_data) {
+                      req_data.push({"id":check_data[i]['id'],"check_on":check_on, "check_protocol": check_protocol,"check_timeout":check_timeout, "check_port":check_port, "check_host":check_host, "check_path":check_path, "check_action":check_action, "check_node_group":check_node_group})
+                    }
+
+                    admin.req({
+                      url: '/nodes' //实际使用请改成服务端真实接口
+                      ,data: JSON.stringify(req_data)
+                      ,type: "put"
+                      ,contentType:"application/json"
+                      ,dataType: "json"
+                      ,done: function(res){
+                        //登入成功的提示与跳转
+                        layer.msg('修改成功', {
+                          offset: '15px'
+                          ,icon: 1
+                          ,time: 1000
+                        }, function(){
+                          layui.table.reload('test-table-toolbar'); //重载表格
+                          layer.close(index); //执行关闭 
+                        });
+                      }
+                    });
+
+                  });
+
+                });
+              }
+            }); 
+        break;
+        case 'enable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的节点');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1})
+          }
+          admin.req({
+            url: '/nodes' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('启用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'disable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的节点');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0,"disable_by":"admin"})
+          }
+          admin.req({
+            url: '/nodes' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('禁用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;         
+        case 'enable-node':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的节点');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1,"target":"node"})
+          }
+          admin.req({
+            url: '/nodes' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('启用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'disable-node':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的节点');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0,"target":"node","disable_by":"admin"})
+          }
+          admin.req({
+            url: '/nodes' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('禁用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;          
+        case 'set_mgmt':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择节点');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"is_mgmt":1})
+          }
+          admin.req({
+            url: '/nodes' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('设置成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'cancel_mgmt':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择节点');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"is_mgmt":0})
+          }
+          admin.req({
+            url: '/nodes' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('取消成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;              
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的节点');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')节点，是否继续', function(index){
+            admin.req({
+              url: '/nodes/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+
+  });
+
+  function search (argument) {
+      var search = layui.$("input[name='search']").val()
+
+      layui.table.reload('test-table-toolbar', {
+        where: {search: search},
+        done: function (argument) {
+          layui.$("input[name='search']").val(search)
+          node_listen()
+        }, page: {curr: 1}
+      });
+  }
+
+  function node_listen() {
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,element = layui.element
+    ,form = layui.form;
+    
+        // 隐藏子IP
+        $(".layui-table-view .layui-table-box .layui-table-main").find("tr").each(function(index, ele) {
+          var pid = $(ele).find("td[data-field=pid]").text()
+          if (pid != "0") {
+            $(ele).addClass("layui-hide")
+            $(ele).addClass("sub-ip")
+          }
+        })
+
+        // 点击展开子IP
+        $(".master-ip").click(function() {
+          var $icon = $(this).find(".master-ip-icon")
+          var $tr = $(this).parent().parent().parent()
+          if ($icon.hasClass("layui-icon-down")) {
+            $icon.removeClass("layui-icon-down")
+            $icon.addClass("layui-icon-up")            
+            while (1) {
+              var $tr = $tr.next()
+              if ($tr.hasClass("sub-ip")) {
+                $tr.removeClass("layui-hide")
+              } else {
+                return
+              }
+            }
+
+          } else {
+            $icon.removeClass("layui-icon-up")
+            $icon.addClass("layui-icon-down")               
+            while (1) {
+              var $tr = $tr.next()
+              if ($tr.hasClass("sub-ip")) {
+                $tr.addClass("layui-hide")
+              } else {
+                return
+              }
+            }
+          }
+        })
+
+        // 修改子IP
+        $(".config-sub-ip").click(function () {
+          var node_id = $(this).data("id")
+          layer.prompt({
+            formType: 0,
+            value: '',
+            shadeClose: true,
+            title: '请输入新的IP'
+          }, function(value, index, elem){
+            admin.req({
+              url: '/nodes/'+node_id //实际使用请改成服务端真实接口
+              ,data: JSON.stringify({"ip":value})
+              ,type: "put"
+              ,contentType:"application/json"
+              ,dataType: "json"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('修改成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                  layer.close(index); //执行关闭 
+                });
+              }
+            });
+          });          
+        })
+
+        // 查看线路组
+        $(".view-node-group").click(function () {
+          var node_id = $(this).data("id")
+          location.hash = '/node/group/node_id='+node_id +'/'; 
+        })
+
+        // 点击配置节点
+        $(".config-node").click(function () {
+          var node_id = $(this).data("id")
+          var region_id = $(this).data("region-id")
+          admin.popup({
+            title: '编辑节点'
+            ,area: ['500px', '500px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('node/node/nodeform',{"id":node_id,"region_id":region_id}).done(function(){
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                
+                // 基本设置监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var name = field.name
+                  var des = field.des
+                  var ip = field.ip
+                  var host = field.host
+                  var port = field.port
+
+                  admin.req({
+                    url: '/nodes/'+node_id //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"name": name,"des":des, "ip":ip, "port":port,"host":host})
+                    ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('修改成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+
+                // 缓存监听提交
+                form.on('submit(LAY-node-cache-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var proxy_cache_dir = field.proxy_cache_dir
+                  var proxy_cache_max_size = field.proxy_cache_max_size
+                  var logs_dir = field.logs_dir
+
+                  var req_data = {"http":{}}
+                  if (proxy_cache_dir) {
+                    req_data["http"]["proxy_cache_dir"] = proxy_cache_dir
+                  }
+
+                  if (proxy_cache_max_size) {
+                    req_data["http"]["proxy_cache_max_size"] = proxy_cache_max_size
+                  }
+
+                  if (logs_dir) {
+                    req_data["logs_dir"] = logs_dir
+                  }
+
+                  var bw_limit = $("input[name='bw_limit']").val()
+                  if (bw_limit != "") {
+                    var num = $("input[name='bw_limit']").val()
+                    var unit = $("select[name='bw_unit']").val()
+                    bw_limit = num + unit
+                  }
+
+                  var config_save = admin.req({
+                    url: '/configs/node-'+node_id+'-nginx_config-nginx-config-file' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"value": JSON.stringify(req_data)})
+                    ,contentType:"application/json"
+                    ,dataType: "json"                  
+                    ,type: "put"
+                  });
+
+                  var node_save = admin.req({
+                    url: '/nodes/'+node_id //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"bw_limit": bw_limit})
+                    ,contentType:"application/json"
+                    ,dataType: "json"                  
+                    ,type: "put"
+                  });
+
+                  $.when({config_save,node_save}).then(function() {
+                    layer.msg('保存成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                  } )
+
+                });
+
+
+
+                // 子IP监听提交
+                form.on('submit(LAY-node-subip-front-submit)', function(data){
+                  var sub_ips = $("textarea[name='subip']").val().trim()
+                  if (sub_ips == "") {
+                    layer.alert("请输入IP")
+                    return
+                  }
+                  var sub_ips_arr = sub_ips.split("\n")
+                  var nodes = []
+                  for (var i = 0; i < sub_ips_arr.length; i++) {
+                    var ip = sub_ips_arr[i]
+                    if (ip == "") {
+                      continue
+                    }
+
+                    nodes.push({"ip":ip,"pid":node_id})
+
+                  };
+
+                  admin.req({
+                    url: '/nodes' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify(nodes)
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+
+                // 代理提交
+                form.on('submit(LAY-node-http-proxy-front-submit)', function(data){
+                  var ip = $("input[name='proxy_ip']").val()
+                  var port = $("input[name='proxy_port']").val()
+                  var user = $("input[name='proxy_user']").val()
+                  var password = $("input[name='proxy_password']").val()
+                  var http_proxy = {}
+                  if (ip != "" || port != "" || user != "" || password != "") {
+                    http_proxy = {"ip":ip,"port":port,"user":user,"password":password}
+                  }
+
+                  admin.req({
+                    url: '/nodes/'+node_id //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"http_proxy": http_proxy})
+                    ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('修改成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                    });
+                    }
+                  });
+
+                });
+
+              });
+            }
+          });
+
+        })
+
+        // 点击配置监控
+        $(".monitor-config").click(function () {
+          var node_id = $(this).data("id")
+          admin.popup({
+            title: '配置监控'
+            ,area: ['450px', '400px']
+            ,id: 'LAY-popup-node-monitor'
+            ,success: function(layero, index){
+              view(this.id).render('node/node/monitor-config').done(function(){
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                // 开放编辑
+                $(".cb").parent().find("input").removeAttr("disabled")
+
+                // 获取监控配置
+                admin.req({
+                  url: '/nodes/' + node_id
+                  ,type: "get"
+                  ,done: function(res){
+                    var data = res.data
+                    $("input[name='check_on']").prop("checked",data.check_on)
+                    $("input[name='check_protocol'][value='"+data.check_protocol+"']").prop("checked",true)
+                    $("input[name='check_timeout']").val(data.check_timeout)
+                    var node_group_arr = data.check_node_group.toString().split(",")
+                    for (i in node_group_arr) {
+                      var node_group_id = node_group_arr[i]
+                      $("input[name='check_node_group'][value='"+node_group_id+"']").prop("checked",true)
+                    }
+                    $("input[name='check_action'][value='"+data.check_action+"']").prop("checked",true)
+                    $("input[name='check_port']").val(data.check_port)
+                    $("input[name='check_host']").val(data.check_host)
+                    $("input[name='check_path']").val(data.check_path)
+                    form.render()
+                  }
+                });                   
+
+
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var check_on = $("input[name='check_on']").prop("checked")
+                  var check_protocol = $("input[name='check_protocol']:checked").val()
+                  var check_timeout = $("input[name='check_timeout']").val()
+                  var check_port = $("input[name='check_port']").val()
+                  var check_host = $("input[name='check_host']").val()
+                  var check_path = $("input[name='check_path']").val()
+                  var check_action = $("input[name='check_action']:checked").val()
+                  var node_group_arr = []
+                  $("input[name='check_node_group']").each(function (index,ele) {
+                    if ($(ele).prop("checked")) {
+                      node_group_arr.push($(ele).val())
+                    }
+                  })
+                  var check_node_group = node_group_arr.join(",")
+                  admin.req({
+                    url: '/nodes/' + node_id //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"check_on":check_on, "check_protocol": check_protocol,"check_timeout":check_timeout, "check_port":check_port, "check_host":check_host, "check_path":check_path, "check_action":check_action, "check_node_group":check_node_group})
+                    ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('修改成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+
+              });
+            }
+          });          
+        })
+
+        function formatDate(time,format='YY-MM-DD hh:mm:ss'){
+        var date = new Date(time);
+     
+        var year = date.getFullYear(),
+            month = date.getMonth()+1,//月份是从0开始的
+            day = date.getDate(),
+            hour = date.getHours(),
+            min = date.getMinutes(),
+            sec = date.getSeconds();
+        var preArr = Array.apply(null,Array(10)).map(function(elem, index) {
+            return '0'+index;
+        });//开个长度为10的数组 格式为 ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"]
+     
+        var newTime = format.replace(/YY/g,year)
+            .replace(/MM/g,preArr[month]||month)
+            .replace(/DD/g,preArr[day]||day)
+            .replace(/hh/g,preArr[hour]||hour)
+            .replace(/mm/g,preArr[min]||min)
+            .replace(/ss/g,preArr[sec]||sec);
+     
+        return newTime;
+    };
+    
+        // 点击配置日志
+        $(".node-log").click(function () {
+          var ip = $(this).data("ip")
+          var node_id = $(this).data("id")
+          var bwlimit = $(this).data("bwlimit")
+          admin.popup({
+            title: '监控日志'
+            ,area: ['450px', '400px']
+            ,id: 'LAY-popup-node-log'
+            ,success: function(layero, index){
+              view(this.id).render('node/node/node-log').done(function(){
+                if (bwlimit && bwlimit != "") {
+                  $(".monitor-type").removeClass("layui-hide")
+                }
+
+                //执行一个laydate实例
+                layui.laydate.render({
+                  elem: '#time-range' //指定元素
+                  ,format : 'yyyy-MM-dd HH:mm:ss'
+                  ,range: true
+                  ,type: 'datetime'
+                  ,value: formatDate(new Date().getTime() - 3600000) + " - " + formatDate(new Date().getTime())
+                  ,done: function(value, date, endDate) {
+                      var start = value.split(" - ")[0]
+                      var end = value.split(" - ")[1]     
+                      table.reload("monitor-table",{"where":{"start":start,"end":end}})
+
+                    }
+                });
+
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                var access_token = layui.data('layuiAdmin')['access-token']
+                var date_range = $("#time-range").val()
+                var start = date_range.split(" - ")[0]
+                var end = date_range.split(" - ")[1]
+                table.render({
+                  elem: '#monitor-table'
+                  ,where: {"type":"aval","start":start, "end":end}
+                  ,url:'/monitor/node/ip-log?ip='+ip
+                  ,size: 'sm'
+                  ,headers: {"access-token":access_token}
+                  ,cols: [[
+                    {field:'create_at', title:'检测时间'}
+                    ,{field:'failed', title:'失败个数'}
+                    ,{field:'total', title:'总检测点'}
+              
+                  ]]
+                  ,page: true
+                
+                });
+
+                table.render({
+                  elem: '#switch-table'
+                  ,where: {"type":"节点IP解析"}
+                  ,url:'/log/ip-switch?node_id='+node_id
+                  ,size: 'sm'
+                  ,headers: {"access-token":access_token}
+                  ,cols: [[
+                    {field:'create_at', title:'切换时间'}
+                    ,{field:'action', title:'操作'}
+                  ]]
+                  ,page: true
+                
+                });
+              });
+            }
+          });          
+        })
+
+          
+  }
+  
+  </script>

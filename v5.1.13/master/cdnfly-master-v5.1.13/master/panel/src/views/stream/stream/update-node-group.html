@@ -1,0 +1,89 @@
+<style type="text/css">
+.textarea__label {
+    font-size: 12px;
+    position: absolute;
+    bottom: 21px;
+    right: 11px;
+    color: #888;
+}
+.layui-layer-page .layui-layer-content  {  overflow: visible !important;}
+</style>
+  <script type="text/html" template>
+  <span style="color:#009688">已选转发：</span><span id="stream_id">{{ d.params.stream_ids }}</span>
+  </script>  
+
+<div class="layui-form" lay-filter="layuiadmin-form-node-group" style="padding: 20px 0 0 0;">
+  <div class="layui-form-item">
+    <label class="layui-form-label">区域</label>
+    <div class="layui-input-inline">
+        <select lay-filter="update-region" id="update-region" name="update-region">
+        </select>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">线路分组</label>
+    <div class="layui-input-inline">
+        <select lay-filter="update-node-group" id="update-node-group" name="update-node-group">
+        </select>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">备用线路组</label>
+    <div class="layui-input-inline">
+        <select lay-filter="update-backup-node-group" id="update-backup-node-group" name="update-backup-node-group">
+        </select>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit id="update" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script>
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    // 获取线路分组列表
+    var data = window.regions
+    $("select[name='update-region']").append("<option value=''>请选择</option>");
+    for (i in data) {
+      $("select[name='update-region']").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+    }
+    form.render("select")
+
+    //监听区域
+    form.on('select(update-region)', function(data){
+      $("select[name='update-node-group']").empty()
+      $("select[name='update-node-group']").append("<option value=''>请选择线路分组</option>")
+      var data = window.region_node_group[data.value]
+      if (data) {
+        for (var i = 0; i < data.length; i++) {
+          $("select[name='update-node-group']").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+        };        
+      }
+
+      $("select[name='update-backup-node-group']").empty()
+      $("select[name='update-backup-node-group']").append("<option value=''>请选择备用线路组</option>")
+      if (data) {
+        for (var i = 0; i < data.length; i++) {
+          $("select[name='update-backup-node-group']").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+        };        
+      }
+
+      form.render("select")
+    });   
+
+                
+  })
+
+</script>    

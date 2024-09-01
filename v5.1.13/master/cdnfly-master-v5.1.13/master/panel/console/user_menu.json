@@ -1,0 +1,134 @@
+                        [{
+                            "title": "面板首页",
+                            "icon": "layui-icon-home",
+                            "jump": "user_home"
+                        }, {
+                            "name": "site",
+                            "title": "网站管理",
+                            "icon": "layui-icon-component",
+                            "list": [{
+                                "name": "my-site",
+                                "title": "我的网站",
+                                "jump": "/site/site/"
+                            }, {
+                                "name": "group",
+                                "title": "分组管理"
+                            }, {
+                                "name": "refresh",
+                                "title": "刷新预热"
+                            }, {
+                                "name": "cert",
+                                "title": "证书管理",
+                                "list": [{
+                                    "name": "cert",
+                                    "title": "我的证书"
+                                }, {
+                                    "name": "dnsapi",
+                                    "title": "DNS API"
+                                }]
+                            }, {
+                                "name": "cc",
+                                "title": "CC规则",
+                                "jump": "/site/cc/rule"
+                            }, {
+                                "name": "acl",
+                                "title": "ACL管理"
+                            }, {
+                                "name": "monitor",
+                                "title": "监控统计",
+                                "list": [{
+                                    "name": "realtime",
+                                    "title": "实时指标"
+                                },{
+                                    "title": "资源排行",
+                                    "jump": "/site/monitor/top-res/cc=0"
+                                }, {
+                                    "title": "攻击分析",
+                                    "jump": "/site/monitor/top-res/cc=1"
+                                }, {
+                                    "title": "黑名单IP",
+                                    "jump": "/site/monitor/blackip"
+                                }, {
+                                    "name": "access-log",
+                                    "title": "日志下载"
+                                }, {
+                                    "name": "usage",
+                                    "title": "用量查询"
+                                }]
+                            }]
+                        }, {
+                            "name": "stream",
+                            "title": "四层转发",
+                            "icon": "layui-icon-component",
+                            "list": [{
+                                "name": "my-stream",
+                                "title": "我的转发",
+                                "jump": "/stream/stream/"
+                            }, {
+                                "name": "group",
+                                "title": "分组管理"
+                            }, {
+                                "name": "monitor",
+                                "title": "监控统计",
+                                "list": [{
+                                    "name": "realtime",
+                                    "title": "实时监控"
+                                }, {
+                                    "name": "top-res",
+                                    "title": "资源排行"
+                                },{
+                                    "name": "usage",
+                                    "title": "用量查询"
+                                }]
+                            }]
+                        }, {
+                            "name": "package",
+                            "title": "套餐管理",
+                            "icon": "layui-icon-component",
+                            "list": [{
+                                "name": "my",
+                                "title": "我的套餐"
+                            }, {
+                                "name": "buy",
+                                "title": "购买套餐"
+                            }]
+                        }, {
+                            "name": "account",
+                            "title": "账户中心",
+                            "icon": "layui-icon-component",
+                            "list": [{
+                                "name": "personal",
+                                "title": "个人资料",
+                                "jump": "/account/personal/"
+                            },{
+                                "name": "balance",
+                                "title": "账户充值",
+                                "jump": "/account/balance/"
+                            },{
+                                "name": "sub",
+                                "title": "消息订阅",
+                                "jump": "/account/sub/"
+                            }, {
+                                "title": "消息查询",
+                                "icon": "layui-icon-home",
+                                "name": "message",
+                                "jump": "/system/message/"
+
+                            },{
+                                "name": "my-order",
+                                "title": "消费记录",
+                                "jump": "/account/order/"
+                            }, {
+                                "name": "login",
+                                "title": "登录日志",
+                                "jump": "/account/log/login"
+                            },{
+                                "name": "op",
+                                "title": "操作日志",
+                                "jump": "/account/log/op"
+                            },{
+                                "name": "api",
+                                "title": "API密钥",
+                                "jump": "/account/config/api"
+                            }]
+                        }]

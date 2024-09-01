@@ -1,0 +1,326 @@
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+<script src="/src/lib/select2.min.js"></script>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>节点管理</cite></a>
+    <a><cite>监控统计</cite></a>
+    <a><cite>资源排行</cite></a>
+  </div>
+</div>
+<style type="text/css">
+.select2-container .select2-selection--multiple {min-height: 30px;}
+.layui-card-body  {line-height: 18px;}
+.active-btn {
+  border: 1px solid #009688 ! important;
+  color: #009688
+}
+.select2-container .select2-search--inline .select2-search__field {padding-left: 5px;}
+</style>
+
+<div class="layui-fluid" id="component-tabs">
+  <div class="layui-row">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-tab layui-tab-brief" lay-filter="node-top-res-tab">
+            <ul class="layui-tab-title">
+              <li class="layui-this">带宽</li>
+              <li>Nginx连接</li>
+              <li>TCP连接</li>
+              <li>负载</li>
+              <li>硬盘</li>
+            </ul>
+            <div class="layui-tab-content">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-lg4 layui-col-md6">
+                  <div class="layui-btn-group">
+                    <button type="button" data-minute=1m class="layui-btn layui-btn-primary recent_time layui-btn-sm active-btn">近1分钟平均</button>
+                    <button type="button" data-minute=5m class="layui-btn layui-btn-primary recent_time layui-btn-sm">近5分钟平均</button>
+                    <button type="button" data-minute=30m class="layui-btn layui-btn-primary recent_time layui-btn-sm ">近30分钟平均</button>
+                    <button type="button" data-minute=60m class="layui-btn layui-btn-primary recent_time layui-btn-sm ">近1小时平均</button>
+                  </div>
+                  <button id="reload" type="button" class="layui-btn layui-btn-sm">刷新</button>
+                </div>
+              </div>               
+              <div class="layui-tab-item layui-show">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <table id="bandwidth" lay-filter="bandwidth"></table>
+                    </div>
+                  </div>
+              </div>
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <table id="nginx_status" lay-filter="nginx_status"></table>
+                    </div>
+                  </div>
+              </div>
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <table id="tcp_conn" lay-filter="tcp_conn"></table>
+                    </div>
+                  </div>
+              </div>              
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <table id="sys_load" lay-filter="sys_load"></table>
+                    </div>
+                  </div>
+              </div>
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <table id="disk_usage" lay-filter="disk_usage"></table>
+                    </div>
+                  </div>
+              </div>              
+            </div>
+          </div>
+        </div>
+      </div>
+
+   </div>
+</div>
+
+<script>
+layui.use(['admin','table'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,table = layui.table
+  ,element = layui.element;
+
+  admin.on('hash(node-monitor-res)', function(router){
+    clearInterval(window.node_top_interval)
+  });
+
+  $("#reload").click(function (argument) {
+    render_table()
+  })
+
+  function render_table() {
+    // 清理定时
+    var node_top_interval = window.node_top_interval
+    if (typeof(node_top_interval) != "undefined") {
+      clearInterval(node_top_interval)
+    }
+
+    // 间隔
+    var recent_time = $(".active-btn").data("minute")
+
+    //类型
+    var type
+    var curr_tab = $(".layui-tab-title .layui-this").text()
+    if (curr_tab == "带宽") {
+      type = "bandwidth"
+      table.render({
+        elem: '#' + type
+        ,headers: {"access-token":access_token}
+        ,url: '/monitor/node/top'
+        ,page: false
+        ,cols: [[
+            {title:'排行',type: "numbers"}
+            ,{field:'node_id', title:"节点",templet: function(d){
+              if (window.nodes[d.node_id] == undefined) {
+                return  " (" + d.node_id + ")"  
+              } else {
+                return window.nodes[d.node_id] + " (" + d.node_id + ")"  
+              }
+              
+            }}
+            ,{field:'nic', title:"网卡"}
+            ,{field:'outbound', title:"出站带宽", sort: true,templet: function(d){
+              var v = d.outbound /1000
+              if (v >= 900) {
+                var b = (v/1000).toFixed(1) + " Mbps"
+              } else {
+                var b = v.toFixed(1) + " Kbps"
+              }   
+              return b
+            }}
+            ,{field:'inbound', title:"入站带宽", sort: true,templet: function(d){
+              var v = d.inbound /1000
+              if (v >= 900) {
+                var b = (v/1000).toFixed(1) + " Mbps"
+              } else {
+                var b = v.toFixed(1) + " Kbps"
+              }   
+              return b
+            }}
+          ]]
+        ,where: {
+          "recent_time": recent_time,
+          "type": type
+        }
+        ,initSort: {
+          field: 'outbound' 
+          ,type: 'desc'
+        }
+      }); 
+
+    } else if (curr_tab == "Nginx连接") {
+      type = "nginx_status"
+      table.render({
+        elem: '#' + type
+        ,headers: {"access-token":access_token}
+        ,url: '/monitor/node/top'
+        ,page: false        
+        ,cols: [[
+            {title:'排行',type: "numbers"}
+            ,{field:'node_id', title:"节点",templet: function(d){
+              return window.nodes[d.node_id] + " (" + d.node_id + ")"  
+            }}
+            ,{field:'active_conn', title:"活跃连接", sort: true}
+            ,{field:'reading', title:"reading", sort: true}
+            ,{field:'writing', title:"writing", sort: true}
+            ,{field:'waiting', title:"waiting", sort: true}
+
+          ]]
+        ,where: {
+          "recent_time": recent_time,
+          "type": type
+        }
+        ,initSort: {
+          field: 'active_conn' 
+          ,type: 'desc'
+        }
+      }); 
+
+    } else if (curr_tab == "TCP连接") {
+      type = "tcp_conn"
+      table.render({
+        elem: '#' + type
+        ,headers: {"access-token":access_token}
+        ,url: '/monitor/node/top'
+        ,page: false        
+        ,cols: [[
+            {title:'排行',type: "numbers"}
+            ,{field:'node_id', title:"节点",templet: function(d){
+              return window.nodes[d.node_id] + " (" + d.node_id + ")"  
+            }}
+            ,{field:'conn', title:"连接数", sort: true,templet: function(d){
+              return parseInt(d.conn) 
+            }}
+
+          ]]
+        ,where: {
+          "recent_time": recent_time,
+          "type": type
+        }
+        ,initSort: {
+          field: 'conn' 
+          ,type: 'desc'
+        }
+      }); 
+
+    } else if (curr_tab == "负载") {
+      type = "sys_load"
+      table.render({
+        elem: '#' + type
+        ,headers: {"access-token":access_token}
+        ,url: '/monitor/node/top'
+        ,page: false        
+        ,cols: [[
+            {title:'排行',type: "numbers"}
+            ,{field:'node_id', title:"节点",templet: function(d){
+              return window.nodes[d.node_id] + " (" + d.node_id + ")"  
+            }}
+            ,{field:'cpu', title:"CPU使用率", sort: true,templet: function(d){
+              return d.cpu.toFixed(1) + "% "
+            }}
+            ,{field:'mem', title:"内存使用率", sort: true,templet: function(d){
+              return d.mem.toFixed(1) + "% "
+            }}
+            ,{field:'load', title:"系统负载", sort: true,templet: function(d){
+              return d.load.toFixed(1)
+            }}
+
+          ]]
+        ,where: {
+          "recent_time": recent_time,
+          "type": type
+        }
+        ,initSort: {
+          field: 'cpu' 
+          ,type: 'desc'
+        }
+      }); 
+
+    } else {
+      type = "disk_usage"
+      table.render({
+        elem: '#' + type
+        ,headers: {"access-token":access_token}
+        ,url: '/monitor/node/top'
+        ,page: false        
+        ,cols: [[
+            {title:'排行',type: "numbers"}
+            ,{field:'node_id', title:"节点",templet: function(d){
+              return window.nodes[d.node_id] + " (" + d.node_id + ")"  
+            }}
+            ,{field:'path', title:"分区", sort: true}
+            ,{field:'space', title:"空间使用率", sort: true,templet: function(d){
+              return d.space.toFixed(1) + "% "
+            }}
+            ,{field:'inode', title:"inode使用率", sort: true,templet: function(d){
+              return d.inode.toFixed(1) + "% "
+            }}
+
+          ]]
+        ,where: {
+          "recent_time": recent_time,
+          "type": type
+        }
+        ,initSort: {
+          field: 'space' 
+          ,type: 'desc'
+        }
+      });       
+    }
+
+  }
+
+  // 获取节点列表
+  var node_ajax = admin.req({
+      url: '/nodes?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var data = res.data
+        window.nodes = {}
+        for (i in data) {
+          var id = data[i]["id"]
+          var name = data[i]['name']
+          window.nodes[id] = name
+        }  
+      }
+    });   
+
+  // 初始化表格
+  var access_token = layui.data('layuiAdmin')['access-token']
+  $.when(node_ajax).then(function (argument) {
+    render_table()  
+  })
+
+
+  element.on('tab(node-top-res-tab)', function(data){
+    render_table()
+  });
+
+  $(".recent_time").click(function (argument) {
+    $(".recent_time").removeClass("active-btn")
+    $(this).addClass("active-btn")
+    render_table()
+  })
+
+
+});  
+</script>

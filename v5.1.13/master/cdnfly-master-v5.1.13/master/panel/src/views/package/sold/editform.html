@@ -1,0 +1,253 @@
+<style type="text/css">
+.layui-form-item {
+    margin-bottom: 5px;
+}
+
+</style>
+
+<div class="layui-form" lay-filter="layuiadmin-form-packagesoldeditadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id  }}" class="layui-input">
+  </script>
+
+<form class="layui-form" action="">
+  <fieldset class="layui-elem-field layui-field-title">
+    <legend>资源限制</legend>
+  </fieldset>
+
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">流量 (GB)</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="traffic" value="{{ d.params.traffic  }}" lay-verify="required" placeholder="请输入带宽" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label class="layui-form-label">域名数</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" name="domain" value="{{ d.params.domain  }}" lay-verify="required" placeholder="请输入域名数" autocomplete="off" class="layui-input">
+          </script>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">带宽</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="bandwidth" value="{{ d.params.bandwidth  }}" lay-verify="required" placeholder="请输入带宽" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label class="layui-form-label">连接数</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" name="connection" value="{{ d.params.connection  }}" lay-verify="required" placeholder="请输入连接数" autocomplete="off" class="layui-input">
+          </script>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label class="layui-form-label">HTTP端口数</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" name="http_port" value="{{ d.params.http_port  }}" lay-verify="required" placeholder="请输入http端口数" autocomplete="off" class="layui-input">
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label class="layui-form-label">转发端口数</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" name="stream_port" value="{{ d.params.stream_port  }}" lay-verify="required" placeholder="请输入转发端口数" autocomplete="off" class="layui-input">
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label style="font-size: 12px;" class="layui-form-label">自定义CC规则</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="checkbox" {{ d.params.custom_cc_rule && 'checked' }} name="custom_cc_rule" lay-skin="switch" lay-text="允许|禁止">
+
+          </script>
+        </div>
+      </div>
+    </div>  
+
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label class="layui-form-label">Websocket</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="checkbox" {{ d.params.websocket && 'checked' }} name="websocket" lay-skin="switch" lay-text="允许|禁止">
+
+          </script>
+        </div>
+      </div>
+    </div>     
+  </div>  
+
+  <fieldset class="layui-elem-field layui-field-title">
+    <legend>续费价格</legend>
+  </fieldset>
+
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label class="layui-form-label">月价 (元)</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" name="month_price" value="{{ d.params.month_price  }}" lay-verify="required" placeholder="请输入价格" autocomplete="off" class="layui-input">
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label class="layui-form-label">季价 (元)</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" name="quarter_price" value="{{ d.params.quarter_price }}" lay-verify="required" placeholder="请输入价格" autocomplete="off" class="layui-input">
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label class="layui-form-label">年价 (元)</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" name="year_price" value="{{ d.params.year_price  }}" lay-verify="required" placeholder="请输入价格" autocomplete="off" class="layui-input">
+          </script>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <fieldset class="layui-elem-field layui-field-title">
+    <legend>到期时间</legend>
+  </fieldset>
+
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <div class="layui-form-item">
+        <label class="layui-form-label">到期时间</label>
+        <div class="layui-input-inline">
+          <script type="text/html" template>
+            <input type="text" name="end_at" value="{{ d.params.end_at2  }}" lay-verify="required" placeholder="请输入日期" autocomplete="off" class="layui-input">
+          </script>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <fieldset class="layui-elem-field layui-field-title">
+    <legend>线路分组</legend>
+  </fieldset>
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">区域</label>
+      <div class="layui-input-inline">
+        <select lay-filter="region_id" name="region_id" lay-verify="">
+          <option value="">请选择区域</option>
+        </select>
+      </div>
+
+
+    </div>
+
+    <div class="layui-inline">
+      <label class="layui-form-label">线路分组</label>
+      <div class="layui-input-inline">
+        <select name="node_group_id" lay-verify="">
+          <option value="">请选择</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">备用线路组</label>
+      <div class="layui-input-inline">
+        <select name="backup_node_group" lay-verify="">
+          <option value="">请选择</option>
+        </select>
+      </div>
+    </div>  
+  </div>
+
+  <fieldset class="layui-elem-field layui-field-title">
+    <legend>CNAME设置 </legend>
+  </fieldset> 
+  
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">主机名</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="cname_hostname2" value="{{ d.params.cname_hostname2 }}" placeholder="留空则使用一级域名" class="layui-input">
+
+        </script>
+      </div>
+    </div> 
+
+    <div class="layui-inline">
+      <label class="layui-form-label">CNAME域名</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="cname_domain" value="{{ d.params.cname_domain }}" placeholder="留空则使用主域名" class="layui-input">
+
+        </script>
+      </div>
+    </div>
+
+    <div class="layui-inline">
+      <label class="layui-form-label">CNAME模式</label>
+      <div class="layui-input-inline">
+        <select lay-filter="cname_mode" name="cname_mode" lay-verify="">
+          <option value="site">按网站生成(推荐)</option>
+          <option value="package">按套餐生成</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+</form>
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-edit-user-package-front-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>

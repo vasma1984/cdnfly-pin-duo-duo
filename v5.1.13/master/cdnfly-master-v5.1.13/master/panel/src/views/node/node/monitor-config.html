@@ -1,0 +1,142 @@
+<style>
+  .cb {
+    width: 15px !important;
+    margin-right: 0px !important;    
+  }
+.layui-form-label {
+  width: 60px;
+  }
+</style>
+<div class="layui-form monitor" lay-filter="layuiadmin-form-nodeadmin">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <div class="layui-input-inline cb layui-hide">
+      <input type="checkbox" name="" lay-skin="primary"> 
+    </div>
+
+    <label class="layui-form-label">监控开关</label>
+    <div class="layui-input-inline">
+      <input disabled type="checkbox" name="check_on" lay-skin="switch" lay-text="开启|关闭">
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-inline cb layui-hide">
+      <input type="checkbox" name="" lay-skin="primary"> 
+    </div>
+
+    <label class="layui-form-label">检查协议</label>
+    <div class="layui-input-inline" style="width: 250px;">
+      <input disabled type="radio" name="check_protocol" value="http" title="HTTP">
+      <input disabled type="radio" name="check_protocol" value="ping" title="Ping">
+      <input disabled type="radio" name="check_protocol" value="tcp" title="TCP">
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-inline cb layui-hide">
+      <input type="checkbox" name="" lay-skin="primary"> 
+    </div>    
+    <label class="layui-form-label">检查超时</label>
+    <div class="layui-input-inline">
+        <input  disabled type="text" name="check_timeout" value="" placeholder="" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">单位为秒</div>
+  </div>
+
+  <div class="layui-form-item http layui-hide">
+    <div class="layui-input-inline cb layui-hide">
+      <input type="checkbox" name="" lay-skin="primary"> 
+    </div>    
+    <label class="layui-form-label">端口</label>
+    <div class="layui-input-inline">
+        <input disabled  type="text" name="check_port" value="" placeholder="" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">HTTP或TCP</div>
+  </div>
+
+  <div class="layui-form-item http layui-hide">
+    <div class="layui-input-inline cb layui-hide">
+      <input type="checkbox" name="" lay-skin="primary"> 
+    </div>
+
+    <label class="layui-form-label">域名</label>
+    <div class="layui-input-inline">
+        <input  disabled type="text" name="check_host" value="" placeholder="留空则使用节点IP" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">仅HTTP协议</div>
+  </div>
+
+  <div class="layui-form-item http layui-hide">
+    <div class="layui-input-inline cb layui-hide">
+      <input type="checkbox" name="" lay-skin="primary"> 
+    </div>
+
+    <label class="layui-form-label">URL路径</label>
+    <div class="layui-input-inline">
+        <input  disabled type="text" name="check_path" value="" placeholder="" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">仅HTTP协议</div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-inline cb layui-hide">
+      <input type="checkbox" name="" lay-skin="primary"> 
+    </div>
+
+    <label class="layui-form-label">监控组</label>
+    <div class="layui-input-inline">
+      <input  disabled type="checkbox" name="check_node_group" value="1" title="国内组" lay-skin="primary">
+      <input  disabled type="checkbox" name="check_node_group" value="2" title="国外组" lay-skin="primary"> 
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-inline cb layui-hide">
+      <input type="checkbox" name="" lay-skin="primary"> 
+    </div>
+    <label class="layui-form-label">故障动作</label>
+    <div class="layui-input-inline">
+      <input  disabled type="radio" name="check_action" value="none" title="不处理">
+      <input  disabled type="radio" name="check_action" value="pause" title="暂停">
+    </div>
+  </div>
+
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-btn-container">
+      <input type="button" lay-submit lay-filter="LAY-node-front-submit" value="确认" class="layui-btn">
+      <input type="button" value="更多HTTP设置" class="more layui-btn layui-btn-primary layui-border-blue">
+    </div>
+  </div>
+</div>
+<script>
+layui.use(['admin', 'table'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,view = layui.view
+  ,form = layui.form;
+
+  $(".more").click(function () {
+    $(".http").removeClass("layui-hide")
+  })
+
+  $(".cb").click(function () {
+    var is_check = $(this).find("input").prop("checked")
+    if (is_check) {
+      $(this).parent().find("input").removeAttr("disabled")
+
+    } else {
+      $(this).next().next().find("input").attr("disabled","disabled")
+
+    }
+    form.render()
+  })
+
+})
+
+</script>

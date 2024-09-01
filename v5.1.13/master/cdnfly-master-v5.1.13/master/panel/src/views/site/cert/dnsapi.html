@@ -1,0 +1,252 @@
+
+
+  <title>DNS API - 证书管理 - 网站管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>网站管理</cite></a>
+      <a><cite>证书管理</cite></a>
+      <a><cite>DNS API</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md9">
+                    <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                  </div>
+                </div>
+            </script>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/dnsapis'
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,title: 'dns列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',   sort: true,width: 60}
+        ,{field:'name', title:'名称'}
+        ,{field:'type', title:'类型'}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:200}
+      ]]
+      ,page: true
+    });
+
+    window.auth_data = {"CloudFlare":[{"name":"CF_Key","tip":"Key"},{"name":"CF_Email","tip":"Email"}],
+       "DNSPod.cn":[{"name":"DP_Id","tip":"Id"},{"name":"DP_Key","tip":"Key"}],
+       "DNSPod.com":[{"name":"DPI_Id","tip":"Id"},{"name":"DPI_Key","tip":"Key"}],
+       "GoDaddy.com":[{"name":"GD_Key","tip":"Key"},{"name":"GD_Secret","tip":"Secret"}],
+       "Aliyun":[{"name":"Ali_Key","tip":"Key"},{"name":"Ali_Secret","tip":"Secret"}],
+       "cloudns.net":[{"name":"CLOUDNS_SUB_AUTH_ID","tip":"SUB_AUTH_ID"},{"name":"CLOUDNS_AUTH_PASSWORD","tip":"AUTH_PASSWORD"}],
+       "Name.com":[{"name":"Namecom_Username","tip":"Username"},{"name":"Namecom_Token","tip":"Token"}],
+       "Namecheap":[{"name":"NAMECHEAP_USERNAME","tip":"USERNAME"},{"name":"NAMECHEAP_API_KEY","tip":"API_KEY"},{"name":"NAMECHEAP_SOURCEIP","tip":"SOURCEIP"}],
+       "jdcloud.com":[{"name":"JD_ACCESS_KEY_ID","tip":"ACCESS_KEY_ID"},{"name":"JD_ACCESS_KEY_SECRET","tip":"ACCESS_KEY_SECRET"}],
+       "dnsdun":[{"name":"Dnsdun_uid","tip":"UID"},{"name":"Dnsdun_api_key","tip":"API_KEY"}]
+     }   
+
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增DNS API'
+            ,area: ['500px', '650px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('site/cert/dnsapi-add').done(function(){
+                form.render(null, 'layuiadmin-form-sitegroupadmin');       
+
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var name = field.name
+                  var des = field.des
+                  var type = field.type
+
+                  var items = window.auth_data[type]
+                  var auth = {}
+                  for (i in items) {
+                    var key = items[i].name
+                    var val = field[key]
+                    auth[key] = val
+                  }
+
+                  var req_data = {"name":name,"des":des,"type":type,"auth":auth}
+                  admin.req({
+                    url: '/dnsapis' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify(req_data)
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的dnsapi');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')dnsapi，是否继续', function(index){
+            admin.req({
+              url: '/dnsapis/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除dnsapi', function(index){
+          var id = data.id
+          admin.req({
+            url: '/dnsapis/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑dnsapi'
+          ,area: ['500px', '450px']
+          ,id: 'LAY-popup-node-add'
+          ,success: function(layero, index){
+            view(this.id).render('site/cert/dnsapi-add',data).done(function(){
+              var dns = data.type
+              var auth_json = JSON.parse(data.auth)
+              $("select[name='type']").val(dns)
+              
+              var auth = window.auth_data[dns]
+              for (i in auth) {
+                var name = auth[i].name
+                var tip = auth[i].tip
+                $(".auth").append('<input type="text" value="'+auth_json[name]+'" name="'+name+'" lay-verify="required" placeholder="'+tip+'" autocomplete="off" class="layui-input">')    
+              }
+
+              form.render(null, 'layuiadmin-form-sitegroupadmin');
+
+              //监听提交
+              form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var name = field.name
+                  var des = field.des
+                  var type = field.type
+                  var id = field.id
+
+                  var items = window.auth_data[type]
+                  var auth = {}
+                  for (i in items) {
+                    var key = items[i].name
+                    var val = field[key]
+                    auth[key] = val
+                  }
+
+                  var req_data = {"name":name,"des":des,"type":type,"auth":auth}
+
+                admin.req({
+                  url: '/dnsapis/' + id //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify(req_data)
+                  ,type: "put"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('保存成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      layui.table.reload('test-table-toolbar'); //重载表格
+                      layer.close(index); //执行关闭 
+                    });
+                  }
+                });
+
+              });
+            });
+          }
+        });
+      }
+    });  
+
+  });
+
+
+  </script>

@@ -1,0 +1,263 @@
+<style type="text/css">
+.small-title{font-weight:700;font-size:14px;margin-bottom: 15px}
+.li-title {  
+  color:#999;
+  width:130px;
+  display: inline-block;
+}
+</style>
+<div class="layui-fluid">
+  <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+    <ul class="layui-tab-title">
+      <li class="layui-this">升级包</li>
+      <li>更换套餐</li>
+    </ul>
+    <div class="layui-tab-content">
+      <div class="layui-tab-item layui-show">
+        <div class="small-title">已有升级包</div>
+        <div class="layui-row layui-col-space10">
+          <div class="layui-col-md12">
+            <table class="layui-hide" id="upgrade-bought" lay-filter="upgrade-bought"></table>
+            
+            <script type="text/html" id="upgrade-bought-bar">
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">移除</a>
+            </script>      
+          </div>  
+        </div> 
+        <hr>
+        <div class="small-title">可添加升级包</div>
+        <div class="layui-row layui-col-space10">
+          <div class="layui-col-md12">
+            <table class="layui-hide" id="upgrade-available" lay-filter="upgrade-available"></table>
+            
+            <script type="text/html" id="upgrade-available-bar">
+              <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="buy">添加</a>
+            </script>
+          </div>  
+        </div>         
+      </div>
+      <div class="layui-tab-item">
+        <form class="layui-form" action="">
+          <div class="layui-form-item">
+            <label class="layui-form-label">选择套餐</label>
+            <div class="layui-input-block">
+              <select lay-filter="packages" name="packages" lay-search lay-verify="required">
+                <option value="">输入搜索套餐</option>
+              </select>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit lay-filter="change">确定</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>      
+
+
+</div>    
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+<script>
+//定义一个 lay-done 对应的全局方法，以供动态模板执行
+layui.data.sendParams = function(params){
+  console.log(params)
+  var user_package_id = params.id
+  var package = params.package
+  var uid = params.uid
+
+  layui.use(['admin', 'table', 'form'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;  
+
+    // 获取套餐列表
+    admin.req({
+      url: '/packages?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var data = res.data
+        for (i in data) {
+          var id = data[i]['id']
+          var name = data[i]['name']
+          if (package != id) {
+            $("select[name='packages']").append('<option value="'+id+'">'+name+'</option>')
+
+          }
+        }
+        form.render("select")
+      }
+    });      
+
+    form.on('submit(change)', function(data){
+      console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+      var package_id = data.field.packages
+      var req_data = {"package": package_id}
+      admin.req({
+        url: '/user-packages/' + user_package_id //实际使用请改成服务端真实接口
+        ,type: "put"
+        ,data: JSON.stringify(req_data)
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('更换成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          }, function(){
+            layui.table.reload('test-table-toolbar'); //重载表格
+            layer.closeAll();
+          });
+        }
+      });
+
+      return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    });
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#upgrade-bought'
+      ,url:'/user-package/'+params.id+"/upgrades"
+      ,headers: {"access-token":access_token}
+      ,title: '套餐列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',  sort: true,width: 60}
+        ,{field:'package_up_name', title:'名称'}
+        ,{field:'type', title:'类型', templet: function(d){
+          if (d.type == "domain") {
+            return '域名数'
+          } else if (d.type == "traffic") {
+            return '流量'
+          } else if (d.type == "http_port") {
+            return 'HTTP端口数'
+          } else if (d.type == "stream_port") {
+            return '转发端口数'
+          } else if (d.type == "custom_cc_rule") {
+            return '自定义CC规则'
+          }
+        }}
+        ,{field:'package_up_amount', title:'数值',width: 65, templet: function(d){
+          if (d.type == "custom_cc_rule") {
+            return ''
+          } else {
+            return d.package_up_amount
+          }
+        }}
+        ,{field:'amount', title:'数量',width: 65, templet: function(d){
+          if (d.type == "custom_cc_rule") {
+            return ''
+          } else {
+            return d.amount
+          }
+        }}
+        ,{fixed: 'right', title:'操作',width: 65, toolbar: '#upgrade-bought-bar'}
+      ]]
+      ,page: true
+    });
+    
+    //监听行工具事件
+    table.on('tool(upgrade-bought)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定移除该升级包', function(index){
+          var user_package_id = data.user_package
+          var package_up_id = data.package_up
+
+          admin.req({
+            url: '/user-package/' + user_package_id + "/upgrades/"+package_up_id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('移除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('upgrade-bought'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } 
+    })
+
+    table.render({
+      elem: '#upgrade-available'
+      ,url:'/package-ups?enable=1&upid='+user_package_id
+      ,headers: {"access-token":access_token}
+      ,title: '套餐列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',    sort: true,width: 60}
+        ,{field:'name', title:'名称'}
+        ,{field:'type', title:'类型', templet: function(d){
+          if (d.type == "domain") {
+            return '域名数'
+          } else if (d.type == "traffic") {
+            return '流量'
+          } else if (d.type == "http_port") {
+            return 'HTTP端口数'
+          } else if (d.type == "stream_port") {
+            return '转发端口数'
+          } else if (d.type == "custom_cc_rule") {
+            return '自定义CC规则'
+          }
+        }}
+        ,{field:'amount', title:'数值',width: 65, templet: function(d){
+          if (d.type == "custom_cc_rule") {
+            return ''
+          } else {
+            return d.amount
+          }
+        }}
+        ,{field:'price', title:'价格 (元/月)'}
+        ,{fixed: 'right', title:'操作',width: 65, toolbar: '#upgrade-available-bar'}
+      ]]
+      ,page: true
+    });
+    
+    //监听行工具事件
+    table.on('tool(upgrade-available)', function(obj){
+      var data = obj.data;
+      data['user_package_id'] = user_package_id
+      layer.prompt({
+        formType: 0,
+        value: '1',
+        title: '请输入数量',
+      }, function(value, index, elem){
+        var amount = value
+        var req_data = {"package_up":data.id,"amount":amount}
+        admin.req({
+          url: '/user-package/'+user_package_id+'/upgrades'//实际使用请改成服务端真实接口
+          ,type: "post"
+          ,data: JSON.stringify(req_data)
+          ,done: function(res){
+            //登入成功的提示与跳转
+            layer.msg('购买成功', {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              layui.table.reload('upgrade-bought'); //重载表格
+              layer.close(index)
+            });
+          }
+        });
+
+      });
+    })
+  })
+};
+</script>
+

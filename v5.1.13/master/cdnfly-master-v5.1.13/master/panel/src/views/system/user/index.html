@@ -1,0 +1,420 @@
+<style>
+  .search-type .layui-input {height: 30px;}
+</style>
+
+  <title>用户管理 - 系统管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>系统管理</cite></a>
+      <a><cite>用户管理</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md8">
+                    <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="enable">启用</button>
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="disable">禁用</button>
+                    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                  </div>
+
+                  <div class="layui-col-md2">
+                    <input style="height:30px" type="text" name="search" placeholder="输入关键词搜索" autocomplete="off" class="layui-input">   
+                  </div> 
+                  <div class="layui-col-md1 search-type">
+
+                    <select name="search_type" lay-verify="">
+                      <option value="user_id">用户ID</option>
+                      <option value="email">邮箱</option>
+                      <option value="name">用户名</option>
+                      <option value="des">备注</option>
+                      <option value="phone">手机号</option>
+                      <option value="qq">QQ号</option>
+                    </select>  
+                  </div> 
+                  <div class="layui-col-md1">
+                    <button class="layui-btn  layui-btn-sm" onclick="search()">
+                      <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                  </div>
+                                 
+                </div>
+            </script>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="switch">切换</a>
+              <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,setter = layui.setter
+    ,form = layui.form;
+
+    // 获取用户端域名
+    admin.req({
+      url: '/configs/global-0-system-user_domain'
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        window.user_domain = res.data.value
+      }
+    });    
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/users'
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,title: '用户列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',  sort: true,width: 60}
+        ,{field:'email', title:'Email'}
+        ,{field:'name', title:'用户名'}
+        ,{field:'phone', title:'手机号'}
+        ,{field:'qq', title:'QQ'}
+        ,{field:'des', title:'备注'}
+        ,{field:'balance', title:'余额', templet: function(d){
+          return d.balance/100
+        }}
+        ,{field:'state', title:'启用', templet: function(d){
+          if (d.enable == 1) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'  
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+          }
+        }}
+        ,{field:'type', title:'类型', templet: function(d){
+          if (d.type == 1) {
+              return '管理员'   
+          } else {
+              return '普通用户'
+          }
+        }}        
+        ,{field:'create_at2', title:'添加时间',sort: true}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:180}
+      ]]
+      ,page: true
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增用户'
+            ,area: ['500px', '650px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('system/user/addform').done(function(){
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var email = field.email
+                  var name = field.name
+                  var des = field.des
+                  var phone = field.phone
+                  var qq = field.qq
+                  var password = field.password
+                  var enable = field.enable && true || false
+                  var type = parseInt(field.type)
+                  var cert_verified = parseInt(field.cert_verified)
+                  var login_captcha = field.login_captcha
+                  var white_ip = field.white_ip
+
+                  admin.req({
+                    url: '/users' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"login_captcha":login_captcha,"white_ip":white_ip, "cert_verified":cert_verified, "email": email,"name": name,"des": des,"phone": phone,"qq": qq,"password": password,"enable":enable, "type":type})
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+              });
+            }
+          });
+        break;
+        case 'enable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的用户');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1})
+          }
+          admin.req({
+            url: '/users' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('启用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'disable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的用户');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0})
+          }
+          admin.req({
+            url: '/users' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('禁用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的用户');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')用户，是否继续', function(index){
+            admin.req({
+              url: '/users/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除用户', function(index){
+          var id = data.id
+          admin.req({
+            url: '/users/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑用户'
+          ,area: ['500px', '650px']
+          ,id: 'LAY-popup-node-add'
+          ,success: function(layero, index){
+              view(this.id).render('system/user/addform',data).done(function(){
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var email = field.email
+                  var name = field.name
+                  var des = field.des
+                  var phone = field.phone
+                  var qq = field.qq
+                  var login_captcha = field.login_captcha
+                  var white_ip = field.white_ip
+                  var password = field.password
+                  if (password == "") {
+                    password = undefined
+                  }
+                  var enable = field.enable && true || false
+                  var type = parseInt(field.type)
+                  var cert_verified = parseInt(field.cert_verified)
+                  var id = field.id
+
+                  admin.req({
+                    url: '/users/'+ id//实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"white_ip":white_ip,"login_captcha":login_captcha, "cert_verified":cert_verified, "email": email,"name": name,"des": des,"phone": phone,"qq": qq,"password": password,"enable":enable, "type":type})
+                    ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('更新成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+              });
+          }
+        });
+      } else if(obj.event === 'switch'){
+        admin.req({
+          url: '/users/'+ data.id + "?token=1"//实际使用请改成服务端真实接口
+          ,type: "get"
+          ,contentType:"application/json"
+          ,dataType: "json"
+          ,done: function(res){         
+            var access_token = res.data.access_token
+            var username = res.data.username
+            var uid = res.data.uid
+
+            if (window.user_domain == "" || res.data.type == 1) {
+              //请求成功后，写入 access_token
+              layui.data(setter.tableName, {
+                key: setter.request.tokenName
+                ,value: access_token
+              });
+
+              //请求成功后，写入 user_name
+              layui.data(setter.tableName, {
+                key: "username"
+                ,value: username
+              });
+
+              //请求成功后，写入 uid
+              layui.data(setter.tableName, {
+                key: "uid"
+                ,value: uid
+              });       
+
+              //请求成功后，写入 user_type
+              layui.data(setter.tableName, {
+                key: "user_type"
+                ,value: res.data.type
+              });
+
+            }
+
+            //登入成功的提示与跳转
+            layer.msg('切换成功', {
+              offset: '15px'
+              ,icon: 1
+              ,time: 1000
+            }, function(){
+              if (res.data.type == 1) {
+                location.href = "/console/index.html#/home"
+                location.reload()   
+              } else {
+                if (window.user_domain == "") {
+                  location.href = "/console/index.html#/user_home"
+                  location.reload()   
+                } else {
+                  // 处理access_token
+                  access_token = access_token.replace(/\//g,"_")
+                  access_token = access_token.replace(/=/g,",")
+
+                  var port = location.port
+                  var url = "http://"+window.user_domain+":"+port + "/console/index.html#/user/login/redirect=/access_token="+access_token+"/username="+username+"/uid="+uid
+                  window.open(url)
+                }
+              }           
+            });
+
+          }
+        });
+      }
+    });  
+  });
+
+  function search (argument) {
+      var search = layui.$("input[name='search']").val()
+      var search_type = layui.$("select[name='search_type']").val()
+      var where = {"des":"", "user_id":"", "email":"", "qq":"", "phone":"","name":""}
+      where[layui.$("select[name='search_type']").val()] = layui.$("input[name='search']").val()
+      layui.table.reload('test-table-toolbar', {
+        where: where,
+        done: function (argument) {
+          layui.$("input[name='search']").val(search)
+          layui.$("select[name='search_type']").val(search_type)
+          layui.form.render("select")
+        }, page: {curr: 1}
+      });
+
+  }
+
+  </script>

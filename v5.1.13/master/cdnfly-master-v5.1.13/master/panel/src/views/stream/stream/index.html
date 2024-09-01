@@ -1,0 +1,1313 @@
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+<script src="/src/lib/select2.min.js"></script>
+
+  <title>我的转发 - 四层转发</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <script type="text/html" template>
+      <a><cite>四层转发</cite></a>
+        {{# if(layui.router().search.show_all === '1'){ }}
+            <a><cite>所有转发</cite></a>
+        {{# } else { }}
+            <a><cite>我的转发</cite></a>
+        {{# } }}
+      </script>
+    </div>
+  </div>
+  
+  <style type="text/css">
+.search_type .layui-input{height: 30px;}
+
+  </style>
+  <div class="layui-fluid">
+    <script type="text/html" template lay-done="layui.data.done(d);">
+      <div class="layui-row layui-col-space15">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            监听端口
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <input type="text" name="listen_port" required lay-verify="required" placeholder="监听端口" autocomplete="off" class="layui-input">    
+          </div>      
+
+          <div class="layui-col-md2 layui-form search-btn">
+            <button type="button" class="layui-btn search">搜索</button>
+            <button type="button" class="layui-btn layui-btn-primary more-option">更多</button>
+          </div>
+
+      </div>
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            监听协议
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <input type="radio" name="listen_protocol" value="" title="不限" checked>
+            <input type="radio" name="listen_protocol" value="udp" title="UDP">
+            <input type="radio" name="listen_protocol" value="tcp" title="TCP">
+          </div>
+      </div>
+
+      {{# if(layui.router().search.show_all != '1'){ }}
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            转发组
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <select lay-filter="group" name="group" lay-verify="required">
+            </select>
+          </div>      
+      </div>
+      {{# } }}
+
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            源IP
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <input type="text" name="backend_ip" required lay-verify="required" placeholder="源IP" autocomplete="off" class="layui-input">    
+          </div>      
+      </div>
+
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            转发ID
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <input type="text" name="id" required lay-verify="required" placeholder="转发ID" autocomplete="off" class="layui-input">    
+          </div>      
+      </div>
+
+      {{# if(layui.router().search.show_all === '1'){ }}
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            用户ID
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <input type="text" name="uid" required lay-verify="required" placeholder="用户ID" autocomplete="off" class="layui-input">    
+          </div>      
+      </div>
+      {{# } }}
+
+      {{# if(layui.router().search.show_all === '1'){ }}
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            基础套餐
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <select lay-filter="package" name="package" lay-verify="required">
+            </select>
+          </div>      
+      </div>
+      {{# } }}
+
+      {{# if(layui.router().search.show_all === '1'){ }}
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            区域
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <select lay-filter="region" name="region" lay-verify="required">
+            </select>
+          </div>      
+      </div>
+      {{# } }}
+
+      {{# if(layui.router().search.show_all === '1'){ }}
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            线路分组
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <select lay-filter="node_group" name="node_group" lay-verify="required">
+            </select>
+          </div>      
+      </div>
+      {{# } }}
+
+      {{# if(layui.router().search.show_all != '1'){ }}
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            转发套餐
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <select lay-filter="user_package"  name="user_package" lay-verify="required">
+            </select>
+          </div>      
+      </div>
+      {{# } }}
+
+      {{# if(layui.router().search.show_all === '1'){ }}
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            CNAME域名
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <input type="text" name="cname_domain" required lay-verify="required" placeholder="CNAME域名" autocomplete="off" class="layui-input">    
+          </div>      
+      </div>
+      {{# } }}
+
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            启用
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <input type="radio" name="enable" value="" title="不限" checked>
+            <input type="radio" name="enable" value="1" title="是">
+            <input type="radio" name="enable" value="0" title="否">
+          </div>      
+      </div>
+
+      {{# if(layui.router().search.show_all === '1'){ }}
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            同步状态
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <select lay-filter="sync_state" id="sync_state" name="sync_state">
+              <option value="">请选择</option>
+              <option value="done">正常</option>
+              <option value="pending">待同步</option>
+              <option value="process">同步中</option>
+              <option value="failed">同步失败</option>
+            </select>
+          </div>      
+      </div>
+      {{# } }}
+
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2" style="padding-left:40px;padding-top:10px;">
+            状态
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <select lay-filter="state" id="state" name="state">
+              <option value="">请选择</option>
+              <option value="200">正常</option>
+              <option value="514">锁定</option>
+              <option value="513">流量超限</option>
+              <option value="512">套餐过期</option>
+            </select>
+          </div>      
+      </div>
+      <div class="layui-row layui-col-space15 layui-hide search-item">
+          <div class="layui-col-md2 layui-form" style="padding-left:40px;">
+            <button type="button" class="layui-btn search">搜索</button>
+          </div>
+          <div class="layui-col-md2 layui-form">
+            <button type="button" class="layui-btn layui-btn-normal reset">重置</button>
+            <button style="float: right;" type="button" class="layui-btn layui-btn-primary close-btn">关闭</button>
+          </div>
+      </div>
+
+    </script>
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md6">
+                    <div class="layui-btn-group">
+                      <button class="layui-btn  layui-btn-sm" lay-event="add">新增</button>
+                      <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="update">修改</button>
+                    </div>
+                    <div class="layui-btn-group">
+                      <button class="layui-btn layui-btn-sm" lay-event="enable">启用</button>
+                      <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="disable">禁用</button>
+                      <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                    </div>
+
+                    {{# if(layui.router().search.show_all == '1'){ }}
+                      <div class="layui-btn-group">
+                        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="set_state">设置状态</button>
+                        <button class="layui-btn layui-btn-sm" lay-event="cname_domain">CNAME域名</button>
+                        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="cname_mode">CNAME模式</button>
+                        <button class="layui-btn layui-btn-sm " lay-event="node_group">线路分组</button>
+                      </div>
+                    {{# } }} 
+
+                  </div>
+                                 
+                </div>
+            </script>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  layui.data.done = function(d){
+    layui.use(['form'], function(){
+      var $ = layui.$
+      ,admin = layui.admin
+      ,view = layui.view
+      ,table = layui.table
+      ,form = layui.form;
+
+      form.render()
+
+      $(".more-option").click(function (argument) {
+        $(".search-item").removeClass("layui-hide")
+        $(".search-btn").addClass("layui-hide")
+      })
+
+      $(".close-btn").click(function (argument) {
+        $(".search-item").addClass("layui-hide")
+        $(".search-btn").removeClass("layui-hide")      
+      })
+
+      // 获取分组列表
+      admin.req({
+        url: '/stream-groups?limit=0' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          var data = res.data
+          $("select[name='group']").append("<option value=''>请选择</option>");
+          for (i in data) {
+            $("select[name='group']").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+          }
+
+          form.render("select");      
+        }
+      }); 
+
+      // 获取用户套餐
+      admin.req({
+        url: '/user-packages?limit=0' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          var data = res.data
+          $("select[name='user_package']").append("<option value=''>请选择</option>");
+          for (i in data) {
+            $("select[name='user_package']").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+          }
+
+          form.render("select");      
+        }
+      }); 
+
+      // 获取基础套餐
+      admin.req({
+        url: '/packages?limit=0' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          var data = res.data
+          $("select[name='package']").append("<option value=''>请选择</option>");
+          for (i in data) {
+            $("select[name='package']").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+          }
+
+          form.render("select");      
+        }
+      });       
+
+      var show_all_site = layui.router().search.show_all
+      if (show_all_site == "1" ) {
+        // 获取区域
+        admin.req({
+          url: '/regions?limit=0' //实际使用请改成服务端真实接口
+          ,type: "get"
+          ,contentType:"application/json"
+          ,dataType: "json"
+          ,done: function(res){
+            var data = res.data
+            window.regions = data
+            $("select[name='region']").append("<option value=''>请选择</option>");
+            for (i in data) {
+              $("select[name='region']").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+            }
+
+            form.render("select");      
+          }
+        });     
+
+        // 获取线路分组
+        admin.req({
+          url: '/node-groups?limit=0' //实际使用请改成服务端真实接口
+          ,type: "get"
+          ,contentType:"application/json"
+          ,dataType: "json"
+          ,done: function(res){
+            var data = res.data
+            var region_node_group = {}
+
+            $("select[name='node_group']").append("<option value=''>请选择</option>");
+            for (i in data) {
+              $("select[name='node_group']").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+              var region_id = data[i]['region_id']
+              var id = data[i]['id']
+              var name = data[i]['name']
+              if (region_node_group[region_id]) {
+                region_node_group[region_id].push({"id":id,"name":name})
+              } else {
+                region_node_group[region_id] = [{"id":id,"name":name}]
+              }
+
+            }
+            window.region_node_group = region_node_group
+            form.render("select");
+          }
+        }); 
+                  
+      }
+
+      // 搜索
+      $(".search").click(function (argument) {
+        var $ = layui.$
+        var table = layui.table
+
+        var listen_port = $("input[name='listen_port']").val()
+        var listen_protocol = $("input[name='listen_protocol']:checked").val()
+        var group = $("select[name='group']").val()
+        var backend_ip = $("input[name='backend_ip']").val()
+        var id = $("input[name='id']").val()
+        var uid = $("input[name='uid']").val()
+        var package_id = $("select[name='package']").val()
+        var region = $("select[name='region']").val()
+        var node_group = $("select[name='node_group']").val()
+
+        var user_package = $("select[name='user_package']").val()
+        var cname_domain = $("input[name='cname_domain']").val()
+        var enable = $("input[name='enable']:checked").val()
+        var sync_state = $("select[name='sync_state']").val()
+        var state = $("select[name='state']").val()
+
+        table.reload('test-table-toolbar', {
+          where: {"listen_port":listen_port,"listen_protocol":listen_protocol,"group":group,"backend_ip":backend_ip,"id":id,"uid":uid,"node_group":node_group,"region":region,"package":package_id,"user_package":user_package,"cname_domain":cname_domain,"enable":enable,"sync_state":sync_state,"state":state}
+          , page: {curr: 1}
+        });
+
+      })
+
+      // 重置
+      $(".reset").click(function (argument) {
+        $("input[name='listen_port']").val("")
+        $("input[name='listen_protocol'][value='']").prop("checked",true)
+        $("input[name='backend_ip']").val("")
+        $("select[name='group']").val("")
+        $("input[name='id']").val("")
+        $("input[name='uid']").val("")
+        $("select[name='user_package']").val("")
+        $("select[name='package']").val("")
+        $("select[name='region']").val("")
+        $("select[name='node_group']").val("")        
+        $("input[name='cname_domain']").val("")
+        $("input[name='enable'][value='']").prop("checked",true)
+        $("select[name='state']").val("")
+        $("select[name='sync_state']").val("")
+        form.render()
+      })
+
+    });
+  };
+</script>
+
+  <script>
+  var show_all_stream = layui.router().search.show_all
+
+  layui.use(['admin', 'table', 'element'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,element = layui.element
+    ,form = layui.form;
+
+    form.render()   
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var uid_hide = true
+    if (show_all_stream == "1") {
+      uid_hide = false
+    }
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/streams'
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,title: '转发列表'
+      ,where: {"show_all": show_all_stream}
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',  sort: true,width: 60}
+        ,{field:'uid', title:'用户',hide: uid_hide,templet:function (d) {
+          return d.name + "(" + d.uid + ")"
+        }}
+        ,{field:'listen', title:'监听',templet: function(d){
+            var listen = JSON.parse(d.listen)      
+            var list = []
+            for (i in listen) {
+              var port = listen[i]['port']
+              var protocol = listen[i]['protocol']
+              if (protocol == "udp") {
+                list.push(port+"/UDP")
+              } else {
+                list.push(port)
+              }
+            }
+            return list.join(", ")
+        }}        
+        ,{field:'package_name', title:'套餐'}
+        ,{field:'region_name', hide: uid_hide, title:'区域'} 
+        ,{field:'node_group_name', hide: uid_hide, title:'线路组'}         
+        ,{field:'backup_node_group_name', hide: uid_hide, title:'备用线路组'}    
+        ,{field:'cname', title:'CNAME',templet:function (d) {
+          var cname
+          if (d.cname_mode == "site") {
+            if (d.cname_hostname2 == "") {
+              cname = d.cname_hostname + "." + d.cname_domain
+            } else {
+              cname =  d.cname_hostname + "."+ d.cname_hostname2 + "." + d.cname_domain
+            }            
+          } else {
+            if (d.up_cname_hostname2 == "") {
+              cname =  d.up_cname_hostname + "." + d.up_cname_domain
+            } else {
+              cname =  d.up_cname_hostname + "."+ d.up_cname_hostname2 + "." + d.up_cname_domain
+            }               
+          }
+
+          if (d.cname_state == "done" || d.cname_state == null) {
+            return cname
+          } else {
+            return '<span class="layui-badge layui-bg-orange">生成中</span>'    
+          }
+
+        }}
+        ,{field:'create_at2', title:'创建时间'}
+        ,{field:'update_at2', title:'更新时间'}
+        ,{field:'enable', title:'启用',width:80,templet: function(d){
+          if (d.enable == 1) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'        
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+          }
+        }}        
+        ,{field:'sync_state', title:'配置同步',templet: function(d){
+            if (d.sync_state == "pending") {
+              return '<span class="layui-badge layui-bg-orange">待同步</span>'
+            } else if (d.sync_state == "process") {
+              return '<span class="layui-badge layui-bg-orange">同步中</span>'
+            } else if (d.sync_state == "done") {
+              return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'              
+            } else {
+              return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'
+            }            
+        }}
+        ,{field:'stream_state', title:'转发状态',templet: function(d){
+            if (d.stream_state == "200") {
+              return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'  
+            } else if (d.stream_state == "512") {
+              return '<span class="layui-badge layui-bg-orange">套餐到期</span>'
+            } else if (d.stream_state == "513") {
+              return '<span class="layui-badge layui-bg-orange">流量超限</span>'
+            } else if (d.stream_state == "514") {
+              return '<span class="layui-badge layui-bg-orange">锁定</span>'
+            }             
+        }}          
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:120}
+      ]]
+      ,page: true
+    });
+
+    // 获取分组列表
+    admin.req({
+      url: '/stream-groups?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var data = res.data
+        $(".stream-group-select").append("<option value=''>所有</option>");
+        for (i in data) {
+          $(".stream-group-select").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+        }
+
+        form.render("select");      
+      }
+    }); 
+
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增转发'
+            ,area: ['500px', '500px']
+            ,id: 'LAY-popup-stream-add'
+            ,success: function(layero, index){
+              view(this.id).render('stream/stream/addform').done(function(){
+                $('.stream-group-select-add').select2();
+                // 如果是管理员
+                if (!uid_hide) {
+                  $(".users").removeClass("layui-hide")
+                  form.on('select(users)', function(data){
+                    var uid = data.value
+                    //请求套餐数据
+                    admin.req({
+                      url: '/user-packages?limit=0&uid='+uid //实际使用请改成服务端真实接口
+                      ,type: "get"
+                      ,contentType:"application/json"
+                      ,dataType: "json"
+                      ,done: function(res){
+                        var data = res.data
+                        $("#package").empty()
+                        for (i in data) {
+                          var package_name = data[i]['package_name']
+                          var user_package_name = data[i]['user_package_name']
+                          var name = package_name
+                          if (package_name != user_package_name) {
+                            name = package_name + "(" + user_package_name + ")"
+                          }
+                          $("#package").append("<option value='"+data[i]["id"]+"'>"+name+"</option>");
+                        }
+
+                        form.render(null, 'layuiadmin-form-nodeadmin');
+                      }
+                    });
+
+                    //请求网站分组数据
+                    admin.req({
+                      url: '/stream-groups?limit=0&uid='+uid //实际使用请改成服务端真实接口
+                      ,type: "get"
+                      ,contentType:"application/json"
+                      ,dataType: "json"
+                      ,done: function(res){
+                        var data = res.data
+                        $(".stream-group-select-add").empty()
+                        for (i in data) {
+                          $(".stream-group-select-add").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+                        }
+
+                        $('.stream-group-select-add').select2();
+                      }
+                    });                    
+                  });                       
+                  //请求用户列表
+                  admin.req({
+                    url: '/users?limit=0&type=2' //实际使用请改成服务端真实接口
+                    ,type: "get"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      var data = res.data
+                      for (i in data) {
+                        var id = data[i]['id']
+                        var name = data[i]['name']
+                        var phone = data[i]['phone']
+                        var email = data[i]['email']
+                        var identify = id
+                        if (name) {
+                          identify = name 
+                        } else if (phone) {
+                          identify = phone
+                        } else if (email) {
+                          identify = email
+                        }
+
+                        $("#users").append("<option value='"+data[i]["id"]+"'>"+identify+"</option>");
+                      }
+
+                      form.render(null, 'layuiadmin-form-nodeadmin');
+                    }
+                  });                  
+                } else {
+                  $(".users").addClass("layui-hide")
+                  //请求套餐数据
+                  admin.req({
+                    url: '/user-packages?limit=0' //实际使用请改成服务端真实接口
+                    ,type: "get"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      var data = res.data
+                      for (i in data) {
+                        var package_name = data[i]['package_name']
+                        var user_package_name = data[i]['user_package_name']
+                        var name = package_name
+                        if (package_name != user_package_name) {
+                          name = package_name + "(" + user_package_name + ")"
+                        }
+                        $("#package").append("<option value='"+data[i]["id"]+"'>"+name+"</option>");
+                      }
+
+                      form.render(null, 'layuiadmin-form-nodeadmin');
+                    }
+                  });
+
+                  //请求网站分组数据
+                  admin.req({
+                    url: '/site-groups?limit=0' //实际使用请改成服务端真实接口
+                    ,type: "get"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      var data = res.data
+                      for (i in data) {
+                        $(".site-group-select-add").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+                      }
+
+                      $('.site-group-select-add').select2();
+                    }
+                  });
+                }
+
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field
+                  var stream_amount = field.stream_amount; //获取提交的字段
+                  var user_package_id = field.package
+                  var listen_port = field.listen_port
+                  var ip = field.ip
+                  var backend_port = field.backend_port
+                  var stream_data = field.stream_data
+                  var uid = undefined
+                  if (field.users) {
+                    uid = field.users
+                  }
+
+                  var req_data = []
+                  var groups = $("select[name='groups-add']").val()
+                  if (groups) {
+                    groups = groups.join(",")
+                  } else {
+                    groups = undefined
+                  }
+
+                  var listen = []
+                  var listen_port_arr = listen_port.split(/\s+/)
+                  for (i in listen_port_arr) {
+                    var port_protocol = listen_port_arr[i]
+                    var port_protocol_arr = port_protocol.split("/")
+                    var port = port_protocol_arr[0]
+                    var protocol = port_protocol_arr[1]
+                    if (typeof(protocol) == "undefined") {
+                      protocol = "tcp"
+                    }
+
+                    listen.push({"protocol":protocol,"port":port})
+                  }
+
+                  if (stream_amount == "single") {
+                    req_data.push({"uid":uid, "groups":groups, "user_package":user_package_id,"listen":listen,"backend_port":backend_port, "backend":[{"addr":ip}]})
+
+                    admin.req({
+                      url: '/streams' //实际使用请改成服务端真实接口
+                      ,data: JSON.stringify(req_data)
+                      ,type: "post"
+                      ,contentType:"application/json"
+                      ,dataType: "json"
+                      ,done: function(res){
+                        //登入成功的提示与跳转
+                        layer.msg('新增成功', {
+                          offset: '15px'
+                          ,icon: 1
+                          ,time: 1000
+                        }, function(){
+                          if (stream_amount == "single") {
+                            var id = res.data
+                            location.hash = '/stream/stream/edit/id='+id; 
+                          } else {
+                            layui.table.reload('test-table-toolbar'); //重载表格
+                            layer.close(index); //执行关闭                           
+                          }
+
+                        });
+                      }
+                    });        
+                                
+                  } else {
+                    if (stream_data == "") {
+                        layer.alert('请输入数据'); 
+                        return                      
+                    }
+                    var stream_data_arr = stream_data.split("\n")
+                    for (i in stream_data_arr) {
+                      var line = stream_data_arr[i]
+                      if (line == "") {
+                        continue
+                      }
+                      var line_arr = line.split("|")
+                      var listen_port = line_arr[0]
+                      var ip = line_arr[1]
+                      var backend_port = line_arr[2]
+
+                      var listen = []
+                      var listen_port_arr = listen_port.split(/\s+/)
+                      for (i in listen_port_arr) {
+                        var port_protocol = listen_port_arr[i]
+                        var port_protocol_arr = port_protocol.split("/")
+                        var port = port_protocol_arr[0]
+                        var protocol = port_protocol_arr[1]
+                        if (typeof(protocol) == "undefined") {
+                          protocol = "tcp"
+                        }
+
+                        listen.push({"protocol":protocol,"port":port})
+                      }
+
+                      req_data.push({"uid":uid, "groups":groups, "user_package":user_package_id,"backend_port":backend_port, "listen":listen,"backend":[{"addr":ip}]})
+
+                    }
+
+                    var size = req_data.length
+                    window.stream_cancel = false
+
+                    var add_stream = function (data, index, size) {
+                      admin.req({
+                        url: '/streams' //实际使用请改成服务端真实接口
+                        ,data: JSON.stringify(data[index])
+                        ,type: "post"
+                        ,loader: false
+                        ,contentType:"application/json"
+                        ,dataType: "json"
+                        ,done: function(res){
+                          element.progress('process', parseInt((index+1)/size*100)+"%");
+                          index += 1
+                          if (index == size) {
+                            layer.closeAll();
+                            layui.table.reload('test-table-toolbar'); //重载表格
+                          } else {
+                            if (!window.stream_cancel) {
+                              add_stream(data, index, size)
+                            }
+                          }
+                        }
+                      });
+                    }
+
+                    // 弹出进度条                    
+                    layer.open({
+                      title: '处理中...'
+                      ,content: '<div lay-filter="process" style="margin-left:20px;margin-right:20px;margin-top:20px;" class="layui-progress layui-progress-big" lay-showPercent="true"><div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div></div>'
+                      ,type: 1
+                      ,btn: ['取消']
+                      ,area: '300px'
+                      ,yes: function(index, layero){
+                        window.stream_cancel = true
+                        layer.close(index);
+                      }
+                      ,cancel: function(){ 
+                        return false
+                      }
+                      ,success: function(layero, index){
+                        element.render()
+                        // 开始添加
+                        add_stream(req_data, 0, size)
+                      }
+                    });
+
+                  }
+
+
+
+                });
+              });
+            }
+          });
+        break;
+        break;        
+        case 'enable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的转发');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1})
+          }
+
+          var size = req_data.length
+          window.stream_cancel = false
+
+          var update_stream = function (data, index, size) {
+            admin.req({
+              url: '/streams' //实际使用请改成服务端真实接口
+              ,data: JSON.stringify(data[index])
+              ,type: "put"
+              ,loader: false
+              ,contentType:"application/json"
+              ,dataType: "json"
+              ,done: function(res){
+                element.progress('process', parseInt((index+1)/size*100)+"%");
+                index += 1
+                if (index == size) {
+                  layer.closeAll();
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                } else {
+                  if (!window.stream_cancel) {
+                    update_stream(data, index, size)
+                  }
+                }
+              }
+            });
+          }
+
+          // 弹出进度条                    
+          layer.open({
+            title: '处理中...'
+            ,content: '<div lay-filter="process" style="margin-left:20px;margin-right:20px;margin-top:20px;" class="layui-progress layui-progress-big" lay-showPercent="true"><div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div></div>'
+            ,type: 1
+            ,btn: ['取消']
+            ,area: '300px'
+            ,yes: function(index, layero){
+              window.stream_cancel = true
+              layer.close(index);
+            }
+            ,cancel: function(){ 
+              return false
+            }
+            ,success: function(layero, index){
+              element.render()
+              // 开始添加
+              update_stream(req_data, 0, size)
+            }
+          }); 
+
+        break;
+        case 'disable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的转发');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0})
+          }
+
+          var size = req_data.length
+          window.stream_cancel = false
+
+          var update_stream = function (data, index, size) {
+            admin.req({
+              url: '/streams' //实际使用请改成服务端真实接口
+              ,data: JSON.stringify(data[index])
+              ,type: "put"
+              ,loader: false
+              ,contentType:"application/json"
+              ,dataType: "json"
+              ,done: function(res){
+                element.progress('process', parseInt((index+1)/size*100)+"%");
+                index += 1
+                if (index == size) {
+                  layer.closeAll();
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                } else {
+                  if (!window.stream_cancel) {
+                    update_stream(data, index, size)
+                  }
+                }
+              }
+            });
+          }
+
+          // 弹出进度条                    
+          layer.open({
+            title: '处理中...'
+            ,content: '<div lay-filter="process" style="margin-left:20px;margin-right:20px;margin-top:20px;" class="layui-progress layui-progress-big" lay-showPercent="true"><div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div></div>'
+            ,type: 1
+            ,btn: ['取消']
+            ,area: '300px'
+            ,yes: function(index, layero){
+              window.stream_cancel = true
+              layer.close(index);
+            }
+            ,cancel: function(){ 
+              return false
+            }
+            ,success: function(layero, index){
+              element.render()
+              // 开始添加
+              update_stream(req_data, 0, size)
+            }
+          }); 
+
+        break;
+        case 'set_state':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择转发');   
+            return
+          }
+
+          window.stream_ids = []
+          for (i in data) {
+            window.stream_ids.push(data[i]['id'])
+          }
+
+          var stream_ids = window.stream_ids.join(", ")
+
+          admin.popup({
+            title: '设置状态'
+            ,area: ['400px', '300px']
+            ,id: 'LAY-popup-set-state'
+            ,success: function(layero, index){
+              view(this.id).render('stream/stream/update-state',{"stream_ids":stream_ids}).done(function(){
+                //监听提交
+                $("#update").click(function (argument) {
+                  var stream_ids = $("#stream_id").text()
+                  var state = $("#stream_state").val()
+                  if (state == "") {
+                    layer.alert("请选择状态")
+                    return
+                  }
+
+                  var req_data = []
+                  var stream_ids_arr = stream_ids.split(", ")
+                  for (i in stream_ids_arr) {
+                    var stream_id = stream_ids_arr[i]
+                    var data = {"id":stream_id,"state": state} 
+                    req_data.push(data)
+                  }
+
+                  admin.req({
+                    url: '/streams' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify(req_data)
+                    ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('更新成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                }) 
+              });
+            }
+          });
+        break;        
+        case 'node_group':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择转发');   
+            return
+          }
+
+          window.stream_ids = []
+          for (i in data) {
+            window.stream_ids.push(data[i]['id'])
+          }
+
+          var stream_ids = window.stream_ids.join(", ")
+
+          admin.popup({
+            title: '修改线路分组'
+            ,area: ['400px', '350px']
+            ,id: 'LAY-popup-set-node-group'
+            ,success: function(layero, index){
+              view(this.id).render('stream/stream/update-node-group',{"stream_ids":stream_ids}).done(function(){
+                //监听提交
+                $("#update").click(function (argument) {
+                  var region_id = $("#update-region").val()
+                  var node_group_id = $("#update-node-group").val()
+                  var backup_node_group = $("#update-backup-node-group").val()
+                  if (region_id == "") {
+                    layer.alert("请选择区域")
+                    return
+                  }
+
+                  if (node_group_id == "") {
+                    layer.alert("请选择线路分组")
+                    return
+                  }
+
+                  var req_data = []
+                  var stream_ids_arr = stream_ids.split(", ")
+                  for (i in stream_ids_arr) {
+                    var stream_id = stream_ids_arr[i]
+                    var data = {"backup_node_group":backup_node_group, "id":stream_id,"region_id": region_id, "node_group_id":node_group_id} 
+                    req_data.push(data)
+                  }
+
+                  admin.req({
+                    url: '/streams' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify(req_data)
+                    ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('更新成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                }) 
+              });
+            }
+          });
+        break;             
+        case 'cname_domain':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择转发');   
+            return
+          }
+
+          window.stream_ids = []
+          for (i in data) {
+            window.stream_ids.push(data[i]['id'])
+          }
+
+          var stream_ids = window.stream_ids.join(", ")
+
+          layer.prompt({
+            formType: 0,
+            value: '',
+            title: '请输入新CNAME域名',
+            area: ['800px', '350px'] //自定义文本域宽高
+          }, function(value, index, elem){
+
+            var req_data = []
+            var stream_ids_arr = stream_ids.split(", ")
+            for (i in stream_ids_arr) {
+              var stream_id = stream_ids_arr[i]
+              var data = {"id":stream_id,"cname_domain": value} 
+              req_data.push(data)
+            }
+
+            admin.req({
+              url: '/streams' //实际使用请改成服务端真实接口
+              ,data: JSON.stringify(req_data)
+              ,type: "put"
+              ,contentType:"application/json"
+              ,dataType: "json"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('更新成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                  layer.close(index); //执行关闭 
+                });
+              }
+            });
+            layer.close(index);
+          });
+
+        break;      
+        case 'cname_mode':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择转发');   
+            return
+          }
+
+          window.site_ids = []
+          for (i in data) {
+            window.site_ids.push(data[i]['id'])
+          }
+
+          var site_ids = window.site_ids.join(", ")
+
+          admin.popup({
+            title: '设置CNAME生成模式'
+            ,area: ['400px', '300px']
+            ,id: 'LAY-popup-set-cname-mode'
+            ,success: function(layero, index){
+              view(this.id).render('stream/stream/update-cname-mode',{"site_ids":site_ids}).done(function(){
+                //监听提交
+                $("#update").click(function (argument) {
+                  var site_ids = $("#site_id").text()
+                  var cname_mode = $("#site_cname_mode").val()
+                  if (cname_mode == "") {
+                    layer.alert("请选择模式")
+                    return
+                  }
+
+                  var req_data = []
+                  var site_ids_arr = site_ids.split(", ")
+                  for (i in site_ids_arr) {
+                    var site_id = site_ids_arr[i]
+                    var data = {"id":site_id,"cname_mode": cname_mode} 
+                    req_data.push(data)
+                  }
+
+                  admin.req({
+                    url: '/streams' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify(req_data)
+                    ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('更新成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                }) 
+              });
+            }
+          });
+        break;                            
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的转发');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')转发，是否继续', function(index){
+            admin.req({
+              url: '/streams/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;      
+        case 'update':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要更新的转发');   
+            return
+          }
+
+          window.stream_ids = []
+          for (i in data) {
+            window.stream_ids.push(data[i]['id'])
+          }
+
+          var stream_ids = window.stream_ids.join(", ")
+
+          admin.popup({
+            title: '批量修改转发'
+            ,area: ['800px', '550px']
+            ,id: 'LAY-popup-stream-update'
+            ,success: function(layero, index){
+              view(this.id).render('stream/stream/update_form',{"stream_ids":stream_ids}).done(function(){
+
+                // 获取分组列表
+                var group_ajax = admin.req({
+                  url: '/stream-groups?limit=0' //实际使用请改成服务端真实接口
+                  ,type: "get"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    var data = res.data
+                    for (i in data) {
+                      console.log(i)
+                      $(".stream-group-select-update").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+                    }
+                    console.log(data)
+                    $('.stream-group-select-update').select2({width: '300px'});
+                  }
+                }); 
+
+                // 获取套餐列表
+                var user_package_ajax = admin.req({
+                  url: '/user-packages?limit=0' //实际使用请改成服务端真实接口
+                  ,type: "get"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    var data = res.data
+                    $("#update_user_package").append("<option value=''>请选择套餐</option>");  
+                    for (i in data) {
+                      $("#update_user_package").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");          
+                    }
+
+                    form.render("select")
+
+                  }
+                })
+
+                form.render()
+                
+              });
+            }
+          });
+        break;                      
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除转发', function(index){
+          var id = data.id
+          admin.req({
+            url: '/streams/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+          var id = data.id
+          location.hash = '/stream/stream/edit/id='+id; 
+      }
+    });  
+
+  });
+
+
+  </script>

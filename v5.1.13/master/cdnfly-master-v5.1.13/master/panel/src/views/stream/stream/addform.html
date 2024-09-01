@@ -1,0 +1,116 @@
+
+
+<style type="text/css">
+.layui-form-item .layui-input-inline {width: 300px !important}
+.select2-container { z-index: 100000000; }
+.layui-anim { z-index: 1000000000 !important; }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form-nodeadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">数量</label>
+    <div class="layui-input-inline">
+            <input lay-filter="amount" type="radio" name="stream_amount" value="single" title="单个" checked>
+            <input lay-filter="amount" type="radio" name="stream_amount" value="multiple" title="批量" >
+    </div>
+    <hr class="layui-bg-green">
+  </div>
+
+  <div class="layui-form-item users layui-hide">
+    <label class="layui-form-label">用户</label>
+    <div class="layui-input-inline">
+        <select lay-search lay-filter="users" id="users" name="users" >
+          <option value="">请选择用户 (可搜索)</option>
+        </select>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">所属分组</label>
+    <div class="layui-input-inline">
+        <select lay-ignore class="stream-group-select-add" multiple="multiple" style="width: 300px" name="groups-add">                
+        </select>
+    </div>
+  </div>
+
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">套餐</label>
+    <div class="layui-input-inline">
+        <select lay-filter="package" id="package" name="package" lay-verify="required">
+        </select>
+    </div>
+  </div>
+
+
+
+  <div class="layui-form-item single">
+    <label class="layui-form-label">监听端口</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="listen_port" value="{{ d.params.listen_port || '' }}" placeholder="88 99/udp" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item single">
+    <label class="layui-form-label">源IP</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="ip" value="{{ d.params.ip || '' }}" placeholder="1.2.3.4" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item single">
+    <label class="layui-form-label">源端口</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="backend_port" placeholder="请输入源端口" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item multiple layui-hide">
+    <label class="layui-form-label">数据</label>
+    <div class="layui-input-inline">
+      <textarea name="stream_data"  placeholder="格式为：监听端口|IP|回源端口&#13;&#10;88 99/udp|1.2.3.4|8080&#13;&#10;77 66|8.8.8.8|8080" class="layui-textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-node-front-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+
+
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+
+  <script src="/src/lib/select2.min.js"></script>
+
+
+<script type="text/javascript">
+$ = layui.$
+var form = layui.form
+
+form.on('radio(amount)', function(data){
+  if (data.value == "single") {
+    $(".multiple").addClass("layui-hide")
+    $(".single").removeClass("layui-hide")
+  } else {
+    $(".single").addClass("layui-hide")
+    $(".multiple").removeClass("layui-hide")
+  }
+});  
+
+</script>

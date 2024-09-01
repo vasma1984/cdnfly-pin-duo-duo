@@ -1,0 +1,236 @@
+
+<script type="text/html" template>
+  <link rel="stylesheet" href="{{ layui.setter.base }}style/login.css?v={{ layui.admin.v }}-1" media="all">
+</script>
+
+
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+  <div class="layadmin-user-login-main">
+    <div class="layadmin-user-login-box layadmin-user-login-header">
+      <h2>重置密码</h2>
+    </div>
+    <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+      <div class="layui-tab layui-tab-brief" lay-filter="forget-pass-tab">
+        <ul class="layui-tab-title">
+          <li data-type="email" class="layui-this">用邮箱重置</li>
+          <li data-type="phone">用手机重置</li>
+        </ul>
+      </div>      
+
+      <div class="layui-form-item email">
+        <label class="layadmin-user-login-icon layui-icon layui-icon-email" for="LAY-user-login-email"></label>
+        <input type="text" name="email" id="LAY-user-login-email" placeholder="请输入邮箱" class="layui-input">
+      </div>
+      <div class="layui-form-item email">
+        <div class="layui-row">
+          <div class="layui-col-xs7">
+            <label class="layadmin-user-login-icon layui-icon layui-icon-vercode" for="LAY-user-login-smscode"></label>
+            <input type="text" name="captcha" id="LAY-user-login-smscode"  placeholder="邮箱验证码" class="layui-input">
+          </div>
+          <div class="layui-col-xs5">
+            <div style="margin-left: 10px;">
+              <button type="button" class="layui-btn layui-btn-primary layui-btn-fluid" id="LAY-user-forget-getsmscode">获取验证码</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="layui-form-item phone  layui-hide">
+        <label class="layadmin-user-login-icon layui-icon layui-icon-cellphone" for="LAY-user-login-cellphone"></label>
+        <input type="text" name="phone" id="LAY-user-login-cellphone" placeholder="手机号码" class="layui-input">
+      </div>
+
+      <div class="layui-form-item phone layui-hide">
+        <div class="layui-row">
+          <div class="layui-col-xs7">
+            <label class="layadmin-user-login-icon layui-icon layui-icon-vercode" for="LAY-user-login-vercode"></label>
+            <input type="text" name="phone_captcha"  placeholder="短信验证码" class="layui-input">
+          </div>
+          <div class="layui-col-xs5">
+            <div style="margin-left: 10px;">
+              <button type="button" class="layui-btn layui-btn-primary layui-btn-fluid" id="LAY-user-reg-getsmscode-phone">获取手机验证码</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+        <input type="password" name="password" id="LAY-user-login-password"  placeholder="新密码" class="layui-input">
+      </div>
+      <div class="layui-form-item">
+        <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-repass"></label>
+        <input type="password" name="repass" id="LAY-user-login-repass" placeholder="确认密码" class="layui-input">
+      </div>
+      <div class="layui-form-item">
+        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-forget-resetpass">重置新密码</button>
+      </div>
+
+      <div class="layui-trans layui-form-item layadmin-user-login-other">
+
+        <a lay-href="/user/login" class="layadmin-user-jump-change layadmin-link">用已有帐号登入</a>
+        <a lay-href="/user/reg" class="layadmin-user-jump-change layadmin-link">注册帐号</a>
+      </div>
+
+    </div>
+  </div>
+
+
+</div>
+
+<script>
+function refresh_img(ele) {
+  ele.src = '/common/captcha?t='+ new Date().getTime()
+}
+
+function wait_60s () {
+  $ = layui.$
+  window.second_total = window.second_total - 1
+  $("#LAY-user-reg-getsmscode-phone").text(window.second_total+"秒后可重发")
+  if (window.second_total <= 0) {
+    $("#LAY-user-reg-getsmscode-phone").text("获取手机验证码")
+    $("#LAY-user-reg-getsmscode-phone").removeClass("layui-btn-disabled")
+    clearInterval(window.count_down_interval)
+  }
+}
+
+function send_sms(ele) {
+  $ = layui.$
+  admin = layui.admin
+
+  var code = $(ele).val()
+  if (code.length == 4) {
+    var phone = $("#LAY-user-login-cellphone").val()
+
+    // 发送短信
+    admin.req({
+      url: '/phone-captcha' //实际使用请改成服务端真实接口
+      ,data: JSON.stringify({"phone": phone,"check_exist":1,"code":code})
+      ,type: "post"
+      ,fail: fail
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var code = res.code
+        if (code == 0) {
+          window.second_total = 60
+          $("#LAY-user-reg-getsmscode-phone").addClass("layui-btn-disabled")
+          window.count_down_interval = setInterval('wait_60s()', 1000);
+          layer.closeAll();
+          layer.msg("验证码已发送到您的手机，请收到后输入继续")
+        }
+      }
+    });
+
+  }
+
+  function fail (argument) {
+    $(".captcha-img").click()
+  }
+}  
+
+layui.use(['admin', 'form', 'user','element'], function(){
+  var $ = layui.$
+  ,setter = layui.setter
+  ,admin = layui.admin
+  ,form = layui.form
+  ,element = layui.element
+  ,router = layui.router();
+
+  form.render();
+  
+  //一些事件监听
+  element.on('tab(forget-pass-tab)', function(data){
+    if (data.index == 0) {
+      $(".email").removeClass("layui-hide")
+      $(".phone").addClass("layui-hide")
+    } else {
+      $(".email").addClass("layui-hide")
+      $(".phone").removeClass("layui-hide")
+    }
+  });
+
+  var set_title = function (argument) {
+    var sys_name = layui.data('layuiAdmin').sys_name
+    $("title").text(sys_name+"系统重置密码")
+    $("h2").text(sys_name+"系统重置密码")
+  }
+
+  // 获取系统信息
+  admin.get_sys_info(set_title)
+
+  // 获取短信，弹出图形验证码
+  $("#LAY-user-reg-getsmscode-phone").click(function function_name (argument) {
+    var phone = $("#LAY-user-login-cellphone").val()
+    if (phone == "") {
+      layer.alert("请输入手机号")
+      return
+    }
+
+    layer.open({
+      type: 1,
+      title: false,
+      closeBtn: 0,
+      shadeClose: true,
+      skin: 'yourClass',
+      content: '<div class="layui-form-item"><img onclick="refresh_img(this)" class="captcha-img" style="cursor: pointer;margin:-5px 10px 0px 20px;width:100px;float:left;" src="/common/captcha"><input oninput="send_sms(this)" style="margin:15px 20px 0px 0px;width:200px;" type="text" name="code" autocomplete="off"  placeholder="输入验证码获取手机短信"  class="layui-input"></div>'
+    });
+
+    $("input[name='code']").focus()
+  })
+
+  //发送短信验证码
+  $("#LAY-user-forget-getsmscode").click(function (argument) {
+    var email = $("input[name='email']").val()
+    var data = {"email":email,"check_exist":1}
+    admin.req({
+      url: '/email-captcha' //实际使用请改成服务端真实接口
+      ,type: "post"
+      ,data: JSON.stringify(data)
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        layer.msg('验证码已发送至你的邮箱，请注意查收', {
+          offset: '15px'
+          ,icon: 1
+          ,time: 1000
+        });
+      }
+    });    
+  })
+  
+  //重置密码
+  form.on('submit(LAY-user-forget-resetpass)', function(obj){
+    var field = obj.field;
+    
+    //确认密码
+    if(field.password !== field.repass){
+      return layer.msg('两次密码输入不一致');
+    }
+
+    var reset_by = $(".layui-tab-title").find(".layui-this").data("type")
+
+    var data = {"reset_by":reset_by, "email":field.email,"phone":field.phone, "captcha":field.captcha, "phone_captcha":field.phone_captcha, "password":field.password}
+    //请求接口
+    admin.req({
+      url: '/reset-pass' //实际使用请改成服务端真实接口
+      ,type: "post"
+      ,data: JSON.stringify(data)
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        layer.msg('重置成功', {
+          offset: '15px'
+          ,icon: 1
+          ,time: 1000
+        },function (argument) {
+          location.href = "/console/index.html#/user/login"
+        });
+      }
+    }); 
+    
+    return false;
+  });
+  
+});
+</script>

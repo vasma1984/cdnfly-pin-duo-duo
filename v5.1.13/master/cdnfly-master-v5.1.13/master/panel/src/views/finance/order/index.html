@@ -1,0 +1,151 @@
+
+
+  <title>我的订单 - 财务管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>财务管理</cite></a>
+      <a><cite>我的订单</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <form class="layui-form" action="">
+      <div class="layui-form-item">
+        <script type="text/html" template>
+          {{# if(layui.router().search.show_all === '1'){ }}
+        <div class="layui-input-inline">
+          <input type="text" name="uid"  placeholder="用户ID" autocomplete="off" class="layui-input">
+        </div>
+        {{# } }}
+        </script>
+
+        <div class="layui-input-inline">
+          <select lay-filter="order_type" class="order_type" name="order_type" lay-verify="required">
+            <option value=''>订单类型</option>
+            <option value='购买'>购买</option>
+            <option value='续费'>续费</option>
+            <option value='充值'>充值</option>
+            <option value='升级'>升级</option>
+          </select>
+        </div>
+
+        <div class="layui-input-inline">
+          <select lay-filter="order_state" class="order_state" name="order_state" lay-verify="required">
+            <option value=''>付款状态</option>
+            <option value='已付款'>已付款</option>
+            <option value='未付款'>未付款</option>
+          </select>
+        </div>
+
+        <div class="layui-input-inline">
+          <input type="text" id="date" name="date"  placeholder="时间范围" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux total"></div>
+      </div>
+    </form>
+
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form
+    ,laydate = layui.laydate;
+
+    laydate.render({
+      elem: '#date'
+      ,range: true
+      ,done: function(value, date, endDate){
+        var date_range = value
+        var start = date_range.split(" - ")[0]
+        var end = date_range.split(" - ")[1]
+        table.reload('test-table-toolbar',{where: {"start":start,"end":end}})        
+      }
+    });
+
+    form.render()
+    var show_all_order = layui.router().search.show_all
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var uid_hide = true
+    if (show_all_order == "1") {
+      uid_hide = false
+    }
+
+
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/orders'
+      ,headers: {"access-token":access_token}
+      ,title: '订单列表'
+      ,where: {"show_all": show_all_order}
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',  sort: true,width: 60}
+        ,{field:'uid', title:'用户',hide: uid_hide}
+        ,{field:'type', title:'类型'}
+        ,{field:'pay_type', title:'支付方式'}
+        ,{field:'mch_order_no', title:'订单号'}
+        ,{field:'des', title:'备注'}
+        ,{field:'amount', title:'金额 (元)',totalRow: true, templet: function(d){
+          return parseInt(d.amount)/100
+        }}        
+        ,{field:'data',title:'更多', templet: function(d){
+          if (d.data == "") {
+            return "";
+          };
+          var data = JSON.parse(d.data)
+          if (d.type == "购买") {
+            return '套餐: ' + data.package + " 开始："+data.start_at + " 到期：" + data.end_at
+          } else if (d.type == "升级") {
+            return '用户套餐: ' + data.user_package + " 升级包："+data.package_up + " 数量：" + data.amount
+          } else if (d.type == "续费") {
+            return '用户套餐: ' + data.user_package + " 到期："+data.end_at
+          } else if (d.type == "更换套餐") {
+            return '用户套餐: ' + data.user_package_id+ " 旧基础套餐："+data.old_package_id + " 新基础套餐："+data.to_package_id
+          } else  {
+            return ''
+          }
+        }}
+        ,{field:'create_at2', title:'创建时间'}
+        ,{field:'state', title:'状态'}
+      ]]
+      ,page: true
+      ,defaultToolbar: []
+      ,done: function(res, curr, count){
+        $(".total").text("总金额: "+ res.total/100 + "元")        
+      }
+    });
+
+    form.on('select(order_type)', function(data){
+      var order_type = data.value
+      table.reload('test-table-toolbar',{where: {"type":order_type}, page: {curr: 1}})
+    });       
+
+    form.on('select(order_state)', function(data){
+      var order_state = data.value
+      table.reload('test-table-toolbar',{where: {"state":order_state}, page: {curr: 1}})
+    }); 
+
+    $("input[name='uid']").on('change', function(){
+        var uid = $(this).val();
+        table.reload('test-table-toolbar',{where: {"uid":uid}, page: {curr: 1}})
+
+    });   
+
+
+  });
+  </script>

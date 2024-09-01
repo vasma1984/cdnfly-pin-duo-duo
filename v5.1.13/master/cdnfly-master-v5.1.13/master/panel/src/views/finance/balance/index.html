@@ -1,0 +1,387 @@
+
+
+<title>账户充值 - 财务管理</title>
+
+<script type="text/javascript" src="/src/lib/qrcode.min.js"></script>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>财务管理</cite></a>
+    <a><cite>账户充值</cite></a>
+  </div>
+</div>
+
+<div id="cccyun" style="display: none;">
+
+</div>
+
+<style type="text/css">
+.layui-elem-quote{padding: 6px;}
+.thin-gray{font-weight: 400;color: #999;} 
+.small-title{font-weight:700;font-size:14px}
+hr {margin-bottom: 30px}
+.layui-form-switch {margin-top: 0px;}
+</style>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+         <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+          <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+
+              <div class="layui-row layui-col-space10 ">
+                <div class="layui-col-lg2 layui-col-md4">账户余额：</div>
+                <div class="balance layui-col-lg1 layui-col-md2 layui-form">
+                  获取中...
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">充值方式：</div>
+                <div class="layui-col-lg4 layui-col-md6 layui-form">
+                  <input type="checkbox" lay-filter="pay-method" name="pay-method" value="wxpay" disabled title="微信支付" >
+                  <input type="checkbox" lay-filter="pay-method" name="pay-method" value="alipay" disabled title="支付宝">
+                  <input type="checkbox" lay-filter="pay-method" name="pay-method" value="transfer" disabled title="转账汇款">
+     
+                </div>
+              </div> 
+
+              <div class="layui-row layui-col-space10 online-pay layui-hide">
+                <div class="layui-col-lg2 layui-col-md4">充值金额：</div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <input type="text" placeholder="单位元,如100或100.88" name="amount" autocomplete="off" class="layui-input">
+                </div>
+
+              </div>
+
+              <div class="layui-row layui-col-space10 online-pay layui-hide">
+                <div class="layui-col-lg2 layui-col-md4"></div>
+                <div class="layui-col-lg2 layui-col-md4">
+                  <button id="recharge" type="button" class="layui-btn layui-btn-sm">确定充值</button>
+                </div>
+
+              </div>
+
+              <div class="layui-row layui-col-space10 transfer layui-hide">
+                <div class="layui-col-lg2 layui-col-md4">转账说明：</div>
+                <div class="layui-col-lg4 layui-col-md6 transfer-data">
+                </div>
+              </div>
+
+            </div>
+        </div>
+      </div>                 
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+  layui.use(['admin', 'table','form'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    form.render()
+
+    form.on('checkbox(pay-method)', function(data){
+      $("input[name='pay-method']").each(function (index, ele) {
+        if ($(ele).val() != data.value) {
+          $(ele).removeAttr("checked")
+        }
+      })
+
+      if (data.value == "transfer") {
+        $(".transfer").removeClass("layui-hide")
+        $(".online-pay").addClass("layui-hide")
+      } else {
+        $(".online-pay").removeClass("layui-hide")
+        $(".transfer").addClass("layui-hide")
+      }
+
+      form.render()
+    }); 
+
+    // 获取余额
+    var uid = layui.data('layuiAdmin').uid
+    admin.req({ 
+      url: '/user' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var balance = res.data.balance
+        $(".balance").text(balance/100+" 元")
+      }
+    });     
+
+    // 获取转账说明和默认支付
+    admin.req({
+      url: '/configs/global-0-system-recharge' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,done: function(res){
+        var data = res.data
+        // 微信
+        if (data["wxpay"]['state']) {
+          $("input[name='pay-method'][value='wxpay']").removeAttr("disabled")
+          window.wxpay_subtype = data['wxpay']['subtype']
+        }
+
+        // 支付宝
+        if (data["alipay"]['state']) {
+          $("input[name='pay-method'][value='alipay']").removeAttr("disabled")
+          window.alipay_subtype = data['alipay']['subtype']
+        }
+
+        // 转账
+        if (data["transfer"]['state']) {
+          $("input[name='pay-method'][value='transfer']").removeAttr("disabled")
+        }
+
+        // 默认支付
+        var default_pay = data["default-pay"]
+        if (default_pay != "" && data[default_pay]['state']) {
+          $("input[name='pay-method'][value='"+default_pay+"']").prop("checked",true)
+        }
+        
+        $(".transfer-data").html(data["transfer"]["data"])
+
+        if (data["default-pay"] == "transfer") {
+          $(".transfer").removeClass("layui-hide")
+          $(".online-pay").addClass("layui-hide")
+        } else {
+          $(".online-pay").removeClass("layui-hide")
+          $(".transfer").addClass("layui-hide")
+        }
+
+        form.render()
+
+      }
+    });    
+
+    // 查询订单状态
+    window.query_order = function (order_id) {
+      admin.req({ 
+        url: '/orders/'+order_id //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,loader: false
+        ,done: function(res){
+          var data = res.data
+          if (data.state == "已付款") {
+            layer.closeAll();
+            layer.msg("充值成功!",function (argument) {
+              layui.index.render();
+            })
+          }
+        }
+      });       
+    }
+
+    // 充值
+    $("#recharge").click(function (argument) {
+      var amount = $("input[name='amount']").val()
+      var data = {"amount":amount}
+      var pay_method = $("input[name='pay-method']:checked").val()
+      if (pay_method == "wxpay") {
+        admin.req({
+          url: '/wxpay/preorder' //实际使用请改成服务端真实接口
+          ,type: "post"
+          ,data: JSON.stringify(data)
+          ,contentType:"application/json"
+          ,dataType: "json"        
+          ,done: function(res){
+            var data = res.data
+            // 易支付是跳转到支付网站来支付
+            if (window.wxpay_subtype == "cccyun") {
+              var url = data['url'] + '?t=' + new Date().getTime();
+              var pid = data['pid']
+              var type = data['type']
+              var out_trade_no = data['out_trade_no']
+              var notify_url = data['notify_url']
+              var return_url = data['return_url']
+              var name = data['name']
+              var money = data['money']
+              var sitename = data['sitename']
+              var sign = data['sign']
+              var sign_type = data['sign_type']
+
+              $("#cccyun").html("")              
+              var form = $('<form />', {action : url, method:"post", target:"_blank" }).appendTo($("#cccyun"));
+              if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+                form = $('<form />', {action : url, method:"post" }).appendTo($("#cccyun"));
+              }
+
+              form.append('<input type="hidden" name="pid" value="' + pid +'" />');
+              form.append('<input type="hidden" name="type" value="' + type +'" />');
+              form.append('<input type="hidden" name="out_trade_no" value="' + out_trade_no +'" />');
+              form.append('<input type="hidden" name="notify_url" value="' + notify_url +'" />');
+              form.append('<input type="hidden" name="return_url" value="' + return_url +'" />');
+              form.append('<input type="hidden" name="name" value="' + name +'" />');
+              form.append('<input type="hidden" name="money" value="' + money +'" />');
+              form.append('<input type="hidden" name="sitename" value="' + sitename +'" />');
+              form.append('<input type="hidden" name="sign" value="' + sign +'" />');
+              form.append('<input type="hidden" name="sign_type" value="' + sign_type +'" />');
+              form.submit();             
+              layer.alert("您正在跳转到支付网站完成付款，如付款未到账，请联系客服!",function() {
+                layui.index.render();
+              })
+
+
+            } else {
+              var code_url = data["code_url"]
+              window.order_id = data["order_id"]
+              admin.popup({
+                title: '微信支付'
+                ,area: ['280px', '380px']
+                ,id: 'LAY-popup-node-add'
+                ,success: function(layero, index){
+                    view(this.id).render('finance/balance/weixin').done(function(){
+                    if (window.wxpay_subtype == "native") {
+                      var qrcode = new QRCode("wx-pc", {
+                          text: code_url,
+                          width: 200,
+                          height: 200,
+                          colorDark : "#000000",
+                          colorLight : "#ffffff",
+                          correctLevel : QRCode.CorrectLevel.H
+                      });         
+                      $("#wx-pc").removeClass("layui-hide")      
+                      $(".tip-img").removeClass("layui-hide")     
+                    } else {
+
+                      $("#wx-codepay-img").attr("src",code_url)
+                      $("#wx-codepay").removeClass("layui-hide")
+                      var amount = $("input[name='amount']").val().trim()
+                      var money = data['money']
+                      $(".money").text("￥"+money)
+                      if (amount != money){
+                        $(".money-diff").removeClass("layui-hide")
+                        $(".money2").text(money)
+                      } else {
+                        $(".money-same").removeClass("layui-hide")
+                      }
+                    }
+
+
+                    // 定时获取订单状态
+                    window.query_order_interval =  setInterval('window.query_order(window.order_id);', 3000);
+
+                  });
+                }
+                ,end: function() {
+                  clearInterval(window.query_order_interval)
+                }  
+                });
+            }   
+          }
+        });        
+      } else if (pay_method == "alipay") {
+        admin.req({
+            url: '/alipay/preorder' //实际使用请改成服务端真实接口
+            ,type: "post"
+            ,data: JSON.stringify(data)
+            ,contentType:"application/json"
+            ,dataType: "json"        
+            ,done: function(res){
+              var data = res.data
+            // 易支付是跳转到支付网站来支付
+            if (window.alipay_subtype == "cccyun") {
+              var url = data['url'] + '?t=' + new Date().getTime();
+              var pid = data['pid']
+              var type = data['type']
+              var out_trade_no = data['out_trade_no']
+              var notify_url = data['notify_url']
+              var return_url = data['return_url']
+              var name = data['name']
+              var money = data['money']
+              var sitename = data['sitename']
+              var sign = data['sign']
+              var sign_type = data['sign_type']
+
+              $("#cccyun").html("")
+              var form = $('<form />', {action : url, method:"post", target:"_blank" }).appendTo($("#cccyun"));
+              if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+                form = $('<form />', {action : url, method:"post" }).appendTo($("#cccyun"));
+              }            
+              form.append('<input type="hidden" name="pid" value="' + pid +'" />');
+              form.append('<input type="hidden" name="type" value="' + type +'" />');
+              form.append('<input type="hidden" name="out_trade_no" value="' + out_trade_no +'" />');
+              form.append('<input type="hidden" name="notify_url" value="' + notify_url +'" />');
+              form.append('<input type="hidden" name="return_url" value="' + return_url +'" />');
+              form.append('<input type="hidden" name="name" value="' + name +'" />');
+              form.append('<input type="hidden" name="money" value="' + money +'" />');
+              form.append('<input type="hidden" name="sitename" value="' + sitename +'" />');
+              form.append('<input type="hidden" name="sign" value="' + sign +'" />');
+              form.append('<input type="hidden" name="sign_type" value="' + sign_type +'" />');
+              form.submit();             
+              layer.alert("您正在跳转到支付网站完成付款，如付款未到账，请联系客服!",function() {
+                layui.index.render();
+              })
+
+
+            } else {
+
+                var qr_code_url = data["qr_code_url"]
+                window.order_id = data["order_id"]
+                admin.popup({
+                  title: '支付宝'
+                  ,area: ['280px', '380px']
+                  ,id: 'LAY-popup-node-add'
+                  ,success: function(layero, index){
+                      view(this.id).render('finance/balance/alipay').done(function(){
+                      if (window.alipay_subtype == "f2f") {
+                        var qrcode = new QRCode("qrcode", {
+                            text: qr_code_url,
+                            width: 200,
+                            height: 200,
+                            colorDark : "#000000",
+                            colorLight : "#ffffff",
+                            correctLevel : QRCode.CorrectLevel.H
+                        });
+                        $(".f2f").removeClass("layui-hide")
+
+                      } else if (window.alipay_subtype == "pc") {
+                        $(".tip-img").removeClass("layui-hide")
+                        $("#alipay_qrcode_url").attr("src", qr_code_url)
+                        $(".pc").removeClass("layui-hide")
+                      } else {
+                        $("#alipay-codepay-img").attr("src",qr_code_url)
+                        $("#alipay-codepay").removeClass("layui-hide")
+                        var amount = $("input[name='amount']").val().trim()
+                        var money = data['money']
+                        $(".money").text("￥"+money)
+                        if (amount != money){
+                          $(".money-diff").removeClass("layui-hide")
+                          $(".money2").text(money)
+                        } else {
+                          $(".money-same").removeClass("layui-hide")
+                        }
+                      }
+                      
+
+                      // 定时获取订单状态
+                      window.query_order_interval =  setInterval('window.query_order(window.order_id);', 3000);
+
+                    });
+                  }
+                ,end: function() {
+                  clearInterval(window.query_order_interval)
+                }  
+                });
+              }
+            }
+          });         
+      }
+
+    })
+
+
+  });  
+
+</script>

@@ -1,0 +1,831 @@
+
+
+<title>我的转发 - 四层转发</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>四层转发</cite></a>
+    <a href="#/stream/stream/"><cite>我的转发</cite></a>
+    <a><cite>编辑转发</cite></a>
+  </div>
+</div>
+
+<style type="text/css">
+.layui-elem-quote{padding: 6px;}
+.thin-gray{font-weight: 400;color: #999;} 
+.small-title{font-weight:700;font-size:14px}
+hr {margin-bottom: 30px}
+.del-span {
+    padding: 8px;
+    border-radius: 8px;
+}
+.del {
+    border-radius: 10px !important;
+    height: 16px;
+    line-height: 16px;
+    font-size: 10px;
+    padding: 0 5px;
+    position: absolute;
+    margin-top: -14px;
+    margin-left: -2px;
+    color: White;
+    cursor: pointer;
+}
+.layui-layer-page .layui-layer-content {
+            position: relative;
+            overflow: visible !important;
+    }
+
+</style>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+         <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+          <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+              <div class="layui-row ">
+               <div class="layui-col-md2"> <span class="small-title">基本信息</span></div>
+              </div>
+
+             <div class="layui-row layui-col-space10">
+              <div class="thin-gray layui-col-md2">启用：</div> <div id="enable" class="layui-col-md1"><span class="layui-badge layui-bg-orange">获取中...</span></div> 
+            </div>
+
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2 thin-gray">配置同步：</div> <div id="state" class="layui-col-md1"><span class="layui-badge layui-bg-orange">获取中...</span></div> 
+            </div>
+
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2 thin-gray">CNAME：</div> <div class="layui-col-md10"><span id="cname">获取中...</span> <span id="cname_state" class="layui-badge layui-bg-orange">获取中...</span></div> 
+            </div>
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2 thin-gray">套餐：</div> <div id="package" class="layui-col-md10">获取中...</div>
+            </div>
+
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2 thin-gray">所属分组：</div>
+              <div class="layui-col-md10">
+                <select lay-ignore class="stream-group-select" multiple="multiple" style="width: 300px" name="groups">                
+                </select>
+              </div>
+            </div>      
+
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2 thin-gray">创建时间：</div> <div id="create_at" class="layui-col-md10">获取中...</div>
+            </div>       
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2 thin-gray">更新时间：</div> <div id="update_at" class="layui-col-md10">获取中...</div>
+            </div>                          
+            <hr>    
+
+
+            <div class="layui-row ">
+             <div class="layui-col-md2"> <span class="small-title">监听设置</span></div>
+            </div>
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2" style="padding-top:10px">监听端口：</div>
+              <div class="layui-col-md10 port-list">
+
+              </div>                
+            </div> 
+
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2" style="padding-top:10px"></div>
+              <div class="layui-col-md2">
+                  <input type="text" name="listen_port" required lay-verify="required" placeholder="端口" autocomplete="off" class="layui-input">           
+              </div>
+              <div class="layui-col-md2 layui-form">
+                  <select class="protocol" name="protocol" lay-verify="">
+                    <option value="">协议</option>
+                    <option value="tcp">TCP</option>
+                    <option value="udp">UDP</option>
+                  </select>  
+              </div>   
+              <div class="layui-col-md2">
+                <button type="button" id="add-port" class="layui-btn layui-btn-sm layui-bg-blue">添加</button>
+              </div>                        
+            </div> 
+
+            <hr>          
+              <div class="layui-row">
+               <div class="layui-col-md2"> <span class="small-title">源站设置</span> </div>
+              </div> 
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-md2" style="padding-top:10px">负载方式：</div> <div class="layui-col-md3 layui-form">
+                      <select lay-search lay-filter="balance_way" id="balance_way" name="balance_way" lay-verify="required">
+                        <option value="ip_hash">ip hash</option>
+                        <option value="rr">轮循</option>
+                        <option value="least_conn">最少连接数</option>
+                        <option value="random">随机</option>
+                      </select>
+                </div>
+              </div>
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2" style="padding-top:10px">回源端口：</div> <div class="layui-col-md2"><input type="text" name="backend_port"  placeholder="请输入端口"  value="80" autocomplete="off" class="layui-input"></div>
+            </div>     
+
+            <div class="layui-row layui-col-space10">
+               <div class="layui-col-md2">PROXY Protocol</div>
+               <div class="layui-col-md2 layui-form"><input type="checkbox" lay-filter="proxy_protocol" name="proxy_protocol" lay-skin="switch" lay-text="开启|关闭">
+              </div>
+            </div> 
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-md2" style="padding-top:10px">源站列表：</div> 
+                <div class="layui-col-md10">
+                <table id="backend" lay-filter="backend"></table>
+                  <script type="text/html" id="backend-toolbar">
+                      <div class="layui-row layui-col-space10">
+                        <div class="layui-col-md12">
+                            <button class="layui-btn  layui-btn-xs" lay-event="add">新增</button>
+                            <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</button>
+
+                        </div>  
+                      </div>
+                  </script>
+                  <script type="text/html" id="backend-bar">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                  </script>
+              </div>
+             </div>
+            <hr>     
+            <div class="layui-row ">
+             <div class="layui-col-md2"> <span class="small-title">单IP连接数限制</span></div>
+            </div>      
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md2" style="padding-top:10px">连接限制：</div> <div class="layui-col-md2"><input type="text" name="conn_limit"  placeholder="单IP连接数限制"  autocomplete="off" class="layui-input"></div>
+            </div>  
+            <hr>
+            <div class="layui-row ">
+             <div class="layui-col-md2"> <span class="small-title">ACL</span></div>
+            </div> 
+            <div class="layui-row layui-col-space10 ">
+              <div class="layui-col-md2" style="padding-top:10px">默认行为</div>
+              <div class="layui-col-md10 layui-form">
+                <input type="radio" name="default_action" lay-filter="default_action" value="allow" checked title="允许">
+                <input type="radio" name="default_action" lay-filter="default_action" value="deny" title="拒绝" >
+              </div>
+            </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2">规则</div>
+                <div class="layui-col-md10">
+                  <table class="layui-hide" id="acllist" lay-filter="acllist"></table>
+                  <script type="text/html" id="acllist-toolbar">
+                      <div class="layui-row layui-col-space10">
+                        <div class="layui-col-md9">
+                          <button class="layui-btn layui-btn-xs" lay-event="add">新增</button>
+                          <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</button>
+                        </div>
+                      </div>
+                  </script>
+                   
+                  <script type="text/html" id="acllist-bar">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                  </script>
+                </div>
+              </div>
+
+          </div>
+        </div>
+      </div>                 
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<link href="/src/style/select2.min.css" rel="stylesheet" />
+
+
+<script type="text/javascript">
+var jQuery = layui.$
+</script>
+
+  <script src="/src/lib/select2.min.js"></script>
+
+
+<script type="text/javascript">
+  $ = layui.$
+
+  $(document).ready(function() {
+      $('.stream-group-select').select2({
+        width: '300px'
+      });
+  });
+  var stream_id = layui.router().search.id
+  
+  layui.use(['admin', 'table','form'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    
+
+    form.render();
+
+    // 获取分组列表
+    var group_ajax = admin.req({
+      url: '/stream-groups?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var data = res.data
+        for (i in data) {
+          $(".stream-group-select").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+        }
+      }
+    });    
+
+    $.when(group_ajax).then(function () {
+      // 获取网站信息
+      admin.req({
+        url: '/streams/'+ stream_id //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          var data = res.data
+          // 分组
+          if (data.groups) {
+            $("select[name='groups']").val(data.groups.split(","))
+          }
+
+          $('.stream-group-select').select2();
+
+          // enable
+          if (data.enable == 1) {
+            $("#enable").html('<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>')
+          } else {
+            $("#enable").html('<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>')
+          }
+
+          // 同步状态
+          if (data.sync_state == 'pending') {
+            $("#state").html('<span class="layui-badge layui-bg-orange">待同步</span>')
+          } else if (data.sync_state == 'process'){
+            return '<span class="layui-badge layui-bg-orange">同步中</span>'
+          } else {
+            $("#state").html('<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>')
+          }
+
+          // cname状态
+          var cname = ""
+          if (data.cname_mode == "site") {
+            if (data.cname_hostname2 == "") {
+              cname = data.cname_hostname + "." + data.cname_domain
+            } else {
+              cname = data.cname_hostname + "."+ data.cname_hostname2 + "." + data.cname_domain
+            }            
+          } else {
+            if (data.up_cname_hostname2 == "") {
+              cname = data.up_cname_hostname + "." + data.up_cname_domain
+            } else {
+              cname = data.up_cname_hostname + "."+ data.up_cname_hostname2 + "." + data.up_cname_domain
+            }               
+          }
+
+          if (data.cname_state == "done" || data.cname_state == null) {
+            $("#cname").text(cname)
+          } else {
+            $("#cname").html('<span class="layui-badge layui-bg-orange">生成中</span>')
+          }
+
+          $("#cname").removeClass("layui-hide")
+          $("#cname_state").addClass("layui-hide")
+
+
+          // 套餐
+          $("#package").text(data.package_name + " (" + data.end_at + "到期)")
+
+          // 创建时间
+          $("#create_at").text(data.create_at2)
+
+          // 更新时间
+          $("#update_at").text(data.update_at2)
+
+          // 监听端口
+          var listen_port = JSON.parse(data.listen)
+          for (i in listen_port) {
+            var port = listen_port[i]['port']
+            var protocol = listen_port[i]['protocol']
+            $(".port-list").append('<div class="layui-form-mid port-item"><span class="layui-badge layui-bg-blue del-span">'+port+'/'+protocol.toUpperCase() +'<span onclick=\'del_item(this)\' class="layui-badge del">x</span></span></div>')            
+          }
+
+          // 负载方式
+          $("#balance_way").val(data.balance_way)
+
+          // 回源端口
+          $("input[name='backend_port']").val(data.backend_port)
+
+          // 源站
+          window.backend = JSON.parse(data.backend)
+          var backend_table = JSON.parse(data.backend)
+
+          table.render({
+            elem: '#backend'
+            ,title: 'xx'
+            ,toolbar: '#backend-toolbar'
+            ,autoSort: false
+            ,defaultToolbar: []
+              ,size: 'sm' //小尺寸的表格
+
+            ,cols: [[ //表头
+              {type: 'checkbox', fixed: 'left'}
+              ,{field: 'addr', title: '源IP'}
+              ,{field: 'weight', title: '权重'}
+              ,{field: 'state', title: '状态', templet: function(d){
+                if (d.state == 'up') {
+                  return '<span class="layui-badge layui-bg-green">上线</span>'
+                } else if (d.state == 'down') {
+                  return '<span class="layui-badge layui-bg-orange">下线</span>'
+                } else {
+                  return '<span class="layui-badge layui-bg-orange">备用</span>'
+                }
+              }}
+              ,{fixed: 'right', title:'操作', toolbar: '#backend-bar', width:120}
+
+            ]]
+            ,data: backend_table
+            ,page: true
+            
+          });   
+
+          // proxy protocol
+          $("input[name='proxy_protocol']").prop("checked",data.proxy_protocol)
+
+
+          // acl
+          var acl = JSON.parse(data.acl)
+          var default_action = acl.default_action
+          if (typeof(default_action) == "undefined") {
+            default_action = "allow"
+          }
+
+          $("input[name='default_action'][value='"+default_action+"']").prop("checked",true)
+
+          var acl_data = acl.rule
+          if (typeof(acl_data) == "undefined") {
+            acl_data = []
+          }
+          window.acl_data = acl_data
+
+          table.render({
+            elem: '#acllist'
+            ,title: 'xx'
+            ,toolbar: '#acllist-toolbar'
+            ,autoSort: false
+            ,defaultToolbar: []
+              ,size: 'sm' //小尺寸的表格
+
+            ,cols: [[ //表头
+              {type: 'checkbox', fixed: 'left'}
+              ,{field: 'ip', title: 'IP'}
+              ,{field: 'action', title: '行为'}
+              ,{fixed: 'right', title:'操作', toolbar: '#acllist-bar', width:120}
+
+            ]]
+            ,data: acl_data
+            ,page: true
+          }); 
+
+          // conn_limit
+          $("input[name='conn_limit']").val(data.conn_limit)
+
+          form.render()
+
+        }
+      });    
+    })
+
+    // 源站表格事件
+    //头工具栏事件
+    table.on('toolbar(backend)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      var table_data = obj.config.data
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增源站'
+            ,area: ['500px', '450px']
+            ,id: 'LAY-popup-backend-add'
+            ,success: function(layero, index){
+              view(this.id).render('stream/stream/backend_form').done(function(){
+                //监听提交
+                form.on('submit(LAY-stream-stream-edit-backend-add-submit)', function(data){
+                  var field = data.field
+                  var addr = field.backend_addr; //获取提交的字段
+                  var weight = field.backend_weight
+                  var state = field.backend_state
+
+                  var backend = JSON.parse(JSON.stringify(table_data))
+                  for (i in backend) {
+                    delete backend[i]['LAY_TABLE_INDEX']
+                    delete backend[i]['LAY_CHECKED']
+                  }
+
+                  backend.push({"addr":addr,"weight":weight,"state":state})
+
+                  window.backend = backend
+
+                  var success = function (argument) {
+                    table.reload('backend',{"data":backend}); //重载表格
+                    layer.close(index); //执行关闭 
+                  }
+
+                  var fail = function (argument) {
+                  }
+
+                  update_stream({"backend":backend},success,fail)
+
+                });
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的源站');   
+            return
+          }
+
+          layer.confirm('将删除所选源站，是否继续', function(index){
+              var backend = []
+              for (i in table_data) {
+                if (!table_data[i]['LAY_CHECKED']) {
+                  backend.push(table_data[i])
+                }
+              }
+
+              for (i in backend) {
+                delete backend[i]['LAY_TABLE_INDEX']
+                delete backend[i]['LAY_CHECKED']
+              }
+
+              var success = function (argument) {
+                layui.table.reload('backend',{"data":backend}); //重载表格
+                layer.close(index); //执行关闭 
+              }
+
+              var fail = function (argument) {
+              } 
+
+              window.backend = backend
+
+              update_stream({"backend":backend},success,fail)
+          });
+        break;                   
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(backend)', function(obj){
+      var edit_index = $(obj.tr).data("index");
+      var table_data = obj.data
+      if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑源站'
+          ,area: ['500px', '450px']
+          ,id: 'LAY-popup-backend-add'
+          ,success: function(layero, index){
+            view(this.id).render('stream/stream/backend_form',table_data).done(function(){
+              $("#backend_state").val(table_data.state)
+              form.render(null, 'layuiadmin-form-backendadmin');
+              window.backend_pre = JSON.parse(JSON.stringify(window.backend))
+              
+              //监听提交
+              form.on('submit(LAY-stream-stream-edit-backend-add-submit)', function(data_submit){
+                var field = data_submit.field; //获取提交的字段
+                var addr = field.backend_addr
+                var weight = field.backend_weight
+                var state = field.backend_state
+                
+                // 保存旧数据
+                window.backend_pre = JSON.parse(JSON.stringify(window.backend))
+
+                window.backend[edit_index] = {"index":edit_index, "addr":addr,"weight":weight,"state":state}
+                var backend = JSON.parse(JSON.stringify(window.backend))
+
+                var success = function (argument) {
+                  layui.table.reload('backend',{"data":backend}); //重载表格
+                  layer.close(index); //执行关闭 
+                }
+
+                var fail = function (argument) {
+                  window.backend = JSON.parse(JSON.stringify(window.backend_pre))
+                } 
+
+                update_stream({"backend":backend},success,fail)
+
+              });
+            });
+          }
+        });
+      }
+    });  
+
+    //头工具栏事件
+    table.on('toolbar(acllist)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      var table_data = obj.config.data
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增规则'
+            ,area: ['500px', '350px']
+            ,id: 'LAY-popup-acllist-add'
+            ,success: function(layero, index){
+              view(this.id).render('stream/stream/acl-add').done(function(){
+                var index = layer.index
+
+                $("#add_match").click(function (argument) {
+                  var action = $("input[name='action']:checked").val()
+
+                  var ip = $("input[name='ip']").val()
+
+                  if (ip == "") {
+                    layer.alert("请输入IP地址")
+                    return
+                  }
+
+                  window.acl_data.push({"ip":ip,"action":action})
+                  var acl_data = JSON.parse(JSON.stringify(window.acl_data))
+                  
+                  var success = function  (argument) {
+                    table.reload('acllist',{data:acl_data}); //重载表格
+                    layer.close(index); //执行关闭 
+                  }
+
+                  var fail = function (argument) {
+                    window.acl_data.pop()
+                  }
+
+                  update_stream({"acl":{"rule":acl_data}},success,fail)
+
+                })
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的规则');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除所选的规则，是否继续', function(index){
+              var acl_data = []
+              for (i in table_data) {
+                if (!table_data[i]['LAY_CHECKED']) {
+                  acl_data.push(table_data[i])
+                }
+              }
+
+              window.acl_data = acl_data
+              var success = function (argument) {
+                layui.table.reload('acllist',{data: acl_data}); //重载表格
+                layer.close(index); //执行关闭 
+              }
+
+              update_stream({"acl":{"rule":acl_data}},success,null)
+   
+          });
+        break; 
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(acllist)', function(obj){
+      var edit_index = $(obj.tr).data("index");
+      var table_data = obj.data
+      if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑规则'
+            ,area: ['800px', '350px']
+            ,id: 'LAY-popup-acllist-add'
+          ,success: function(layero, index){
+            view(this.id).render('stream/stream/acl-add',table_data).done(function(){
+              // 填充表单
+              $("input[name='ip']").val(table_data.ip)
+              $("input[name='action'][value='"+table_data.action+"']").prop("checked",true)
+
+              form.render()
+              var index = layer.index
+
+              $("#add_match").click(function (argument) {
+                var action = $("input[name='action']:checked").val()
+
+                var ip = $("input[name='ip']").val()
+
+                if (ip == "") {
+                  layer.alert("请输入IP地址")
+                  return
+                }
+
+                window.acl_data[edit_index] = {"ip":ip,"action":action}
+                var acl_data = JSON.parse(JSON.stringify(window.acl_data))
+
+                var success = function (argument) {
+                  table.reload('acllist',{data:acl_data}); //重载表格
+                  layer.close(index); //执行关闭 
+                }
+ 
+                update_stream({"acl":{"rule":acl_data}},success,null)
+
+              })
+
+            });
+          }
+        });
+      }
+    });
+
+    // 监听修改并提交
+
+    // 监听负载方式
+    form.on('select(balance_way)', function(data){
+      var balance_way = data.value
+      update_stream({"balance_way":balance_way},null,null)
+
+    }); 
+
+    // 分组监听
+    $("select[name='groups']").on('change', function (e) {
+      var groups = $("select[name='groups']").val()
+      if (groups) {
+        groups = groups.join(",")
+      } else {
+        groups = ""
+      }      
+
+      update_stream({"groups":groups},null,null)
+    });
+
+    // 监听回源端口
+    $("input[name='backend_port']").on('focusin', function(){
+        $(this).data('val', $(this).val());
+    }).on('change', function(){
+
+        var prev = $(this).data('val');
+        var backend_port = $(this).val();
+        var fail = function (argument) {
+          $("input[name='backend_port']").val(prev)
+        }
+
+        update_stream({"backend_port":backend_port},null,fail)
+    }); 
+
+    // 监听 proxy_protocol
+    form.on('switch(proxy_protocol)', function(data){
+      var checked = data.elem.checked
+      var fail = function (argument) {
+        $("input[name='proxy_protocol']").prop("checked",!checked)
+        form.render("checkbox")          
+      }
+
+      update_stream({"proxy_protocol":checked},null,fail)
+
+    });  
+
+    // 监听连接限制
+    $("input[name='conn_limit']").on('focusin', function(){
+        $(this).data('val', $(this).val());
+    }).on('change', function(){
+
+        var prev = $(this).data('val');
+        var conn_limit = $(this).val();
+        var fail = function (argument) {
+          $("input[name='conn_limit']").val(prev)
+        }
+
+        update_stream({"conn_limit":conn_limit},null,fail)
+    }); 
+
+    // 监听default_action
+    form.on('radio(default_action)', function(data){
+      var default_action = data.value
+      var pre = ""
+      if (data.value == "allow") {
+        pre = "deny"
+      } else {
+        pre = "allow"
+      }
+      var fail = function (argument) {
+        $("input[name='default_action'][value='"+pre+"']").prop("checked",true)
+        form.render("radio")
+
+      }
+      update_stream({"acl":{"default_action":default_action}},null,fail)
+
+    });  
+
+    $("#add-port").click(function () {
+      var listen_port = $("input[name='listen_port']").val()
+      var protocol = $("select[name='protocol']").val()
+
+      if (listen_port == "") {
+        layer.alert("请输入监听端口")
+        return
+      }
+
+      if (protocol == "") {
+        layer.alert("请选择协议")
+        return
+      }
+
+      $(".port-list").append('<div class="layui-form-mid port-item"><span class="layui-badge layui-bg-blue del-span">'+listen_port+'/'+protocol.toUpperCase() +'<span onclick=\'del_item(this)\' class="layui-badge del">x</span></span></div>')
+
+      var listen = []
+      $(".port-list .del-span").each(function (index, ele) {
+        var item = $(ele).text()
+        var item_arr = item.split("/")
+        var port = item_arr[0]
+        var protocol = item_arr[1].slice(0,-1)
+        listen.push({"protocol":protocol.toLowerCase(),"port":port})
+      })
+
+      fail = function (argument) {
+        $(".port-list").children().last().remove()
+      }
+
+      success = function (argument) {
+        $("select[name='protocol']").val("")
+        $("input[name='listen_port']").val("")
+        form.render("select")
+      }
+      
+      update_stream({"listen":listen},success,fail)
+
+
+      form.render()
+
+    })
+
+  });  
+
+  function del_item(ele) {
+      if ($(".port-item").length == 1) {
+        layer.alert("监听端口不能为空")
+        return
+      }
+      var port_protocol_arr = $(ele).parent().text().split("/")
+      var port = port_protocol_arr[0]
+      var protocol = port_protocol_arr[1].slice(0,-1)
+
+      $(ele).parent().parent().remove()
+
+      var listen = []
+      $(".port-list .del-span").each(function (index, ele) {
+        var item = $(ele).text()
+        var item_arr = item.split("/")
+        var port = item_arr[0]
+        var protocol = item_arr[1].slice(0,-1)
+        listen.push({"protocol":protocol.toLowerCase(),"port":port})
+      })
+
+      fail = function (argument) {
+        $(".port-list").append('<div class="layui-form-mid port-item"><span class="layui-badge layui-bg-blue del-span">'+port+'/'+protocol.toUpperCase() +'<span onclick=\'del_item(this)\' class="layui-badge del">x</span></span></div>')
+      }
+
+      update_stream({"listen":listen},null,fail)
+  }
+
+  function update_stream(data,success,fail) {
+    layui.admin.req({
+      url: '/streams/'+stream_id //实际使用请改成服务端真实接口
+      ,type: "put"
+      ,data: JSON.stringify(data)
+      ,contentType:"application/json"
+      ,dataType: "json"        
+      ,fail: fail
+      ,done: function(res){
+        //登入成功的提示与跳转
+        layui.layer.msg('更新成功', {
+          offset: '15px'
+          ,icon: 1
+          ,time: 1000
+        }, function(){
+          if (success) {
+            success()
+          }
+          
+        });
+      }
+    });
+  }
+
+</script>

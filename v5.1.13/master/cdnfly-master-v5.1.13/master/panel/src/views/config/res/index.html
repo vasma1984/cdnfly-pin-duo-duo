@@ -1,0 +1,290 @@
+
+
+<title>资源配置 - 全局配置</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>全局配置</cite></a>
+    <a><cite>资源配置</cite></a>
+  </div>
+</div>
+
+<style type="text/css">
+.layui-elem-quote{padding: 6px;}
+.thin-gray{font-weight: 400;color: #999;} 
+.small-title{font-weight:700;font-size:14px}
+hr {margin-bottom: 30px}
+</style>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+
+          <div class="layui-tab" lay-filter="region-tab" style="margin-bottom:20px">
+            <ul class="layui-tab-title regions">
+              <li data-id="0" class="layui-this">全局</li>
+            </ul>
+
+          </div>
+
+         <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+          <ul class="layui-tab-title">
+            <li class="layui-this">网站</li>
+            <li>转发</li>
+            <li>公共</li>
+          </ul>
+          <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+              <div class="layui-row global">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">配置限制</span></div>
+              </div>
+
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">相关配置限制不低于：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-related-config-min-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">相关配置限制的最大倍数：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-related-config-max-times-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <hr class="global">
+
+              <div class="layui-row ">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">黑白名单</span></div>
+              </div>
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">黑名单IP数量限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-black-ip-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">白名单IP数量限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-white-ip-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>                                           
+
+              <hr>
+              <div class="layui-row global">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">清缓存及解锁</span></div>
+              </div>
+
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">日清URL缓存次数限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-clean_url"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">日清目录缓存次数限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-clean_dir"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">日预热URL次数限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-pre_cache_url"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>    
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">预热超时：</div>
+                <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-pre_cache_timeout"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+                <div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">秒</div>
+              </div>                                         
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">日解锁IP次数限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-ip-unlock-max-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">每次解锁IP个数限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-ip-unlock-max-per-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+
+              <hr class="global">
+              <div class="global layui-row ">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">规则数限制</span></div>
+              </div>
+
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">单个cc规则组：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-cc-rule-max-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">单个ACL规则数限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-acl-max-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+
+              <hr class="global">
+              <div class="global layui-row ">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">下载日志</span></div>
+              </div>
+
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">每天允许下载日志次数：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-download-access-log-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">日志文件存放目录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-download-access-log-tmp-dir"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">日志文件存放时长：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-download-access-log-retain"  placeholder="请输入"  autocomplete="off" class="layui-input"></div><div class="layui-form-mid layui-word-aux" style="padding-top:13px !important;">小时</div>
+              </div> 
+
+              <hr class="global">              
+              <div class="layui-row ">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">其它</span></div>
+              </div>
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">单个站点最大域名数限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-max-domain-persite-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">默认监听80端口：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site-listen-default-http-80"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+
+
+            </div>
+            <div class="layui-tab-item">
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">禁用的端口：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="stream-custom-port-not-allow"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">相关配置限制不低于：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="stream-related-config-min-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">相关配置限制的最大倍数：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="stream-related-config-max-times-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="global layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">ACL规则数限制：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="stream-acl-max-limit"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>                                                                                                                                                                                          
+            </div>
+            <div class="layui-tab-item">
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">禁用的自定义端口：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site_stream-custom-port-not-allow"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">允许的自定义端口：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="site_stream-custom-port-allow"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+
+            </div>
+        </div>
+      </div>                 
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+  layui.use(['admin', 'table','form'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,element = layui.element
+    ,form = layui.form;
+
+    // 获取所有区域
+    admin.req({
+      url: '/regions?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        window.region_list = data
+        for (var i = 0; i < data.length; i++) {
+          $(".regions").append("<li data-id='"+data[i]['id']+"'>"+data[i]['name']+"</li>")
+        };
+        element.render()
+      }
+    });
+
+    // 监听tab
+    element.on('tab(region-tab)', function(data){
+      var scope_id = $(this).data("id")
+      // 清空input
+      $("input[type='text']").val("")
+      $("textarea").val("")
+
+      var scope_name = "global"
+      if (scope_id != "0") {
+        scope_name = "region"
+        $(".global").addClass("layui-hide")
+      } else {
+        $(".global").removeClass("layui-hide")
+      }
+
+      get_config(scope_name,scope_id)
+
+    });
+
+    get_config("global","0")
+
+    function get_config(scope_name,scope_id) {
+      $(".layui-card-body input").each(function (argument) {
+        var id = $(this).attr("name")
+        var ajax = admin.req({
+          url: '/configs/'+scope_name+'-'+scope_id+'-'+id //实际使用请改成服务端真实接口
+          ,type: "get"
+          ,contentType:"application/json"
+          ,dataType: "json"        
+          ,done: function(res){
+            if (res.data) {
+              var v = res.data.value
+              $("input[name='"+id+"']").val(v)
+              if (scope_name == "global") {
+                $("input[name='"+id+"']").attr("placeholder",v)
+              }       
+            }
+
+          }
+        });
+        return ajax;
+
+      })
+    }
+
+    function update_config(id,data,success,fail) {
+      var scope_name = "global"
+      var scope_id = $(".regions").find(".layui-this").data("id")
+      if (scope_id != "0") {
+        scope_name = "region"
+      }
+      method = "put"
+      if (!data['value']) {
+        method = "delete"
+      } 
+      var option = {
+        url: '/configs/'+scope_name+'-'+scope_id+'-'+id //实际使用请改成服务端真实接口
+        ,type: method
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,fail: fail
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('更新成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          }, function(){
+            if (success) {
+              success()
+            }
+            
+          });
+        }
+      }
+
+      if (data['value']) {
+        option["data"] = JSON.stringify(data)
+      }
+
+      admin.req(option);
+    }
+
+
+    $("input").on('focusin', function(){
+        $(this).data('val', $(this).val());
+    }).on('change', function(){
+        var prev = $(this).data('val');
+        var curr = $(this).val();
+        var id = $(this).attr("name")
+
+        var fail = function (argument) {
+          $("input[name='"+id+"']").val(prev)
+        }
+
+        var req_data = {"value": curr}
+        update_config(id, req_data, null,fail )
+
+    });
+
+  });  
+
+</script>

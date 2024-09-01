@@ -1,0 +1,172 @@
+  <div class="layui-fluid layui-form">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md3">名称</div>
+                <div class="layui-col-md4">
+                  <input type="text" name="name" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md3">备注</div>
+                <div class="layui-col-md6">
+                  <input type="text" name="des" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md3">类型</div>
+                <div class="layui-col-md6">
+                  <select name="type" lay-verify="" lay-filter="type">
+                    <option value="">请选择类型</option>
+                    <option value="req_rate">请求速率</option>
+                    <option value="302_challenge">302跳转</option>
+                    <option value="browser_verify_auto">浏览器识别</option>
+                    <option value="slide_filter">滑动验证</option>
+                    <option value="captcha_filter">验证码</option>
+                    <option value="url_auth">URL鉴权</option>
+                    <option value="click_filter">点击验证</option>
+                    <option value="delay_jump_filter">5秒盾</option>
+                    <option value="rotate_filter">旋转图片</option>
+                  </select>  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md3">n秒内</div>
+                <div class="layui-col-md6">
+                  <input type="text" name="within_second" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md3 max-req-tip">最大失败次数</div>
+                <div class="layui-col-md6">
+                  <input type="text" name="max_req" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15 max_req_per_uri layui-hide">
+                <div class="layui-col-md3">单URL最大次数</div>
+                <div class="layui-col-md6">
+                  <input type="text" name="max_req_per_uri" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15 url_auth layui-hide">
+                <div class="layui-col-md3">鉴权方式</div>
+                <div class="layui-col-md9 layui-form">
+                  <input type="radio" name="url_auth_mode" lay-filter="url_auth_mode"  value="TypeA" title="TypeA" checked>
+                  <input type="radio" name="url_auth_mode" lay-filter="url_auth_mode" value="TypeB" title="TypeB"> 
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15 url_auth layui-hide">
+                <div class="layui-col-md3">密钥(16-32位)</div>
+                <div class="layui-col-md6">
+                  <input type="text" name="url_auth_key" required lay-verify="required"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15 url_auth layui-hide">
+                <div class="layui-col-md3">签名参数名</div>
+                <div class="layui-col-md6">
+                  <input type="text" name="url_auth_sign_name" value="sign"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15 url_auth_a layui-hide">
+                <div class="layui-col-md3">时间戳参数名</div>
+                <div class="layui-col-md6">
+                  <input type="text" name="url_auth_time_name" value="t"  autocomplete="off" class="layui-input">  
+                </div>
+              </div>
+
+              <div class="layui-row layui-col-space15 url_auth layui-hide">
+                <div class="layui-col-md3">最大时间相差(秒)</div>
+                <div class="layui-col-md6">
+                  <input type="text" name="url_auth_time_diff" value="180"  autocomplete="off" class="layui-input">  
+                </div>
+
+              </div>
+
+              <div class="layui-row layui-col-space15 url_auth layui-hide">
+                <div class="layui-col-md3">签名使用次数</div>
+                <div class="layui-col-md6">
+                  <input type="text" name="url_auth_sign_use_times" value="0"  autocomplete="off" class="layui-input">  
+                </div>
+
+              </div>
+
+              <div class="layui-row layui-col-space15">
+                <div class="layui-col-md3"></div>
+                <div class="layui-col-md2">
+                  <button id="save" type="button" class="layui-btn">确认</button>
+                </div>
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+<script>
+layui.data.sendParams = function(params){
+  var data = params.data
+  var table = layui.table
+  var admin = layui.admin
+  var view = layui.view
+  var form = layui.form
+  var  $ = layui.$
+  form.render()
+
+  form.on('select(type)', function(data){
+    $(".max-req-tip").text("最大失败次数")
+    if (data.value == "req_rate") {
+      $(".max_req_per_uri").removeClass("layui-hide")
+      $(".url_auth").addClass("layui-hide")
+      $(".max-req-tip").text("最大请求次数")
+      $(".url_auth_a").addClass("layui-hide")
+
+    } else if (data.value == "url_auth") {
+      $(".max_req_per_uri").addClass("layui-hide")
+      $(".url_auth").removeClass("layui-hide")
+
+      var mode = $("input[name='url_auth_mode']:checked").val()
+      if (mode == "TypeA") {
+        $(".url_auth_a").removeClass("layui-hide")
+      } else {
+        $(".url_auth_a").addClass("layui-hide")
+      }
+
+
+    } else {
+      $(".max_req_per_uri").addClass("layui-hide")
+      $(".url_auth").addClass("layui-hide")
+      $(".url_auth_a").addClass("layui-hide")
+    }
+
+  }); 
+
+  form.on('radio(url_auth_mode)', function(data){
+    var value = data.value
+    if (value == "TypeA") {
+      $(".url_auth_a").removeClass("layui-hide")
+    } else {
+      $(".url_auth_a").addClass("layui-hide")
+    }
+  });  
+
+
+
+
+}  
+</script>  

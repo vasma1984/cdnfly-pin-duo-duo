@@ -1,0 +1,57 @@
+
+<div class="layui-form" lay-filter="layuiadmin-form-url_rewriteadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">域名端口</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="url_rewrite_host" placeholder=".*表示匹配所有域名" value="{{ d.params.host || '.*' }}" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">匹配</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="url_rewrite_match"  placeholder=".*表示匹配所有URL" value="{{ d.params.match || '.*' }}" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">转向到</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="url_rewrite_redirect"  value="{{ d.params.redirect || 'http://www.baidu.com/' }}" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">响应码</label>
+    <div class="layui-input-inline">
+      <select lay-filter="url_rewrite_code" id="url_rewrite_code"  name="url_rewrite_code" lay-verify="required">
+          <option value="301">301</option>
+          <option value="302">302</option>
+      </select> 
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-site-site-edit-url_rewrite-add-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+var form = layui.form
+var $ = layui.$
+form.render()
+
+</script>

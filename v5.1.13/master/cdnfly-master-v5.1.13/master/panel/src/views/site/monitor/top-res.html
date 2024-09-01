@@ -1,0 +1,199 @@
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>网站管理</cite></a>
+    <a><cite>监控统计</cite></a>
+    <script type="text/html" template>
+        {{# if(layui.router().search.cc === '1'){ }}
+            <a><cite>攻击分析</cite></a>
+        {{# } else { }}
+            <a><cite>资源排行</cite></a>
+        {{# } }}
+
+    </script>
+  </div>
+</div>
+<style type="text/css">
+.layui-card-body  {line-height: 18px;}
+.active-btn {
+  border: 1px solid #009688 ! important;
+  color: #009688
+}
+.select2-container .select2-search--inline .select2-search__field {padding-left: 5px;}
+</style>
+
+<div class="layui-fluid" id="component-tabs">
+  <div class="layui-row">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-tab layui-tab-brief" lay-filter="top-res-tab">
+            <ul class="layui-tab-title">
+              <li class="layui-this">域名排行</li>
+              <li>Top客户端IP</li>
+              <li>热门URL</li>
+              <li>热门Referer</li>
+            </ul>
+            <div class="layui-tab-content">
+    
+              <div class="layui-form-item">
+                <div class="layui-input-inline domains layui-hide" style="width:220px">
+                  <input style="height: 32px;" type="text" name="domains"  placeholder="输入域名,多个域名空格分隔" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-input-inline domains layui-hide" style="width: 120px;">
+                  <input style="height: 32px;" type="text" name="server_port"  placeholder="监听端口" autocomplete="off" class="layui-input">
+                </div>                
+                <div class="layui-input-inline time-period" style="width: 220px;">
+                  <div class="layui-btn-group">
+                    <button type="button" data-minute=10m class="layui-btn layui-btn-primary recent_time layui-btn-sm active-btn">10分钟实时</button>
+                    <button type="button" data-minute=30m class="layui-btn layui-btn-primary recent_time layui-btn-sm ">近30分钟</button>
+                    <button type="button" data-minute=60m class="layui-btn layui-btn-primary recent_time layui-btn-sm ">近1小时</button>      
+                  </div>         
+                </div>
+
+                <div class="layui-input-inline">
+                  <button id="reload" type="button" class="layui-btn layui-btn-sm">刷新</button>
+                </div>
+                
+                                
+              </div>
+
+              <div class="layui-tab-item layui-show">
+                <div class="layui-row layui-col-space15">
+                  <div class="layui-col-lg6 layui-col-md12">
+                    <table id="top-domain" lay-filter="top-domain"></table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <table id="top-ip" lay-filter="top-ip"></table>
+                    </div>
+                  </div>
+              </div>
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <table id="top-url" lay-filter="top-url"></table>
+                    </div>
+                  </div>
+              </div>
+              <div class="layui-tab-item">
+                  <div class="layui-row layui-col-space15">
+                    <div class="layui-col-lg6 layui-col-md12">
+                      <table id="top-referer" lay-filter="top-referer"></table>
+                    </div>
+                  </div>
+              </div>              
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+   </div>
+</div>
+
+<script>
+layui.use(['admin','table'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,table = layui.table
+  ,element = layui.element;
+
+  $("#reload").click(function (argument) {
+    render_table()
+  })
+
+  function render_table() {
+    //最近时间
+    var recent_time = $(".active-btn").data("minute")
+
+    //域名
+    var domain = $("input[name='domains']").val()
+    var server_port = $("input[name='server_port']").val() 
+
+    //类型
+    var type
+    var curr_tab = $(".layui-tab-title .layui-this").text()
+    if (curr_tab == "Top客户端IP") {
+      type = "top-ip"
+      title = "IP"
+    } else if (curr_tab == "热门URL") {
+      type = "top-url"
+      title = "URL"
+    } else if (curr_tab == "热门Referer") {
+      type = "top-referer"
+      title = "Referer"      
+    } else {
+      type = "top-domain"
+      title = "域名"
+    }
+
+    var cc = layui.router().search.cc
+    if (typeof(cc) == "undefined") {
+      cc = "0"
+    }
+
+    admin.req({
+      url: '/monitor/site/top?recent_time='+recent_time+"&domain="+domain+"&type="+type+'&cc='+cc +'&server_port=' + server_port
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        table.render({
+          elem: '#'+type
+          ,cols: [[
+            {title:'排行',type: "numbers"}
+            ,{field:'res', title:title}
+            ,{field:'count', title:'请求次数',width:120}
+            ,{field:'traffic', title:'出站流量',width:120,templet:function (d) {
+                var v = d.traffic / 1024
+                if (v >= 921.6) {
+                  var t = (v / 1024).toFixed(2) + " MB" 
+                } else {
+                  var t = v.toFixed(2) + " KB"
+                }
+                return t
+            }}
+            ,{field:'up_recv', title:'回源流量',width:120,templet:function (d) {
+                var v = d.up_recv / 1024
+                if (v >= 921.6) {
+                  var t = (v / 1024).toFixed(2) + " MB" 
+                } else {
+                  var t = v.toFixed(2) + " KB"
+                }
+                return t
+            }}            
+          ]]
+          ,data: data
+          ,page: true
+          ,limit: 20
+        });  
+     
+      }
+    }); 
+  }
+
+  render_table()
+
+  element.on('tab(top-res-tab)', function(data){
+    if ($(this).text() == "域名排行") {
+      $(".domains").addClass("layui-hide")
+    } else {
+      $(".domains").removeClass("layui-hide")
+    }
+    render_table()
+
+  });
+
+  $(".recent_time").click(function (argument) {
+    $(".recent_time").removeClass("active-btn")
+    $(this).addClass("active-btn")
+    render_table()
+  })
+
+
+});  
+</script>

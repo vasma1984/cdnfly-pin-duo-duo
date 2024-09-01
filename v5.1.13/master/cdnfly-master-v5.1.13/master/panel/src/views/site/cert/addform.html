@@ -1,0 +1,195 @@
+
+
+<div class="layui-form" lay-filter="layuiadmin-form-nodeadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item count">
+    <label class="layui-form-label">数量</label>
+    <div class="layui-input-block">
+      <script type="text/html" template>
+        <input type="radio" name="count" lay-filter="count" value="single" checked title="单个">
+        <input type="radio" name="count" lay-filter="count" value="multiple" title="批量" >
+      </script>
+    </div>
+    <hr class="layui-bg-green">
+  </div>
+  
+  <div class="layui-form-item users layui-hide">
+    <label class="layui-form-label">用户</label>
+    <div class="layui-input-inline">
+        <select lay-search lay-filter="users" id="users" name="users" >
+          <option value="">请选择用户 (可搜索)</option>
+        </select>
+    </div>
+  </div>
+
+  <div class="single">
+    <div class="layui-form-item">
+      <label class="layui-form-label">名称</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="name" value="{{ d.params.name || '' }}"  placeholder="请输入名称" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">备注</label>
+      <div class="layui-input-inline">
+        <script type="text/html" template>
+          <input type="text" name="des" value="{{ d.params.des || '' }}" placeholder="请输入备注" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">类型</label>
+      <div class="layui-input-block">
+        <script type="text/html" template>
+          <input type="radio" name="type" lay-filter="type" value="custom" checked title="自己上传">
+          <input type="radio" name="type" lay-filter="type" value="zerossl" title="ZeroSSL(推荐)" >
+          <input type="radio" name="type" lay-filter="type" value="lets" title="Let's Encrypt" >
+        </script>
+      </div>
+    </div>
+
+    <div class="layui-form-item layui-hide domain">
+      <label class="layui-form-label">域名</label>
+      <div class="layui-input-inline" style="width:80%">
+        <script type="text/html" template>
+          <input type="text" name="domain" value="{{ d.params.domain || '' }}"  placeholder="请输入域名" autocomplete="off" class="layui-input">
+        </script>
+      </div>
+    </div>
+
+    <div class="layui-form-item cert">
+      <label class="layui-form-label">证书</label>
+      <div class="layui-input-inline" style="width:80%">
+        <script type="text/html" template>
+            <textarea name="cert" rows="4"  placeholder="请输入" class="layui-textarea"></textarea>
+        </script>
+      </div>
+    </div>
+
+    <div class="layui-form-item key" >
+      <label class="layui-form-label">密钥</label>
+      <div class="layui-input-inline" style="width:80%">
+        <script type="text/html" template>
+            <textarea name="key" rows="4"  placeholder="请输入" class="layui-textarea"></textarea>
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <div class="layui-form-item auto-cert-type layui-hide">
+    <label class="layui-form-label">类型</label>
+    <div class="layui-input-block">
+      <script type="text/html" template>
+        <input type="radio" name="cert_type" lay-filter="cert-type" value="zerossl" checked  title="ZeroSSL(推荐)" >
+        <input type="radio" name="cert_type" lay-filter="cert-type" value="lets" title="Let's Encrypt" >
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-hide dnsapi ">
+    <label class="layui-form-label">DNS API</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <select class="dnsapi-select" name="dnsapi">
+        </select>
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item domains layui-hide" >
+    <label class="layui-form-label">域名</label>
+    <div class="layui-input-inline" style="width:80%">
+      <script type="text/html" template>
+          <textarea name="domains" rows="6"  placeholder="请输入" class="layui-textarea"></textarea>
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-node-front-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+<script type="text/javascript">
+layui.data.sendParams = function(params){
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    form.on('radio(type)', function(data){
+      if (data.value == "custom") {
+        $(".domain").addClass("layui-hide")
+        $(".dnsapi").addClass("layui-hide")
+        $(".cert").removeClass("layui-hide")
+        $(".key").removeClass("layui-hide")
+        $("textarea[name='cert']").removeAttr("readonly")
+        $("textarea[name='key']").removeAttr("readonly")
+      } else {
+        $(".domain").removeClass("layui-hide")
+        $(".dnsapi").removeClass("layui-hide")
+        $(".cert").addClass("layui-hide")
+        $(".key").addClass("layui-hide")
+      }
+    });
+
+    form.on('radio(count)', function(data){
+      if (data.value == "single") {
+        $(".auto-cert-type").addClass("layui-hide")
+        $(".single").removeClass("layui-hide")
+        $(".domains").addClass("layui-hide")
+        if ($("input[name='type']:checked").val() == "custom") {
+          $(".dnsapi").addClass("layui-hide")
+        } else {
+          $(".dnsapi").removeClass("layui-hide")
+        }
+
+      } else {
+        $(".single").addClass("layui-hide")
+        $(".domains").removeClass("layui-hide")
+        $(".dnsapi").removeClass("layui-hide")
+        $(".auto-cert-type").removeClass("layui-hide")
+      }
+    });
+
+    // 获取dnsapi列表
+    var uid = params.uid
+    var uid_para = ""
+    if (uid) {
+      uid_para = "&uid="+uid
+    }
+
+    admin.req({
+      url: '/dnsapis?limit=0'+uid_para //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        var data = res.data
+        $(".dnsapi-select").append("<option value=''>请选择</option>");
+        for (i in data) {
+          $(".dnsapi-select").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+        }
+
+        form.render("select");      
+      }
+    });    
+
+  });  
+}
+</script>

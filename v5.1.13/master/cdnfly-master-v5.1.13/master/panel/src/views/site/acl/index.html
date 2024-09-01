@@ -1,0 +1,305 @@
+
+
+  <title>ACL管理 - 网站管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>网站管理</cite></a>
+      <a><cite>ACL管理</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md9">
+                  {{# if(layui.router().search.show_all != '1'){ }}
+                    <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                  {{# } }}    
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="enable">启用</button>
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="disable">禁用</button>
+                    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                  </div>
+                                 
+                </div>
+            </script>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var show_all = layui.router().search.show_all
+    var uid_hide = true
+    if (show_all == "1") {
+      uid_hide = false
+    }    
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/acls'
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,title: 'ACL列表'
+      ,where: {"show_all": show_all}
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID',  sort: true,width: 60}
+        ,{field:'name', title:'用户', hide: uid_hide,templet: function (d) {
+          return d.username + "(" + d.uid + ")"
+        }}        
+        ,{field:'name', title:'名称'}
+        ,{field:'enable', title:'启用', templet: function(d){
+          if (d.enable == 1) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'              
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'   
+          }
+        }}         
+        ,{field:'enable', title:'配置同步', templet: function(d){
+          if (d.state == "pending") {
+            return '<span class="layui-badge layui-bg-orange">待同步</span>'
+          } else if (d.state == "process") {
+            return '<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 25px; color: #1E9FFF;"></i>'
+          } else if (d.state == "done" || d.state == null) {
+            return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'              
+          } else {
+            return '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'  
+          }            
+        }}  
+        ,{field:'create_at2', title:'创建时间'}
+        ,{field:'update_at2', title:'更新时间'}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:120}
+      ]]
+      ,page: true
+    });
+    
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增ACL'
+            ,area: ['700px', '630px']
+            ,id: 'LAY-popup-acl-add'
+            ,success: function(layero, index){
+              view(this.id).render('site/acl/acl-add').done(function(){
+                //监听提交  
+                $("#save").click(function (argument) {
+                  var name = $("input[name='name']").val()
+                  var des = $("input[name='des']").val()
+                  var default_action = $("input[name='default_action']:checked").val()
+                  if (name == "") {
+                    layer.alert("请输入名称")
+                    return
+                  }
+
+                  var req_data = {"name":name,"des":des,"data":window.acl_data,"default_action":default_action}
+                  admin.req({
+                    url: '/acls' //实际使用请改成服务端真实接口
+                    ,type: "post"
+                    ,data: JSON.stringify(req_data)
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index)
+                      });
+                    }
+                  });
+                })
+              });
+            }
+          });
+        break;
+        case 'enable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要启用的ACL');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":1})
+          }
+          admin.req({
+            url: '/acls' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('启用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'disable':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要禁用的ACL');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push({"id":data[i]['id'],"enable":0})
+          }
+          admin.req({
+            url: '/acls' //实际使用请改成服务端真实接口
+            ,type: "put"
+            ,data: JSON.stringify(req_data)
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('禁用成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的ACL');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')ACL，是否继续', function(index){
+            admin.req({
+              url: '/acls/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除ACL', function(index){
+          var id = data.id
+          admin.req({
+            url: '/acls/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑ACL'
+          ,area: ['700px', '630px']
+          ,id: 'LAY-popup-acl-add'
+          ,success: function(layero, index){
+              view(this.id).render('site/acl/acl-add', data).done(function(){
+
+                //监听提交  
+                $("#save").click(function (argument) {
+                  var name = $("input[name='name']").val()
+                  var des = $("input[name='des']").val()
+                  var default_action = $("input[name='default_action']:checked").val()
+                  if (name == "") {
+                    layer.alert("请输入名称")
+                    return
+                  }
+
+                  var req_data = {"name":name,"des":des,"data":window.acl_data,"default_action":default_action}
+                  admin.req({
+                    url: '/acls/'+data.id //实际使用请改成服务端真实接口
+                    ,type: "put"
+                    ,data: JSON.stringify(req_data)
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('更新成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index)
+                      });
+                    }
+                  });
+                })
+              });
+          }
+        });
+      }
+    });  
+
+  });
+
+  function search (argument) {
+      var search = layui.$("input[name='search']").val()
+
+      layui.table.reload('test-table-toolbar', {
+        where: {search: search},
+        done: function (argument) {
+          layui.$("input[name='search']").val(search)
+        }
+      });
+
+  }
+
+  </script>

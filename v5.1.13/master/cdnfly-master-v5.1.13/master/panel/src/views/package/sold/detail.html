@@ -1,0 +1,208 @@
+<style type="text/css">
+.small-title{font-weight:700;font-size:14px;margin-bottom: 15px}
+.li-title {  
+  color:#999;
+  width:130px;
+  display: inline-block;
+}
+</style>
+<div class="layui-fluid">
+  <div class="small-title">使用情况</div>
+  <div class="layui-row layui-col-space10">
+    <div class="layui-col-md12">
+      <table class="layui-table">
+        <colgroup>
+          <col>
+          <col>
+          <col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th></th>
+            <th>总额度</th>
+            <th>已使用</th>
+            <th>剩余</th>
+          </tr> 
+        </thead>
+        <tbody>
+          <tr>
+            <td>流量 (GB)</td>
+            <td id="traffic_total"></td>
+            <td id="traffic_used"></td>
+            <td id="traffic_remain"></td>
+          </tr>
+          <tr>
+            <td>域名数</td>
+            <td id="domain_total"></td>
+            <td id="domain_used"></td>
+            <td id="domain_remain"></td>
+          </tr>
+          <tr>
+            <td>HTTP端口数</td>
+            <td id="http_port_total"></td>
+            <td id="http_port_used"></td>
+            <td id="http_port_remain"></td>
+          </tr>       
+          <tr>
+            <td>转发端口数</td>
+            <td id="stream_port_total"></td>
+            <td id="stream_port_used"></td>
+            <td id="stream_port_remain"></td>
+          </tr>              
+        </tbody>
+      </table>
+    </div>     
+  </div>   
+   <hr>
+  <div class="small-title">套餐详情</div>
+  <div class="layui-row layui-col-space20">
+    <div class="layui-col-md12">
+      <ul>
+        <script type="text/html" template>
+          <li><span class="li-title">名称：</span> {{d.params.package_name}}</li>
+          <li><span class="li-title">线路分组：</span> {{d.params.node_group_name}}</li>
+          <li><span class="li-title">流量 (GB)：</span> {{d.params.traffic}}</li>
+          <li><span class="li-title">域名数：</span> {{d.params.domain}}</li>
+          <li><span class="li-title">HTTP端口数：</span> {{d.params.http_port}}</li>
+          <li><span class="li-title">转发端口数：</span> {{d.params.stream_port}}</li>
+          <li><span class="li-title">自定义CC规则：</span> {{d.params.custom_cc_rule == '1' && '允许' || '禁止'}}</li>
+          <li><span class="li-title">到期时间：</span> {{d.params.end_at2}}</li>
+        </script>
+      </ul>  
+    </div>  
+  </div>
+  <hr>
+  <div class="small-title">升级包</div>
+  <div class="layui-row layui-col-space10">
+    <div class="layui-col-md12">
+      <table class="layui-table upgrade">
+        <colgroup>
+          <col>
+          <col>
+          <col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>类型</th>
+            <th>数值</th>
+            <th>数量</th>
+            <th>总数</th>
+          </tr> 
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>  
+  </div> 
+
+</div>    
+<script type="text/html" template lay-done="layui.data.sendParams(d.params)">
+  
+</script>
+
+<script>
+//定义一个 lay-done 对应的全局方法，以供动态模板执行
+layui.data.sendParams = function(params){
+  var basic_traffic = parseInt(params.traffic)
+  var basic_domain = parseInt(params.domain)
+  var basic_http_port = parseInt(params.http_port)
+  var basic_stream_port = parseInt(params.stream_port)
+  var id = params.id
+
+  layui.use(['admin'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,element = layui.element
+    ,form = layui.form
+    ,router = layui.router();
+
+      var usage_ajax = admin.req({
+        url: '/user-package/'+id+'/usage' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          var data = res.data
+          var domain_usage = data.domain_usage
+          var http_port_usage = data.http_port_usage
+          var stream_port_usage = data.stream_port_usage
+          var traffic_usage = data.traffic_usage
+
+          $("#domain_used").text(domain_usage)
+          $("#http_port_used").text(http_port_usage)
+          $("#stream_port_used").text(stream_port_usage)
+          $("#traffic_used").text(traffic_usage)
+        }
+      });
+
+      var upgrade_ajax = admin.req({
+        url: '/user-package/'+id+'/upgrades?limit=0' //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,done: function(res){
+          var traffic_total = basic_traffic
+          var domain_total = basic_domain
+          var http_port_total = basic_http_port
+          var stream_port_total = basic_stream_port
+
+          var data = res.data
+          for (i in data) {
+            var type = data[i]['type']
+            var package_up_amount = data[i]['package_up_amount']
+            var amount = data[i]['amount']
+            var total = parseInt(package_up_amount) * parseInt(amount)
+
+            if (type == "custom_cc_rule") {
+              type = '自定义CC规则'
+              package_up_amount = ''
+              amount = ''
+              total = ''
+            } else if (type == 'domain') {
+              type = '域名数'
+              domain_total += total
+
+            } else if (type == 'http_port') {
+              type = 'HTTP端口数'
+              http_port_total += total
+
+            } else if (type == 'stream_port') {
+              type = '转发端口数'
+              stream_port_total += total
+
+            } else if (type == 'traffic') {
+              type = '流量'
+              traffic_total += total
+            } 
+
+            $(".upgrade tbody").append('<tr><td>'+data[i]['id']+'</td><td>'+data[i]['package_up_name']+'</td><td>'+type+'</td><td>'+package_up_amount+'</td><td>'+amount+'</td><td>'+total+'</td></tr>')
+          }
+
+          $("#traffic_total").text(traffic_total)
+          $("#domain_total").text(domain_total)
+          $("#http_port_total").text(http_port_total)
+          $("#stream_port_total").text(stream_port_total)
+        }
+      });
+
+      // 统计剩余
+      $.when(usage_ajax,upgrade_ajax).then(function (argument) {
+        var stream_port_remain = parseInt($("#stream_port_total").text()) - parseInt($("#stream_port_used").text())
+        var traffic_remain = parseInt($("#traffic_total").text()) - parseInt($("#traffic_used").text())
+        var http_port_remain = parseInt($("#http_port_total").text()) - parseInt($("#http_port_used").text())
+        var domain_remain = parseInt($("#domain_total").text()) - parseInt($("#domain_used").text())
+
+        $("#stream_port_remain").text(stream_port_remain)
+        $("#traffic_remain").text(traffic_remain)
+        $("#http_port_remain").text(http_port_remain)
+        $("#domain_remain").text(domain_remain)
+      })
+
+  });
+
+};
+</script>
+

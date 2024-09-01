@@ -1,0 +1,104 @@
+<style type="text/css">
+
+</style>
+  <form class="layui-form" action="">
+    <script type="text/html" template>
+      <input type="hidden" name="package" value="{{d.params.id}}"  class="layui-input">
+    </script>
+    
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">套餐名称</label>
+          <div class="layui-input-inline">
+            <script type="text/html" template>
+              <input type="text" name="name" value="{{d.params.name}}" class="layui-input">
+            </script>
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">用户ID</label>
+          <div class="layui-input-inline">
+            <input type="text" name="uid" lay-verify="required" placeholder="填数字ID" class="layui-input">
+          </div>
+        </div>  
+
+        <div class="layui-inline">
+          <label class="layui-form-label">时长</label>
+          <div class="layui-input-inline">
+            <input type="radio" lay-filter="duration" name="duration" value="month"  checked title="1个月">
+            <input type="radio" lay-filter="duration"  name="duration" value="quarter" title="3个月">
+            <input type="radio" lay-filter="duration"  name="duration" value="year" title="12个月">
+            <input type="radio" lay-filter="duration"  name="duration" value="custom" title="自定义">
+            <input type="text" name="end_at" placeholder="格式2000-01-01 12:00:00" class="layui-input layui-hide">
+          </div>
+        </div>  
+
+
+      </div>
+
+      <div class="layui-row layui-col-space30">   
+        <div class="layui-col-md6 layui-col-md-offset6">
+          <button type="button"  lay-submit lay-filter="assign" class="layui-btn ">确认</button>
+        </div>    
+      </div>
+
+  </form>
+
+
+<script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,laydate = layui.laydate
+    ,form = layui.form;
+
+
+  layui.form.render()
+
+  form.on('radio(duration)', function(data){
+    if (data.value == "custom") {
+      $("input[name='end_at']").removeClass("layui-hide")
+    } else {
+      $("input[name='end_at']").addClass("layui-hide")
+    }
+  });  
+      
+
+
+  form.on('submit(assign)', function(data){
+    var field = data.field //当前容器的全部表单字段，名值对形式：{name: value}
+    var data = {"package":field.package,"name":field.name,"uid":field.uid, "duration":field.duration}
+    var checked = $("input[name='duration']:checked").val()
+    if (checked == "custom") {
+      data = {"package":field.package,"name":field.name,"uid":field.uid, "end_at":field.end_at}
+    }
+
+    admin.req({
+      url: '/user-packages' //实际使用请改成服务端真实接口
+      ,data: JSON.stringify(data)
+      ,type: "post"
+      ,contentType:"application/json"
+      ,dataType: "json"
+      ,done: function(res){
+        //登入成功的提示与跳转
+        layer.msg('分配成功', {
+          offset: '15px'
+          ,icon: 1
+          ,time: 1000
+        }, function(){
+          layer.closeAll();
+        });
+      }
+    });
+
+    return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+  });
+
+   
+  }); //重载表格  
+
+
+</script>    

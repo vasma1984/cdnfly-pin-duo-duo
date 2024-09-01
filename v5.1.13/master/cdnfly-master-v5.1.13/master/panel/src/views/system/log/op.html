@@ -1,0 +1,156 @@
+
+
+  <title>操作日志 - 系统日志 - 系统管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>系统管理</cite></a>
+      <a><cite>系统日志</cite></a>
+      <a><cite>操作日志</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-lg2 layui-col-md4 layui-form">
+          <input type="text" id="date" name="date"  placeholder="时间范围" autocomplete="off" class="layui-input">
+        </div> 
+        <script type="text/html" template lay-done="listen_uid();">
+        {{# if(layui.router().search.show_all === '1'){ }}
+          <div class="layui-col-lg1 layui-col-md2 layui-form">
+            <input type="text" name="uid"  placeholder="用户ID" autocomplete="off" class="layui-input">
+          </div> 
+        {{# } }}
+        </script>
+
+        <div class="layui-col-lg1 layui-col-md2 layui-form">
+          <input type="text" name="type"  placeholder="类别" autocomplete="off" class="layui-input">
+        </div> 
+
+        <div class="layui-col-lg1 layui-col-md2 layui-form">
+          <input type="text" name="content"  placeholder="对象" autocomplete="off" class="layui-input">
+        </div> 
+
+        <div class="layui-col-lg1 layui-col-md2 layui-form" >
+          <select lay-filter="action" class="action" name="action" lay-verify="required">
+            <option value=''>动作</option>
+            <option value='更新'>更新</option>
+            <option value='新增'>新增</option>
+            <option value='删除'>删除</option>
+          </select>
+        </div>      
+
+        <div class="layui-col-lg2 layui-col-md3 layui-form">
+          <input type="text" name="ip"  placeholder="IP" autocomplete="off" class="layui-input">
+        </div>
+
+    </div>
+
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table','laydate'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form
+    ,laydate = layui.laydate;
+
+    laydate.render({
+      elem: '#date'
+      ,range: true
+      ,done: function(value, date, endDate){
+        var date_range = value
+        var start = date_range.split(" - ")[0]
+        var end = date_range.split(" - ")[1]
+        table.reload('test-table-toolbar',{where: {"start":start,"end":end}, page: {curr: 1}})        
+      }
+    });
+
+    form.render()
+    var show_all = layui.router().search.show_all
+    var access_token = layui.data('layuiAdmin')['access-token']
+    var uid_hide = true
+    if (show_all == "1") {
+      uid_hide = false
+    }
+
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/log/op'
+      ,headers: {"access-token":access_token}
+      ,title: '操作日志'
+      ,where: {"show_all": show_all}
+      ,cols: [[
+        {field:'id', title:'ID',  sort: true, width: 100}
+        ,{field:'uid', title:'用户ID',hide: uid_hide, width: 100}
+        ,{field:'type', title:'类别', width: 100}
+        ,{field:'content', title:'对象', width: 100}
+        ,{field:'action', title:'动作', width: 100}
+        ,{field:'diff', title:'变更内容', templet: function(d){
+          if (d.diff) {
+            var data = JSON.parse(d.diff)
+            var ret = ""
+            for (i in data) {
+              ret +=  "字段：【" + data[i].field + "】旧：【"+data[i].old+ "】新：【" + data[i].new + "】| "    
+            }
+            return ret
+          } else {
+            return ''
+          }
+
+        }}
+        ,{field:'ip', title:'IP', width: 150}
+        ,{field:'create_at2', title:'操作时间'}
+      ]]
+      ,page: true
+      ,defaultToolbar: []
+    });
+
+    form.on('select(action)', function(data){
+      var action = data.value
+      table.reload('test-table-toolbar',{where: {"action":action}, page: {curr: 1}})
+    });       
+
+    $("input[name='type']").on('change', function(){
+        var type = $(this).val();
+        table.reload('test-table-toolbar',{where: {"type":type}, page: {curr: 1}})
+
+    });
+
+    $("input[name='content']").on('change', function(){
+        var content = $(this).val();
+        table.reload('test-table-toolbar',{where: {"content":content}, page: {curr: 1}})
+
+    });
+
+    $("input[name='ip']").on('change', function(){
+        var ip = $(this).val();
+        table.reload('test-table-toolbar',{where: {"ip":ip}, page: {curr: 1}})
+
+    });
+
+
+  });
+function listen_uid (argument) {
+    var $ = layui.$
+    var table = layui.table
+    $("input[name='uid']").on('change', function(){
+        var uid = $(this).val();
+        table.reload('test-table-toolbar',{where: {"uid":uid}, page: {curr: 1}})
+
+    });   
+}
+
+  </script>

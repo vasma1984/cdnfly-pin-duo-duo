@@ -1,0 +1,76 @@
+<style type="text/css">
+.layui-layer-page .layui-layer-content {
+            position: relative;
+            overflow: visible !important;
+    }
+.li-title {
+  color:#999;
+  width:100px;
+  display: inline-block;
+}
+
+</style>
+
+<div class="layui-form" lay-filter="layuiadmin-form-nodeadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">时长</label>
+    <div class="layui-input-inline">
+        <select name="duration" lay-filter="duration" lay-verify="">
+            <option value="">续费时长</option>
+            <option value="month">一个月</option>
+            <option value="quarter">三个月</option>
+            <option value="year">一年</option>
+        </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">价格</label>
+    <div class="layui-input-inline">
+        <li><span class="li-title">总价</span><span id="total_price"></span> 元</li>
+        <li><span class="li-title">基础套餐</span><span id="basic_price"></span> 元</li>
+        <li><span class="li-title">升级包</span><span id="up_price"></span> 元</li>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" id="renew-confirm" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+var form = layui.form
+var admin = layui.admin
+var $ = layui.$
+
+form.on('select(duration)', function(data){
+  var duration = data.value
+  var id = $("input[name='id']").val()
+
+  admin.req({
+    url: '/user-packages/'+ id + "?duration=" + duration  //实际使用请改成服务端真实接口
+    ,type: "get"
+    ,contentType:"application/json"
+    ,dataType: "json"        
+    ,done: function(res){
+        var data = res.data
+        var basic_price = data.basic_price
+        var up_price = data.up_price
+        var total_price = data.total_price
+
+        $("#basic_price").text(basic_price)
+        $("#up_price").text(up_price)
+        $("#total_price").text(total_price)
+    }
+  });
+
+
+});    
+</script>

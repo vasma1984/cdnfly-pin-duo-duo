@@ -1,0 +1,1047 @@
+<title>节点管理 - 线路分组 - 管理</title>
+<style type="text/css">
+.title {
+  text-align: center;
+/*  width: 33%;*/
+/*  font-size: 16px;*/
+  line-height: 30px;
+}
+.active {
+    background-color: #009688c2;
+    color: #fff !important;  
+}
+
+.node-list tr {
+  cursor:pointer;
+}
+
+.node-list tr:hover {
+  color: #fff !important;
+  background-color: #009688c2 !important;
+}
+
+.sub-title {
+  cursor:pointer;
+}
+
+.sub-title:hover {
+  color: #fff !important;
+  background-color: #009688c2 !important;
+}
+
+.center {
+  text-align: center;
+}
+
+
+.lines dl dd i {
+  padding-right: 8px !important
+}
+
+.lines dd {
+  padding-left: 20px;
+  cursor:pointer;
+}
+
+.top-level {
+  width:170px;
+  min-width:0%;
+  left:auto;
+  top:40px;
+  z-index: 1000;
+}
+
+.sub-level {
+  width:170px;
+  min-width:0%;
+  left:168px;top:0px;
+}
+
+.sub-level dd {
+  color: #666;
+}
+
+.layui-table-box {
+  overflow: visible;
+}
+
+.layui-table-body {
+  overflow: visible;
+}
+
+.layui-form-label {
+  padding: 9px 5px 9px 5px;
+  width: fit-content;
+}
+
+.layui-table-tool {
+  background-color:#ffff
+}
+
+.curr-line {
+  font-weight: bold;
+    color: green;
+    font-size: 16px;
+}
+
+.layui-table-tool-temp {
+  padding-right: 0px;
+}
+</style>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>节点管理</cite></a>
+    <a><cite>线路分组</cite></a>
+    <a><cite id="group-name"></cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <form class="layui-form" action="">
+            <div class="layui-form-item">
+  
+              <div class="layui-inline">
+                <label class="layui-form-label">区域：</label>
+                <div class="layui-input-inline" style="width: 150px;">
+                  <select name="region" lay-filter="region">
+                  </select>     
+                </div>
+                <label class="layui-form-label">分组：</label>
+                <div class="layui-input-inline" style="width: 150px;">
+                  <select name="group" lay-filter="group">
+                  </select>     
+                </div>
+                <label class="layui-form-label">线路：</label>
+                <div class="layui-input-inline lines" style="width: 150px;">
+                  <input type="text" name="line" autocomplete="off" class="layui-input">    
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div class="layui-row layui-col-space15">
+
+            <div class="layui-col-md5 title">
+              未设置的IP
+            </div>
+
+            <div class="layui-col-md7 title">
+              已设置<span class="curr-line"></span>线路的IP
+            </div>
+
+
+          </div>
+          <div class="layui-row layui-col-space15">
+            <div class="layui-col-md5">
+              <table class="layui-hide" id="ip-pending" lay-filter="ip-pending"></table>
+              <script type="text/html" id="ip-pending-toolbar">
+                <form class="layui-form" action="">
+                  <div style="margin-bottom:0px;" class="layui-form-item">
+        
+                    <div class="layui-inline" style="margin-bottom:0px;">
+                        <button type="button"  style="margin-top: 5px;" class="layui-btn  layui-btn-sm" lay-event="add">批量添加</button>
+                        <button type="button"  style="margin-top: 5px;" class="layui-btn  layui-btn-sm layui-btn-normal" lay-event="backup">批量备用</button>
+
+                    </div>
+                    <div class="layui-inline" style="margin-bottom:0px;float: right;">
+                      <div class="layui-input-inline" style="width: 150px;">
+                        <input type="text" name="search_pending" placeholder="请输入IP或名称" autocomplete="off" class="layui-input">   
+                      </div>
+                      <button type="button" style="margin-top: 5px;" class="layui-btn  layui-btn-normal layui-btn-sm" lay-event="search">搜索</button>
+                    </div>
+
+                  </div>
+                </form>
+              </script>            
+            </div>
+
+            <div class="layui-col-md7">
+              <table class="layui-hide" id="ip-set" lay-filter="ip-set"></table>
+              <script type="text/html" id="ip-set-toolbar">
+                <div class="layui-row layui-col-space1s0">
+                  <div class="layui-btn-group">
+                    <button style="margin-top: 5px;" class="layui-btn  layui-btn-sm" lay-event="enable">启用</button>
+                    <button style="margin-top: 5px;" class="layui-btn layui-btn-warm layui-btn-sm" lay-event="disable">禁用</button>
+                    <button style="margin-top: 5px;" class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</button>
+
+                  </div>
+                  <div class="layui-btn-group">
+                    <button style="margin-top: 5px;" class="layui-btn layui-btn-sm" lay-event="set_backup">备用IP</button>
+                    <button style="margin-top: 5px;" class="layui-btn layui-btn-normal layui-btn-sm" lay-event="unset_backup">取消备用</button>
+                  </div>
+
+                  <div class="layui-btn-group">
+                    <button title="当该线路组没有默认线路时，启用所设置的为默认线路，防止没有默认线路时，出现部分地区无解析的情况" style="margin-top: 5px;" class="layui-btn layui-btn-sm" lay-event="set_backup_default_line">备用默认解析</button>
+                    <button style="margin-top: 5px;" class="layui-btn layui-btn-normal layui-btn-sm" lay-event="unset_backup_default_line">取消备用</button>
+                  </div>
+
+                  <div class="layui-btn-group">
+                    <button style="margin-top: 5px;" class="layui-btn layui-btn-sm" lay-event="set_weight">权重</button>
+                  </div>
+                  <div class="layui-inline" style="margin-bottom:0px;float: right;">
+                    <div class="layui-input-inline" style="width: 150px;margin-right: 5px;">
+                      <input type="text" name="search_set" placeholder="请输入IP或名称" autocomplete="off" class="layui-input">   
+                    </div>
+                    <button type="button" class="layui-btn  layui-btn-normal layui-btn-sm" lay-event="search">搜索</button>
+                  </div>
+                </div>
+              </script>  
+            </div>
+          </div>
+         </div>
+      </div> 
+  </div> 
+</div>          
+
+
+<script>
+layui.use(['admin', 'table'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,view = layui.view
+  ,table = layui.table
+  ,form = layui.form;
+
+    var router = layui.router();
+    var group_name = router.search.group_name
+    var group_id_url = router.search.group_id
+    var region_id_url = router.search.region_id
+
+    $("#group-name").text(decodeURI(group_name)+"线路组")
+
+    // 监听区域选择
+    form.on('select(region)', function(data){
+      var region_id = data.value
+      var node_group = window.node_group[region_id]
+      $("select[name='group']").empty()
+      if (node_group && node_group.length > 0) {
+        // 渲染分组
+        for (i in node_group) {
+          var id = node_group[i]['id']
+          var name = node_group[i]['name']
+          $("select[name='group']").append("<option value='"+id+"'>"+name+"</option>")
+        }
+        var line_id = $("input[name='line']").data("id")
+        var group_id = node_group[0]['id']
+        var node_ip_ajax = get_node_ip(region_id)
+        $.when(node_ip_ajax).then(function () {
+          render_table(group_id, line_id)
+        })
+        
+      } 
+      form.render("select")
+    });     
+
+    // 监听分组选择
+    form.on('select(group)', function(data){
+      var line_id = $("input[name='line']").data("id")
+      var group_id = $("select[name='group']").val()
+      render_table(group_id, line_id)
+    });  
+
+    // 获取区域列表
+    var region_ajax = admin.req({
+      url: '/regions?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        for (i in data) {
+          var id = data[i]['id']
+          var name = data[i]['name']
+          $("select[name='region']").append("<option value='"+id+"'>"+name+"</option>")
+        }
+        form.render("select")
+      }
+    });
+
+    // 获取分组列表
+    var group_ajax = admin.req({
+      url: '/node-groups?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        window.node_group = {}
+        for (i in data) {
+          var id = data[i]['id']
+          var name = data[i]['name']
+          var region_id = data[i]['region_id']
+          if (region_id == region_id_url) {
+            $("select[name='group']").append("<option value='"+id+"'>"+name+"</option>")
+          }
+          if (window.node_group[region_id]) {
+            window.node_group[region_id].push({"id":id,"name":name})
+          } else {
+            window.node_group[region_id] = [{"id":id,"name":name}]
+          }
+        }
+        form.render("select")
+      }
+    });
+
+    // 获取dns线路列表
+    var dns_line_ajax = admin.req({
+      url: '/configs/global-0-system-dns_config' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data.value
+        var lines = JSON.parse(JSON.parse(data)['lines'])
+        window.dns_lines = lines
+        var defalt_line_id = lines[0]["id"]
+        var default_line_name = lines[0]["name"]
+        $("input[name='line']").val(default_line_name)
+        $("input[name='line']").data("id",defalt_line_id)
+        $(".curr-line").text(default_line_name)
+        render_menu()
+        $(".lines dd").click(function (event) {
+          var line_id = $(this).data("id")
+          var line_name = $(this).data("name")
+          if (line_id == "-1") {
+            return false
+          }
+
+          $("input[name='line']").val(line_name)
+          $("input[name='line']").data("id",line_id)
+          var group_id = $("select[name='group']").val()
+          $(".curr-line").text(line_name)
+          render_table(group_id, line_id)
+          $(".lines dl").removeClass("layui-show")
+          event.stopPropagation();
+        })
+      }
+    });
+
+    var get_node_ip = function (region_id,search="") {
+      window.search_pending = search
+      var sub_ip = 1
+      // 获取当前区域节点IP
+      var node_ip_ajax = admin.req({
+        url: '/nodes?limit=0&sub-ip='+sub_ip+'&region_id='+region_id+'&search='+search //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,done: function(res){
+          var data = res.data
+          window.node_ip_data = data
+        }
+      });
+      return node_ip_ajax
+    }
+
+    var node_ip_ajax = get_node_ip(region_id_url)
+
+
+    $.when(region_ajax,group_ajax,dns_line_ajax,node_ip_ajax).then(function () {
+      $("select[name='region']").val(region_id_url)
+      $("select[name='group']").val(group_id_url)
+      form.render("select")
+      var line_id = $("input[name='line']").data("id")
+      render_table(group_id_url, line_id)
+    })
+
+    var execRowspan = function(fieldName,index,flag){
+      var index = $(".layui-table-body").length
+      // 1为不冻结的情况，左侧列为冻结的情况
+      // let fixedNode = index=="1"?$(".layui-table-body")[index - 1]:(index=="3"?$(".layui-table-fixed-r"):$(".layui-table-fixed-l"));
+      let fixedNode = $(".layui-table-body")[index - 1]
+      // 左侧导航栏不冻结的情况
+      let child = $(fixedNode).find("td");
+      let childFilterArr = [];
+      // 获取data-field属性为fieldName的td
+      for(let i = 0; i < child.length; i++){
+        if(child[i].getAttribute("data-field") == fieldName){
+          childFilterArr.push(child[i]);
+        }
+      }
+      // 获取td的个数和种类
+      let childFilterTextObj = {};
+      for(let i = 0; i < childFilterArr.length; i++){
+        let childText = flag?childFilterArr[i].innerHTML:childFilterArr[i].textContent;
+        if(childFilterTextObj[childText] == undefined){
+          childFilterTextObj[childText] = 1;
+        }else{
+          let num = childFilterTextObj[childText];
+          childFilterTextObj[childText] = num*1 + 1;
+        }
+      }
+      let canRowspan = true;
+      let maxNum;//以前列单元格为基础获取的最大合并数
+      let finalNextIndex;//获取其下第一个不合并单元格的index
+      let finalNextKey;//获取其下第一个不合并单元格的值
+      for(let i = 0; i < childFilterArr.length; i++){
+        (maxNum>9000||!maxNum)&&(maxNum = $(childFilterArr[i]).prev().attr("rowspan")&&fieldName!="8"?$(childFilterArr[i]).prev().attr("rowspan"):9999);
+        let key = flag?childFilterArr[i].innerHTML:childFilterArr[i].textContent;//获取下一个单元格的值
+        let nextIndex = i+1;
+        let tdNum = childFilterTextObj[key];
+        let curNum = maxNum<tdNum?maxNum:tdNum;
+        if(canRowspan){
+          for(let j =1;j<=curNum&&(i+j<childFilterArr.length);){//循环获取最终合并数及finalNext的index和key
+            finalNextKey = flag?childFilterArr[i+j].innerHTML:childFilterArr[i+j].textContent;
+            finalNextIndex = i+j;
+            if((key!=finalNextKey&&curNum>1)||maxNum == j){
+              canRowspan = true;
+              curNum = j;
+              break;
+            }
+            j++;
+            if((i+j)==childFilterArr.length){
+              finalNextKey=undefined;
+              finalNextIndex=i+j;
+              break;
+            }
+          }
+          childFilterArr[i].setAttribute("rowspan",curNum);
+          if($(childFilterArr[i]).find("div.rowspan").length>0){//设置td内的div.rowspan高度适应合并后的高度
+            $(childFilterArr[i]).find("div.rowspan").parent("div.layui-table-cell").addClass("rowspanParent");
+            $(childFilterArr[i]).find("div.layui-table-cell")[0].style.height= curNum*38-10 +"px";
+          }
+          canRowspan = false;
+        }else{
+          childFilterArr[i].style.display = "none";
+        }
+        if(--childFilterTextObj[key]==0|--maxNum==0|--curNum==0|(finalNextKey!=undefined&&nextIndex==finalNextIndex)){//||(finalNextKey!=undefined&&key!=finalNextKey)
+          canRowspan = true;
+        }
+      }
+    }
+    //合并数据表格行
+    var layuiRowspan = function(fieldNameTmp,index,flag){
+      let fieldName = [];
+      if(typeof fieldNameTmp == "string"){
+        fieldName.push(fieldNameTmp);
+      }else{
+        fieldName = fieldName.concat(fieldNameTmp);
+      }
+      for(let i = 0;i<fieldName.length;i++){
+        execRowspan(fieldName[i],index,flag);
+      }
+    }
+
+    var render_table = function (group_id, line_id, search="",need_render_pending=true) {
+      window.search_set = search
+      // 通过group_id和line_id获取已设置的
+      var line_ajax = admin.req({
+      url: '/lines?limit=0&node_group_id='+group_id+'&line_id='+line_id+'&search='+search //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+          var data = res.data
+          var show_all_line = true
+          if (line_id) {
+            show_all_line = false
+          } else {
+            // 按线路排序
+            data.sort((a,b) => (a.line_id > b.line_id) ? 1 : ((b.line_id > a.line_id) ? -1 : 0))
+
+          }
+          table.render({
+            elem: '#ip-set'
+            ,toolbar: '#ip-set-toolbar'
+            ,title: 'IP列表'
+            ,cols: [[
+              {type: 'checkbox'}
+              ,{field:'id', title:'ID',width:50} 
+              ,{field:'line_name', title:'线路',hide:!show_all_line} 
+              ,{field:'name', title:'名称', templet:function (d) {
+                var extra_list = []
+                if (d.is_backup) {
+                  if (d.enable_backup) {
+                    extra_list.push("备用IP -> 已启用")
+                  } else {
+                    extra_list.push("备用IP")
+                  }
+                } 
+
+                if (d.is_backup_default_line) {
+                  if (d.enable_backup_default_line) {
+                    extra_list.push("备用默认 -> 已启用")
+                  } else {
+                    extra_list.push("备用默认")
+                  }
+                }
+
+                if (extra_list.length == 0) {
+                  return d.node_name
+                } else {
+                  return d.node_name + " (" + extra_list.join("，") + ")"
+                }
+                
+              }} 
+              ,{field:'ip', title:'IP'} 
+              ,{field:'enable', title:'启用',templet: function(d){
+                if (d.enable == 1) {
+                  ret = '<i class="layui-icon layui-icon-ok-circle" style="font-size: 25px; color: #009688;"></i>'          
+                } else {
+                  ret = '<i class="layui-icon layui-icon-close-fill" style="font-size: 25px; color: #FF5722;"></i>'    
+                  if (d.disable_by == "ip_down") {
+                    ret += " <span>禁用原因：IP不可用</span>"
+                  } else if (d.disable_by == "bandwidth") {
+                    ret += " <span>禁用原因：带宽超限</span>"
+                  }
+                }
+                return ret
+              }} 
+              ,{field:'weight', title:'权重'} 
+            ]]
+            ,page: false
+            ,limit: Number.MAX_VALUE
+            ,defaultToolbar: []
+            ,data: data
+            ,done: function () {
+              $("input[name='search_set']").val(window.search_set)
+              if (show_all_line) {
+                layuiRowspan(['line_name'],1);//支持数组    
+              }
+                        
+            }
+          });         
+
+          // 当前线路的ip与当前区域的ip比较，得出未设置的ip
+          if (need_render_pending) {
+            var ip_not_set = []
+            var ip_set = []
+            for (i in data) {
+              var ip = data[i]['ip']
+              ip_set.push(ip)
+            }
+
+            for (i in window.node_ip_data) {
+              var ip = window.node_ip_data[i]['ip']
+              if ($.inArray(ip, ip_set) == -1) {
+                ip_not_set.push(window.node_ip_data[i])
+              }
+            }
+
+            table.render({
+              elem: '#ip-pending'
+              ,toolbar: '#ip-pending-toolbar'
+              ,title: 'IP列表'
+              ,cols: [[
+                {type: 'checkbox'}
+                ,{field:'name', title:'名称',templet:function (d) {
+                  return d.name
+                }} 
+                ,{field:'ip', title:'IP'} 
+              ]]
+              ,page: false
+              ,limit: Number.MAX_VALUE
+              ,defaultToolbar: []
+              ,data: ip_not_set
+              ,done: function() {
+                $("input[name='search_pending']").val(window.search_pending)
+              }
+            });   
+
+            //头工具栏事件
+            table.on('toolbar(ip-pending)', function(obj){
+              var checkStatus = table.checkStatus(obj.config.id);
+              var region_id = $("select[name='region']").val()
+              var group_id = $("select[name='group']").val()
+              var line_id = $("input[name='line']").data("id")
+              var line_name = $("input[name='line']").val()
+
+              switch(obj.event){
+                case 'add':
+                  var line_id = $("input[name='line']").data("id")
+                  if (!line_id) {
+                    layer.alert("请先选择线路")
+                    return                    
+                  }
+
+                  var data = checkStatus.data;
+                  if (data.length == 0) {
+                    layer.alert("请选择节点")
+                    return
+                  }
+
+                  req_data = []
+                  for (i in data) {
+                    var pid = data[i]['pid']
+                    var node_ip_id = data[i]['id']
+                    var node_id = pid
+                    if (pid == 0) {
+                      node_id = node_ip_id
+                    }
+                    req_data.push({"node_group_id":group_id, "node_id": node_id,"node_ip_id":node_ip_id, "line_id":line_id, "line_name":line_name})
+                  }
+
+                  admin.req({
+                    url: '/lines' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify(req_data)
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        render_table(group_id, line_id)
+                      });
+                      }
+                    });
+                  break;
+                  case 'backup':
+                  var line_id = $("input[name='line']").data("id")
+                  if (!line_id) {
+                    layer.alert("请先选择线路")
+                    return                    
+                  }
+
+                  var data = checkStatus.data;
+                  if (data.length == 0) {
+                    layer.alert("请选择节点")
+                    return
+                  }
+
+                  req_data = []
+                  for (i in data) {
+                    var pid = data[i]['pid']
+                    var node_ip_id = data[i]['id']
+                    var node_id = pid
+                    if (pid == 0) {
+                      node_id = node_ip_id
+                    }
+                    req_data.push({"node_group_id":group_id, "node_id": node_id,"node_ip_id":node_ip_id, "line_id":line_id, "line_name":line_name,"is_backup":1})
+                  }
+
+                  admin.req({
+                    url: '/lines' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify(req_data)
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        render_table(group_id, line_id)
+                      });
+                      }
+                    });
+                  break;
+
+                  case 'search':
+                    var search = $("input[name='search_pending']").val()
+                    var node_ip_ajax = get_node_ip(region_id, search)
+                    $.when(node_ip_ajax).then(function () {
+                      render_table(group_id, line_id)
+                    })
+
+                  break;                
+              };
+            });
+          }
+
+
+          //头工具栏事件
+          table.on('toolbar(ip-set)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            var region_id = $("select[name='region']").val()
+            var group_id = $("select[name='group']").val()
+            var line_id = $("input[name='line']").data("id")            
+            switch(obj.event){
+              case 'enable':
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                  layer.alert("请选择节点")
+                  return
+                }
+
+                req_data = []
+                for (i in data) {
+                  var id = data[i]['id']
+                  req_data.push({"id":id, "enable": 1})
+                }
+
+                admin.req({
+                  url: '/lines' //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify(req_data)
+                  ,type: "put"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('启用成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      render_table(group_id, line_id)
+                    });
+                    }
+                  });
+                break;
+                case 'disable':
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                  layer.alert("请选择节点")
+                  return
+                }
+
+                req_data = []
+                for (i in data) {
+                  var id = data[i]['id']
+                  req_data.push({"id":id, "enable": 0,"disable_by":"admin"})
+                }
+
+                admin.req({
+                  url: '/lines' //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify(req_data)
+                  ,type: "put"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('禁用成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      render_table(group_id, line_id)
+                    });
+                    }
+                  });
+                break;         
+                case 'del':
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                  layer.alert("请选择节点")
+                  return
+                }
+
+                req_data = []
+                for (i in data) {
+                  var id = data[i]['id']
+                  req_data.push(id)
+                }
+
+                admin.req({
+                  url: '/lines/' + req_data.join(",") //实际使用请改成服务端真实接口
+                  ,type: "delete"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('删除成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      render_table(group_id, line_id)
+                    });
+                    }
+                  });
+                break;
+                case 'set_backup':
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                  layer.alert("请选择节点")
+                  return
+                }
+
+                req_data = []
+                for (i in data) {
+                  var id = data[i]['id']
+                  req_data.push({"id":id, "is_backup": 1})
+                }
+
+                admin.req({
+                  url: '/lines' //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify(req_data)
+                  ,type: "put"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('设置成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      render_table(group_id, line_id)
+                    });
+                    }
+                  });
+                break;  
+                case 'unset_backup':
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                  layer.alert("请选择节点")
+                  return
+                }
+
+                req_data = []
+                for (i in data) {
+                  var id = data[i]['id']
+                  req_data.push({"id":id, "is_backup": 0})
+                }
+
+                admin.req({
+                  url: '/lines' //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify(req_data)
+                  ,type: "put"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('取消成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      render_table(group_id, line_id)
+                    });
+                    }
+                  });
+                break;  
+                case 'set_backup_default_line':
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                  layer.alert("请选择节点")
+                  return
+                }
+
+                req_data = []
+                for (i in data) {
+                  var id = data[i]['id']
+                  req_data.push({"id":id, "is_backup_default_line": 1})
+                }
+
+                admin.req({
+                  url: '/lines' //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify(req_data)
+                  ,type: "put"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('设置成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      render_table(group_id, line_id)
+                    });
+                    }
+                  });
+                break;  
+                case 'unset_backup_default_line':
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                  layer.alert("请选择节点")
+                  return
+                }
+
+                req_data = []
+                for (i in data) {
+                  var id = data[i]['id']
+                  req_data.push({"id":id, "is_backup_default_line": 0})
+                }
+
+                admin.req({
+                  url: '/lines' //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify(req_data)
+                  ,type: "put"
+                  ,contentType:"application/json"
+                  ,dataType: "json"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('取消成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      render_table(group_id, line_id)
+                    });
+                    }
+                  });
+                break;                  
+                case 'set_weight':
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                  layer.alert("请选择节点")
+                  return
+                }
+
+                layer.prompt({
+                  formType: 0,
+                  title: '请输入权重值',
+                }, function(value, index, elem){
+                  req_data = []
+                  for (i in data) {
+                    var id = data[i]['id']
+                    req_data.push({"id":id, "weight": value})
+                  }
+
+                  admin.req({
+                    url: '/lines' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify(req_data)
+                    ,type: "put"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('设置成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        render_table(group_id, line_id)
+                        layer.close(index);
+                      });
+                      }
+                    });
+                });                
+                
+                break;    
+                case 'search':
+                  var search = $("input[name='search_set']").val()
+                  render_table(group_id, line_id, search=search,need_render_pending=false)
+
+                break;                                   
+            };
+          });
+
+        }
+      });
+    }
+
+
+  // 渲染菜单
+  var render_menu = function (argument) {
+      var menu_data = window.dns_lines
+      menu_data.splice(0,0,{"id":"","name":"全部","pid":[]})
+
+      // 点击td弹出菜单
+      $(".lines").click(function (event) {
+        $(".lines").removeClass("current-line-set")
+        $(this).addClass("current-line-set")
+        var dl = $(this).find("dl:first")
+        if (dl.hasClass("layui-show")) {
+          dl.removeClass("layui-show")
+        } else {
+          $(".lines dl").removeClass("layui-show")
+          dl.addClass("layui-show")
+        }
+        event.stopPropagation();
+      })
+
+      var $top_level = $('<dl class="layui-nav-child layui-anim layui-anim-upbit top-level">')
+      // 添加一级菜单
+      var add_level1 = false
+      $.each(menu_data,function(index, value){
+        var id = value['id']
+        var name = value['name']
+        
+        var pid = value['pid']
+        if (value['useful'] == 0) {
+          return true
+        }
+        add_level1 = true
+        var $dd = $("<dd></dd>")
+        var $i = $('<i class="layui-layout-right layui-icon layui-icon-right"></i>')
+        $dd.append(name)
+        $dd.data("id",id)
+        $dd.data("name",name)
+
+        if (pid && pid.length > 0) {
+          var $level2 = $('<dl class="layui-nav-child layui-anim layui-anim-upbit sub-level"></dl>')
+
+          // 添加二级菜单
+          var add_level2 = false
+          $.each(pid,function(index, value){
+            var id = value['id']
+            var name = value['name']
+            var pid = value['pid']
+            if (value['useful'] == 0) {
+              return true
+            }
+
+            add_level2 = true
+            var $i = $('<i class="layui-layout-right layui-icon layui-icon-right"></i>')
+            var $dd2 = $("<dd></dd>")
+            $dd2.append(name)
+            $dd2.data("id",id)
+            $dd2.data("name",name)
+
+            if (pid && pid.length > 0) {
+              var $level3 = $('<dl class="layui-nav-child layui-anim layui-anim-upbit sub-level"></dl>')
+
+              //添加三级菜单
+              var add_level3 = false
+              $.each(pid,function(index, value){
+                var id = value['id']
+                var name = value['name']
+                if (value['useful'] == 0) {
+                    return true
+                 }                
+                $level3.append("<dd data-name='"+name+"' data-id='"+id+"'>"+name+"</dd>")
+                add_level3 = true
+              })  
+
+              if (add_level3 == true) {
+                $dd2.append($i)
+                $dd2.addClass("spread")                
+                $dd2.append($level3)
+              }
+              
+
+            };
+
+            // 第三级
+            if (add_level2 == true) {
+              $dd.append($i)
+              $dd.addClass("spread")              
+              $level2.append($dd2)
+            }
+            
+
+          });
+
+          // 第二级
+          if (add_level1 == true) {
+            $dd.append($level2)
+          }
+          
+
+        };
+
+        // 第一级
+        $top_level.append($dd)
+
+      });
+
+      $(".lines").append($top_level)
+
+      // 鼠标在上弹出显示
+      $(".spread").hover(function(){
+        $(this).children("dl").addClass("layui-show")
+
+      },function (argument) {
+        dl = $(this).children("dl")
+        dl.removeClass("layui-show")
+      });
+
+      // 鼠标在上高亮显示
+      $(".lines dd").hover(function(){
+        $(this).addClass("layui-this")
+
+      },function (argument) {
+        $(this).removeClass("layui-this")
+      });
+
+  }
+
+
+
+})  
+
+</script>
+

@@ -1,0 +1,177 @@
+
+
+  <title>我的套餐 - 套餐管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>套餐管理</cite></a>
+      <a><cite>我的套餐</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="detail">详情</a>
+              <a class="layui-btn layui-bg layui-btn-xs" lay-event="renew">续费</a>
+              <a class="layui-btn layui-bg-orange layui-btn-xs" lay-event="up_down">升降配</a>
+              <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="rename">改名</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,form = layui.form;
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url:'/user-packages'
+      ,headers: {"access-token":access_token}
+      ,title: '套餐列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID'}
+        ,{field:'package_name', title:'套餐名称',templet: function(d){
+            if (d.package_name == d.user_package_name) {
+              return d.package_name
+            } else {
+              return d.package_name + " (" + d.user_package_name + ")"
+            }
+            
+         }} 
+        // ,{field:'domain', title:'CNAME',templet: function(d){
+        //   var cname_hostname2 = d.cname_hostname2
+        //   var cname_domain = d.cname_domain
+        //   var id = d.id
+        //   if (cname_hostname2 == "") {
+        //     return id + "-u." + cname_domain
+        //   } else {
+        //     return id + "-u." + cname_hostname2 + "." + cname_domain
+        //   }
+        //  }}          
+        ,{field:'start_at2', title:'购买时间'}
+        ,{field:'end_at2', title:'到期时间'}
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:280}
+      ]]
+      ,page: true
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除套餐', function(index){
+          var id = data.id
+          admin.req({
+            url: '/user-packages/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'up_down'){
+        admin.popup({
+          title: '升级包管理'
+          ,area: ['700px', '800px']
+          ,id: 'LAY-popup-package-up_down'
+          ,success: function(layero, index){
+            view(this.id).render('package/my/up_down',data).done(function(){
+            });
+          }
+        });
+      } else if(obj.event === 'detail'){
+        admin.popup({
+          title: '套餐详情'
+          ,area: ['600px', '800px']
+          ,id: 'LAY-popup-package-detail'
+          ,success: function(layero, index){
+            view(this.id).render('package/my/detail',data).done(function(){
+            });
+          }
+        });
+      } else if(obj.event === 'renew'){
+        admin.popup({
+          title: '续费'
+          ,area: ['420px', '320px']
+          ,id: 'LAY-popup-package-renew'
+          ,success: function(layero, index){
+            view(this.id).render('package/my/renew',data).done(function(){
+              form.render("select")
+              $("#renew-confirm").click(function (argument) {
+                var duration = $("select[name='duration']").val()                  
+                var req_data = {"duration":duration}
+                admin.req({
+                  url: '/user-packages/' + data.id //实际使用请改成服务端真实接口
+                  ,type: "put"
+                  ,data: JSON.stringify(req_data)
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('续费成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      layui.table.reload('test-table-toolbar'); //重载表格
+                      layer.close(index)
+                    });
+                  }
+                });
+              })              
+            });
+          }
+        });
+      } else if(obj.event === 'rename'){
+        layer.prompt({
+          formType: 0,
+          title: '请输入新名称',
+        }, function(value, index, elem){
+          admin.req({
+                  url: '/user-packages/' + data.id //实际使用请改成服务端真实接口
+                  ,type: "put"
+                  ,data: JSON.stringify({"name":value})
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('修改成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      layui.table.reload('test-table-toolbar'); //重载表格
+                      layer.close(index);
+                    });
+                  }
+                });
+        });
+      }
+    });  
+
+  });
+
+
+  </script>

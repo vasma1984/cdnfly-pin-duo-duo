@@ -1,0 +1,348 @@
+
+  <title>节点 - 节点管理</title>
+
+  <div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+      <a lay-href="">首页</a>
+      <a><cite>节点管理</cite></a>
+      <a><cite>线路分组</cite></a>
+      <a class="node-filter"><cite>线路分组</cite></a>
+    </div>
+  </div>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <div class="layui-tab" lay-filter="region-tab" style="margin-bottom:20px">
+              <ul class="layui-tab-title regions">
+                <li data-id="" class="layui-this">所有区域</li>
+              </ul>
+            </div>
+
+            <table class="layui-hide" id="test-table-toolbar" lay-filter="test-table-toolbar"></table>
+            
+            <script type="text/html" id="test-table-toolbar-toolbarDemo">
+                <div class="layui-row layui-col-space10">
+                  <div class="layui-col-md9">
+                    <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+                    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+                  </div>
+
+                  <div class="layui-col-md2">
+                    <input style="height:30px" type="text" name="search" placeholder="输入名称或解析值搜索" autocomplete="off" class="layui-input">
+
+                  </div>
+                  <div class="layui-col-md1">
+                    <button class="layui-btn  layui-btn-sm" onclick="search()">
+                      <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                  </div>
+
+                </div>
+                
+            </script>
+             
+            <script type="text/html" id="test-table-toolbar-barDemo">
+              <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="node">设置解析</a>            
+              <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+
+  layui.use(['admin', 'table'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,element = layui.element
+    ,form = layui.form;
+
+    // 获取所有区域
+    admin.req({
+    url: '/regions?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        window.region_list = data
+        for (var i = 0; i < data.length; i++) {
+          $(".regions").append("<li data-id='"+data[i]['id']+"'>"+data[i]['name']+"</li>")
+        };
+        element.render()
+      }
+    });
+
+    // 监听tab
+    element.on('tab(region-tab)', function(data){
+      var region_id = $(this).data("id")
+
+      table.reload('test-table-toolbar', {
+        where: {"region_id":region_id,"node_id":""}
+        , page: {curr: 1}
+      });
+
+    });
+
+    var node_id = layui.router().search.node_id
+    var where = {}
+    var hide_count = false
+    if (node_id) {
+      $(".regions").addClass("layui-hide")
+      $(".node-filter cite").text("节点(id:"+node_id+")线路组")
+      hide_count = true
+      where = {"node_id":node_id}
+    }
+
+    var access_token = layui.data('layuiAdmin')['access-token']
+    table.render({
+      elem: '#test-table-toolbar'
+      ,url: "/node-groups"
+      ,where: where
+      ,headers: {"access-token":access_token}
+      ,toolbar: '#test-table-toolbar-toolbarDemo'
+      ,title: '线路分组列表'
+      ,cols: [[
+        {type: 'checkbox', fixed: 'left'}
+        ,{field:'id', title:'ID', sort: true,width: 60}
+        ,{field:'name', title:'名称'}
+        ,{field:'region_name', title:'区域'}
+        ,{field:'cname_hostname', title:'解析值',templet:function(d) {
+          return d.cname_hostname+".n"
+        }}
+        ,{hide:hide_count, field:'create_at', title:'统计',templet:function(d) {
+          return '节点数('+d.node_count+'个) ' + '网站数('+d.site_count+'个) ' + '转发数('+d.stream_count+'个) '
+        }}
+        ,{field:'create_at', title:'备用IP切换策略',templet:function(d) {
+          if (d.backup_switch_type == "master_down") {
+            return 'IP下线时'
+          } else {
+            return '间隔时间切换'
+          }
+        }}        
+        ,{fixed: 'right', title:'操作', toolbar: '#test-table-toolbar-barDemo', width:230}
+      ]]
+      ,page: true
+    });
+
+    // 获取线路
+    admin.req({
+      url: '/configs/global-0-system-dns_config' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data.value
+        var lines = JSON.parse(data)['lines']
+        window.lines = lines
+      }
+    });    
+
+
+    //头工具栏事件
+    table.on('toolbar(test-table-toolbar)', function(obj){
+      var checkStatus = table.checkStatus(obj.config.id);
+      switch(obj.event){
+        case 'add':
+          admin.popup({
+            title: '新增线路分组'
+            ,area: ['500px', '350px']
+            ,id: 'LAY-popup-node-add'
+            ,success: function(layero, index){
+              view(this.id).render('node/group/groupform').done(function(){
+                form.render(null, 'layuiadmin-form-nodeadmin');
+                
+                //监听提交
+                form.on('submit(LAY-node-front-submit)', function(data){
+                  var field = data.field; //获取提交的字段
+                  var name = field.name
+                  var des = field.des
+                  var region_id = field.region_id
+
+                  admin.req({
+                    url: '/node-groups' //实际使用请改成服务端真实接口
+                    ,data: JSON.stringify({"region_id":region_id, "name": name,"des":des})
+                    ,type: "post"
+                    ,contentType:"application/json"
+                    ,dataType: "json"
+                    ,done: function(res){
+                      //登入成功的提示与跳转
+                      layer.msg('新增成功', {
+                        offset: '15px'
+                        ,icon: 1
+                        ,time: 1000
+                      }, function(){
+                        layui.table.reload('test-table-toolbar'); //重载表格
+                        layer.close(index); //执行关闭 
+                      });
+                    }
+                  });
+
+                });
+              });
+            }
+          });
+        break;
+        case 'delete':
+          var data = checkStatus.data;
+          if (data.length == 0) {
+            layer.alert('请选择需要删除的线路分组');   
+            return
+          }
+          req_data = []
+          for (i in data) {
+            req_data.push(data[i]['id'])
+          }
+
+          var ids = req_data.join(",")
+          layer.confirm('将删除('+ids+')线路分组，是否继续', function(index){
+            admin.req({
+              url: '/node-groups/'+ids //实际使用请改成服务端真实接口
+              ,type: "delete"
+              ,done: function(res){
+                //登入成功的提示与跳转
+                layer.msg('删除成功', {
+                  offset: '15px'
+                  ,icon: 1
+                  ,time: 1000
+                }, function(){
+                  layui.table.reload('test-table-toolbar'); //重载表格
+                });
+              }
+            });
+          });
+        break;        
+      };
+    });
+    
+    //监听行工具事件
+    table.on('tool(test-table-toolbar)', function(obj){
+      var data = obj.data;
+      if(obj.event === 'del'){
+        layer.confirm('是否确定删除线路分组', function(index){
+          var id = data.id
+          admin.req({
+            url: '/node-groups/' + id //实际使用请改成服务端真实接口
+            ,type: "delete"
+            ,done: function(res){
+              //登入成功的提示与跳转
+              layer.msg('删除成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                layui.table.reload('test-table-toolbar'); //重载表格
+                layer.close(index); //执行关闭 
+              });
+            }
+          });
+
+        });
+      } else if(obj.event === 'edit'){
+        admin.popup({
+          title: '编辑线路分组'
+          ,area: ['500px', '450px']
+          ,id: 'LAY-popup-node-edit'
+          ,success: function(layero, index){
+            view(this.id).render('node/group/groupform',data).done(function(){
+              $(".region-item").addClass("layui-hide")
+              $(".edit").removeClass("layui-hide")
+
+              // 填充备用IP切换
+              var backup_switch_type = data.backup_switch_type
+              $("input[name='backup_switch_type'][value='"+backup_switch_type+"']").prop("checked",true)
+
+              // 填充切换参数
+              var backup_switch_policy = JSON.parse(data.backup_switch_policy)
+              var ip_num = backup_switch_policy["ip_num"]
+              var interval = backup_switch_policy["interval"]
+              var switch_order = backup_switch_policy["switch_order"]
+
+              $("input[name='ip_num']").val(ip_num)
+              $("input[name='interval']").val(interval)
+              $("select[name='switch_order']").val(switch_order)
+
+              // 是否显示切换参数
+              if (backup_switch_type == "interval") {
+                $(".backup-switch-policy").removeClass("layui-hide")
+              }
+
+              form.render(null, 'layuiadmin-form-nodeadmin');
+
+              form.on('radio(backup_switch_type)', function(data){
+                if (data.value == "interval") {
+                  $(".backup-switch-policy").removeClass("layui-hide")
+                } else {
+                  $(".backup-switch-policy").addClass("layui-hide")
+                }
+              });  
+
+              //监听提交
+              form.on('submit(LAY-node-front-submit)', function(data){
+                var field = data.field; //获取提交的字段
+                var name = field.name
+                var des = field.des
+                var cname_id = field.cname_id
+                var id = field.id
+                var backup_switch_type = $("input[name='backup_switch_type']:checked").val()
+                var ip_num = $("input[name='ip_num']").val()
+                var interval = $("input[name='interval']").val()
+                var switch_order = $("select[name='switch_order']").val()    
+                if (backup_switch_type == "master_down") {
+                  var backup_switch_policy = {}
+                } else {
+                  var backup_switch_policy = {"ip_num":ip_num,"interval":interval,"switch_order":switch_order}
+                }
+
+                admin.req({
+                  url: '/node-groups/' + id //实际使用请改成服务端真实接口
+                  ,data: JSON.stringify({"name": name,"des":des, "cname_id":cname_id,"backup_switch_policy":backup_switch_policy,"backup_switch_type":backup_switch_type})
+                  ,type: "put"
+                  ,done: function(res){
+                    //登入成功的提示与跳转
+                    layer.msg('保存成功', {
+                      offset: '15px'
+                      ,icon: 1
+                      ,time: 1000
+                    }, function(){
+                      layui.table.reload('test-table-toolbar'); //重载表格
+                      layer.close(index); //执行关闭 
+                    });
+                  }
+                });
+
+              });
+            });
+          }
+        });
+      } else if(obj.event === 'node'){
+        if (typeof(window.lines) == "undefined") {
+          layer.alert("请先设置DNS")
+          return
+        };
+        var id = data.id
+        var name = data.name
+        var region_id = data.region_id
+        location.hash = '/node/group/line/group_id='+id+'/group_name='+name + '/region_id='+region_id;
+      }
+    });  
+
+  });
+
+  function search (argument) {
+      var search = layui.$("input[name='search']").val()
+
+      layui.table.reload('test-table-toolbar', {
+        where: {search: search.replace(/\.n$/,"")},
+        done: function (argument) {
+          layui.$("input[name='search']").val(search)
+        }, page: {curr: 1}
+      });
+  }
+
+  </script>

@@ -1,0 +1,471 @@
+
+
+<title>Nginx配置 - 全局配置</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="">首页</a>
+    <a><cite>全局配置</cite></a>
+    <a><cite>Nginx配置</cite></a>
+  </div>
+</div>
+
+<style type="text/css">
+.layui-elem-quote{padding: 6px;}
+.thin-gray{font-weight: 400;color: #999;} 
+.small-title{font-weight:700;font-size:14px}
+hr {margin-bottom: 30px}
+</style>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <div class="layui-tab" lay-filter="region-tab" style="margin-bottom:20px">
+            <ul class="layui-tab-title regions">
+              <li data-id="0" class="layui-this">全局</li>
+            </ul>
+
+          </div>
+
+          <form class="layui-form node-config layui-hide" action="">
+            <div class="layui-form-item" style="margin-left: 10px;">
+              <div class="layui-input-inline" style="width: 230px;">
+                <input type="radio" name="config" lay-filter="config" value="region" title="区域默认" checked>
+                <input type="radio" name="config" lay-filter="config" value="node" title="配置节点">
+              </div>        
+              <div class="layui-input-inline node layui-hide">
+                <select name="node" lay-filter="node" lay-verify="required" lay-search>
+
+                </select>
+              </div>
+            </div>
+          </form>   
+
+         <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+          <ul class="layui-tab-title">
+            <li class="layui-this">Worker</li>
+            <li>Http</li>
+            <li>Stream</li>
+          </ul>
+          <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">worker_rlimit_nofile：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="worker_rlimit_nofile"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">worker_shutdown_timeout：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="worker_shutdown_timeout"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">worker_connections：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="worker_connections"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">worker_processes：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="worker_processes"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>                                           
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">resolver：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="resolver"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">resolver_timeout：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="resolver_timeout"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>  
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">日志目录：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="logs_dir"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>  
+
+            </div>
+            <div class="layui-tab-item">
+              <div class="layui-row ">
+               <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">Gzip</span></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">gzip_comp_level：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.gzip_comp_level"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">gzip_http_version：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.gzip_http_version"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div> 
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">gzip_min_length：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.gzip_min_length"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">gzip_vary：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.gzip_vary"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+
+              <hr>
+              <div class="layui-row ">
+                <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">Proxy</span></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_buffering：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.proxy_buffering"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_request_buffering：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.proxy_request_buffering"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>              
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_cache_dir：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.proxy_cache_dir"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_cache_max_size：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.proxy_cache_max_size"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_cache_keys_zone_size：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.proxy_cache_keys_zone_size"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>                            
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_http_version：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.proxy_http_version"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>           
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_max_temp_file_size：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.proxy_max_temp_file_size"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>             
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_next_upstream：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.proxy_next_upstream"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>        
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">入口IP回源：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.server_addr_outgoing"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>  
+
+              
+
+              <hr>
+              <div class="layui-row ">
+                <div class="layui-col-lg2 layui-col-md4"> <span class="small-title">其它</span></div>
+              </div>
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">server：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.server"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">client_max_body_size：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.client_max_body_size"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>      
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">default_type：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.default_type"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">keepalive_requests：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.keepalive_requests"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">keepalive_timeout：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.keepalive_timeout"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">log_not_found：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.log_not_found"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">server_names_hash_max_size：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.server_names_hash_max_size"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">server_names_hash_bucket_size：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.server_names_hash_bucket_size"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+              
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">server_tokens：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.server_tokens"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>            
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">large_client_header_buffers：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="http.large_client_header_buffers"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>                                                                                                                                                            
+            </div>
+            <div class="layui-tab-item">
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_connect_timeout：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="stream.proxy_connect_timeout"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-lg2 layui-col-md4">proxy_timeout：</div> <div class="layui-col-lg2 layui-col-md4"><input type="text" name="stream.proxy_timeout"  placeholder="请输入"  autocomplete="off" class="layui-input"></div>
+              </div>
+
+            </div>
+        </div>
+      </div>                 
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+  layui.use(['admin', 'table','form'], function(){
+    var $ = layui.$
+    ,admin = layui.admin
+    ,view = layui.view
+    ,table = layui.table
+    ,element = layui.element
+    ,form = layui.form;
+    form.render()
+
+    // 获取所有区域
+    admin.req({
+      url: '/regions?limit=0' //实际使用请改成服务端真实接口
+      ,type: "get"
+      ,done: function(res){
+        var data = res.data
+        window.region_list = data
+        for (var i = 0; i < data.length; i++) {
+          $(".regions").append("<li data-id='"+data[i]['id']+"'>"+data[i]['name']+"</li>")
+        };
+        element.render()
+      }
+    });
+
+    // 清空配置
+    function clean_input (argument) {
+      $("input[type='text']").each(function (index, ele) {
+        if (!$(ele).parent().hasClass("layui-select-title")) {
+          $(ele).val("")
+        }
+      })
+    }
+
+    // 监听radio
+    form.on('radio(config)', function(data){
+      if (data.value == "region" ) {
+        $(".node").addClass("layui-hide")
+        $("input[type='text']").attr("disabled",false)
+        clean_input()
+        // 获取全局配置
+        var global_ajax = get_config("global","0", true)
+
+        // 获取该区域配置
+        var scope_id = $(".regions").find(".layui-this").data("id")
+        $.when(global_ajax).then(function (params) {
+          get_config("region",scope_id, false)
+        })
+        
+
+      } else {
+        $(".node").removeClass("layui-hide")
+        
+        var node = $("select[name='node']").val()
+        if (node) {
+          $("input[type='text']").attr("disabled",false)
+          clean_input()
+
+          // 获取该区域配置
+          var scope_id = $(".regions").find(".layui-this").data("id")
+          var region_ajax = get_config("region",scope_id, true)          
+
+          // 获取节点配置
+          $.when(region_ajax).then(function (params) {
+            get_config("node",node, false)
+          })
+          
+        } else {
+          $("input[type='text']").attr("disabled",true)
+        }
+      }
+    });  
+
+    // 监听select
+    form.on('select(node)', function(data){
+      var v = data.value
+      if (v) {
+        $("input[type='text']").attr("disabled",false)
+        clean_input()
+
+        // 获取当前区域配置
+        var scope_id = $(".regions").find(".layui-this").data("id")
+        var region_ajax = get_config("region",scope_id, true)           
+
+        // 获取该节点的配置
+        $.when(region_ajax).then(function (params) {
+          get_config("node",v, false)
+        })
+        
+      } else {
+        $("input[type='text']").attr("disabled",true)
+      }
+    });
+
+    // 监听tab
+    element.on('tab(region-tab)', function(data){
+      var scope_id = $(this).data("id")
+      // 清空input
+      clean_input()
+      var scope_name = "global"
+      if (scope_id != "0") {
+        scope_name = "region"
+        $(".node-config").removeClass("layui-hide")
+        // 获取该区域节点
+        admin.req({
+          url: '/nodes?limit=0&region_id=' + scope_id //实际使用请改成服务端真实接口
+          ,type: "get"
+          ,done: function(res){
+            $("select[name='node']").empty()
+            $("select[name='node']").append("<option value=''>请选择节点</option>")
+            var data = res.data
+            for (var i = 0; i < data.length; i++) {
+              $("select[name='node']").append("<option value='"+data[i]['id']+"'>("+data[i]['id']+") " + data[i]['name']+"</option>")
+            };
+            form.render("select")
+          }
+        });
+
+        // 获取全局配置
+        var global_ajax = get_config("global","0",true)
+
+        // 获取区域配置
+        $.when(global_ajax).then(function (params) {
+          get_config(scope_name,scope_id,false)
+        })
+        
+
+      } else {
+        $(".node-config").addClass("layui-hide")
+        // 获取全局配置
+        get_config("global","0",false)
+      }
+
+      
+
+    });
+
+    function flatten(data) {
+        var result = {};
+        function recurse (cur, prop) {
+            if (Object(cur) !== cur) {
+                result[prop] = cur;
+            } else if (Array.isArray(cur)) {
+                 for(var i=0, l=cur.length; i<l; i++)
+                     recurse(cur[i], prop + "[" + i + "]");
+                if (l == 0)
+                    result[prop] = [];
+            } else {
+                var isEmpty = true;
+                for (var p in cur) {
+                    isEmpty = false;
+                    recurse(cur[p], prop ? prop+"."+p : p);
+                }
+                if (isEmpty && prop)
+                    result[prop] = {};
+            }
+        }
+        recurse(data, "");
+        return result;
+    }
+    get_config("global","0",false)
+
+    function get_config (scope_name, scope_id, placeholder) {
+      var ajax = admin.req({
+        url: '/configs/' + scope_name + "-" + scope_id + "-nginx_config-nginx-config-file" //实际使用请改成服务端真实接口
+        ,type: "get"
+        ,contentType:"application/json"
+        ,dataType: "json"
+        ,done: function(res){
+          var value
+          if (!res.data) {
+            value = '{}'
+          } else {
+            value = res.data.value
+          }
+          var data = JSON.parse(value)
+          window.data = data
+          var flat_data = flatten(data)
+          for (i in flat_data) {
+            var v = flat_data[i]
+            
+            if (placeholder == true) {
+              $("input[name='"+i+"']").attr("placeholder",v)
+            } else {
+              $("input[name='"+i+"']").val(v)
+            }
+            
+          }
+        }
+      })
+      return ajax
+
+    }
+
+    function update_config(data,success,fail) {
+      var scope_name = "global"
+      var scope_id = $(".regions").find(".layui-this").data("id")
+      if (scope_id != "0") {
+        // 检查是区域默认还是节点
+        if ($("input[name='config']:checked").val() == "node") {
+          scope_name = "node"
+          scope_id = $("select[name='node']").val()
+          if (!scope_id) {
+            layer.alert("请先选择节点")
+            return
+          }
+        } else {
+          scope_name = "region"
+        }
+        
+      }
+
+      data["scope_name"] = scope_name
+      data["scope_id"] = scope_id
+      data["type"] = "nginx_config"
+      data["name"] = "nginx-config-file"
+
+      admin.req({
+        url: '/configs'
+        ,type: 'put'
+        ,data: JSON.stringify(data)
+        ,contentType:"application/json"
+        ,dataType: "json"        
+        ,fail: fail
+        ,done: function(res){
+          //登入成功的提示与跳转
+          layer.msg('更新成功', {
+            offset: '15px'
+            ,icon: 1
+            ,time: 1000
+          }, function(){
+            if (success) {
+              success()
+            }
+            
+          });
+        }
+      });
+    }
+
+    function set_data_val (name, value) {
+      var scope_id = $(".regions").find(".layui-this").data("id")
+
+      var name_arr = name.split(".")
+      if (name_arr.length == 2) {
+        if (window.data[name_arr[0]]) {
+          window.data[name_arr[0]][name_arr[1]] = value
+        } else {
+          window.data[name_arr[0]] = {}
+          window.data[name_arr[0]][name_arr[1]] = value
+        }
+        
+        if (scope_id != "0" && value == "") {
+          delete  window.data[name_arr[0]][name_arr[1]]
+        }
+
+      } else {
+        window.data[name_arr[0]] = value
+        if (scope_id != "0" && value == "") {
+          delete  window.data[name_arr[0]]
+        }
+
+      }
+    }
+
+    $("input").on('focusin', function(){
+        $(this).data('val', $(this).val());
+    }).on('change', function(){
+        var prev = $(this).data('val');
+        var curr = $(this).val();
+        var name = $(this).attr("name")
+
+        var fail = function (argument) {
+          $("input[name='"+name+"']").val(prev)
+          set_data_val(name, prev)
+        }
+
+        set_data_val(name, curr)
+
+        var req_data = {"value": JSON.stringify(window.data)}
+        update_config(req_data, null,fail )
+
+    });
+
+  });  
+
+</script>

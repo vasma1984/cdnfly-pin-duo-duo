@@ -1,0 +1,93 @@
+<style>
+  .layui-layer-page .layui-layer-content  {  overflow: visible !important;}
+</style>
+
+<div class="layui-form" lay-filter="layuiadmin-form-nodeadmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item region-item">
+    <label class="layui-form-label">区域</label>
+    <div class="layui-input-inline">
+      <select class="regions" name="region_id" lay-verify="">
+        <option value="">请选择区域</option>
+      </select>           
+    </div>
+  </div>
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label">名称</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="name" value="{{ d.params.name || '' }}" lay-verify="required" placeholder="请输入线路分组名称" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">备注</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="des" value="{{ d.params.des || '' }}" placeholder="请输入备注" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item edit layui-hide">
+    <label class="layui-form-label">备用IP切换</label>
+    <div class="layui-input-inline">
+      <input lay-filter="backup_switch_type" type="radio" name="backup_switch_type" value="master_down" title="主IP下线时" checked>
+      <input lay-filter="backup_switch_type"  type="radio" name="backup_switch_type" value="interval" title="间隔切换" >
+    </div>
+  </div>
+
+
+  <div class="layui-form-item layui-hide backup-switch-policy">
+    <label class="layui-form-label">切换参数</label>
+    <div class="layui-input-inline">
+      <input type="text" name="ip_num" value="" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">启用的IP数</div>
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="text" name="interval" value="" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">间隔时间(秒)</div>    
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <select name="switch_order" lay-verify="required">
+        <option value="seq">顺序</option>
+        <option value="rand">随机</option>
+      </select>
+    </div>
+    <div class="layui-form-mid layui-word-aux">切换次序</div>        
+  </div>
+
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-node-front-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+
+<script>
+layui.use(['admin', 'table'], function(){
+  var $ = layui.$
+  ,admin = layui.admin
+  ,view = layui.view
+  ,form = layui.form;
+
+  var data = window.region_list
+  for (var i = 0; i < data.length; i++) {
+    $(".regions").append("<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>")
+  };
+
+  form.render("select")
+
+
+})
+
+</script>

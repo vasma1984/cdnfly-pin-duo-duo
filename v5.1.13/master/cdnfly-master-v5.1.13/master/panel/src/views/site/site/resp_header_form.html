@@ -1,0 +1,38 @@
+
+<div class="layui-form" lay-filter="layuiadmin-form-resp_headeradmin" style="padding: 20px 0 0 0;">
+  <script type="text/html" template>
+    <input type="hidden" name="id" value="{{ d.params.id || '' }}" class="layui-input">
+  </script>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">响应头</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="resp_header_name"  value="{{ d.params.name || '' }}" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">值</label>
+    <div class="layui-input-inline">
+      <script type="text/html" template>
+        <input type="text" name="resp_header_value"  value="{{ d.params.value || '' }}" autocomplete="off" class="layui-input">
+      </script>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+      <input type="button" lay-submit lay-filter="LAY-site-site-edit-resp_header-add-submit" value="确认" class="layui-btn">
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+var form = layui.form
+var $ = layui.$
+form.render()
+
+</script>
