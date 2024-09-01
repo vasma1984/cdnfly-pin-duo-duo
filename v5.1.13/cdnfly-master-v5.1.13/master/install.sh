@@ -362,11 +362,11 @@ if [[ ! -f "/etc/elasticsearch/elasticsearch.yml" ]]; then
         cd /tmp
         download "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/GPG-KEY-elasticsearch" "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/GPG-KEY-elasticsearch" "GPG-KEY-elasticsearch"
         cat GPG-KEY-elasticsearch | sudo apt-key add -
-        download "http://bt.fikkey.com/cdnfly/elasticsearch-7.6.1-amd64.deb" "http://bt.fikkey.com/cdnfly/elasticsearch-7.6.1-amd64.deb" "elasticsearch-7.6.1-amd64.deb"
+        download "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/elasticsearch-7.6.1-amd64.deb" "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/elasticsearch-7.6.1-amd64.deb" "elasticsearch-7.6.1-amd64.deb"
         dpkg -i elasticsearch-7.6.1-amd64.deb
     elif check_sys sysRelease centos; then
         cd /tmp
-        download "http://bt.fikkey.com/cdnfly/elasticsearch-7.6.1-x86_64.rpm" "http://bt.fikkey.com/cdnfly/elasticsearch-7.6.1-x86_64.rpm" "elasticsearch-7.6.1-x86_64.rpm"
+        download "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/elasticsearch-7.6.1-x86_64.rpm" "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/elasticsearch-7.6.1-x86_64.rpm" "elasticsearch-7.6.1-x86_64.rpm"
         rpm --install elasticsearch-7.6.1-x86_64.rpm
     fi    
 
