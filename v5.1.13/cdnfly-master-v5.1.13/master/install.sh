@@ -170,7 +170,7 @@ install_pip_module() {
 
     elif check_sys sysRelease centos;then
         cd /etc/yum.repos.d/
-        download "https://github.com/LoveesYe/cdnflydadao/raw/main/master/epel.repo" "https://github.com/LoveesYe/cdnflydadao/raw/main/master/epel.repo" "epel.repo"
+        download "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/epel.repo" "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/epel.repo" "epel.repo"
 
         sed -i 's#https://#http://#g' /etc/yum.repos.d/epel*repo
         yum --enablerepo=epel install python-pip gcc python-devel mariadb-devel libffi-devel -y || true
@@ -182,7 +182,7 @@ install_pip_module() {
     
 
     cd /tmp
-    download "http://bt.fikkey.com/cdnfly/pymodule-master-20211219.tar.gz" "http://bt.fikkey.com/cdnfly/pymodule-master-20211219.tar.gz" "pymodule-master-20211219.tar.gz"
+    download "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/pymodule-master-20211219.tar.gz" "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/pymodule-master-20211219.tar.gz" "pymodule-master-20211219.tar.gz"
     tar xf pymodule-master-20211219.tar.gz
     cd pymodule-master-20211219
 
@@ -308,7 +308,7 @@ install_acme() {
         fi  
 
         cd /tmp
-        download "https://github.com/LoveesYe/cdnflydadao/raw/main/master/acme.sh-3.0.1.zip" "https://github.com/LoveesYe/cdnflydadao/raw/main/master/acme.sh-3.0.1.zip" "acme.sh-3.0.1.zip"
+        download "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/acme.sh-3.0.1.zip" "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/acme.sh-3.0.1.zip" "acme.sh-3.0.1.zip"
         unzip acme.sh-3.0.1.zip
         cd acme.sh-3.0.1
         ./acme.sh --install --nocron    
@@ -360,7 +360,7 @@ install_es() {
 if [[ ! -f "/etc/elasticsearch/elasticsearch.yml" ]]; then
     if check_sys sysRelease ubuntu;then
         cd /tmp
-        download "https://github.com/LoveesYe/cdnflydadao/raw/main/master/GPG-KEY-elasticsearch" "https://github.com/LoveesYe/cdnflydadao/raw/main/master/cdnfly/GPG-KEY-elasticsearch" "GPG-KEY-elasticsearch"
+        download "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/GPG-KEY-elasticsearch" "https://github.com/vasma1984/cdnfly-pin-duo-duo/raw/main/v5.1.13/master_lib/GPG-KEY-elasticsearch" "GPG-KEY-elasticsearch"
         cat GPG-KEY-elasticsearch | sudo apt-key add -
         download "http://bt.fikkey.com/cdnfly/elasticsearch-7.6.1-amd64.deb" "http://bt.fikkey.com/cdnfly/elasticsearch-7.6.1-amd64.deb" "elasticsearch-7.6.1-amd64.deb"
         dpkg -i elasticsearch-7.6.1-amd64.deb
