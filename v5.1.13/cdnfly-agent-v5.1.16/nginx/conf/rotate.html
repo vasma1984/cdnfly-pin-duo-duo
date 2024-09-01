@@ -1,0 +1,29 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>安全验证</title>
+</head>
+<body>
+<style>
+@media screen and (max-width: 305px) { 
+.captcha-root {max-width:100%;font-size: 16px;} 
+} 
+
+</style>
+
+<div class="J__captcha__"></div>
+<script src="/_guard/rotate.js"></script>
+<script>
+let myCaptcha = document.querySelectorAll('.J__captcha__').item(0).captcha({
+	// 验证成功时显示
+	timerProgressBar: !0, // 是否启用进度条
+	timerProgressBarColor: '#07f', // 进度条颜色
+        title: '安全验证',
+	desc: '拖动滑块，使图片角度为正'	
+});
+
+</script>
+</body>
+
+</html>

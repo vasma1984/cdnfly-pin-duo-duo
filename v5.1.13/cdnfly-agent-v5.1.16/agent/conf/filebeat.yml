@@ -1,0 +1,127 @@
+logging.level: info
+logging.selectors: [ ]
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+
+filebeat.inputs:
+# http_access
+- type: log
+  enabled: true
+  paths:
+    - /usr/local/openresty/nginx/logs/access.log
+
+  index: http_access
+
+  scan_frequency: 10s
+  harvester_buffer_size: 1638400
+  tail_files: true
+  pipeline: nginx_access_pipeline
+  symlinks: true
+  publisher_pipeline_disable_host: true
+
+# stream access
+- type: log
+  enabled: true
+  paths:
+    - /usr/local/openresty/nginx/logs/stream.log
+
+  index: stream_access
+
+  scan_frequency: 10s
+  harvester_buffer_size: 1638400
+  tail_files: true
+  pipeline: stream_access_pipeline
+  symlinks: true
+  publisher_pipeline_disable_host: true
+
+- type: httpjson
+  url: https://127.0.0.1:5000/monitor/nginx-status
+  interval: 60s
+  index: nginx_status
+  pipeline: monitor_pipeline
+  ssl.verification_mode: none
+  http_headers:
+    agent-pwd: 'ES_PWD'
+
+- type: httpjson
+  url: https://127.0.0.1:5000/monitor/sys-load
+  interval: 60s
+  index: sys_load
+  pipeline: monitor_pipeline
+  ssl.verification_mode: none
+  http_headers:
+    agent-pwd: 'ES_PWD'
+
+- type: httpjson
+  url: https://127.0.0.1:5000/monitor/tcp-conn
+  interval: 60s
+  index: tcp_conn
+  pipeline: monitor_pipeline
+  ssl.verification_mode: none
+  http_headers:
+    agent-pwd: 'ES_PWD'
+
+- type: httpjson
+  url: https://127.0.0.1:5000/monitor/bandwidth
+  interval: 60s
+  index: bandwidth
+  pipeline: monitor_pipeline
+  ssl.verification_mode: none
+  http_headers:
+    agent-pwd: 'ES_PWD'
+
+- type: httpjson
+  url: https://127.0.0.1:5000/monitor/disk-usage
+  interval: 60s
+  index: disk_usage
+  pipeline: monitor_pipeline
+  ssl.verification_mode: none
+  http_headers:
+    agent-pwd: 'ES_PWD'
+
+- type: httpjson
+  url: https://127.0.0.1:5000/monitor/user-package
+  interval: 60s
+  index: up_res_usage
+  pipeline: monitor_pipeline
+  ssl.verification_mode: none
+  http_headers:
+    agent-pwd: 'ES_PWD'
+
+  processors:
+    - decode_json_fields: 
+        fields: ["message"]
+        target: "json"
+    
+    - fingerprint: 
+        fields: ["json.node_id","json.upid"]
+        target_field: "@metadata._id"
+
+    - script:
+        lang: javascript
+        id: update_instead_of_ignore_same_id
+        source: >
+          function process(event) {
+            event.Put("@metadata.op_type", "index")
+          }
+
+output.elasticsearch:
+  enabled: true
+  hosts: ["192.168.0.30:9200"]
+  compression_level: 3
+  protocol: "http"
+  username: "elastic"
+  password: "ES_PWD"
+  worker: 2
+  max_retries: 3
+  bulk_max_size: 2000
+  timeout: 90
+
+processors:
+  - drop_fields:
+      fields: ["event.created", "agent.hostname","agent.name","agent.id","agent.ephemeral_id", "agent.type",  "agent.version","log.file.path","log.offset", "input.type",  "ecs.version",  "host.name","json"]
+
+setup.template.enabled: false
+setup.ilm.enabled: false
