@@ -218,7 +218,7 @@ else
     second_part=$(printf "%02d\n" `echo $MASTER_VER  | awk -F'.' '{print $2}'`)
     third_part=$(printf "%02d\n" `echo $MASTER_VER  | awk -F'.' '{print $3}'`)
     version_num="$first_part$second_part$third_part"
-    agent_ver=`(curl -s -m 5 "http://auth.fikkey.com/master/upgrades?version_num=$version_num" || curl -s -m 5 "http://auth.fikkey.com/master/upgrades?version_num=$version_num") | grep -Po '"agent_ver":"\d+"' | grep -Po "\d+" || true`
+    agent_ver=`(curl -s -m 5 "http://auth.fikkey.com/master/upgrades?version_num=$version_num" || curl -s -m 5 "https://raw.githubusercontent.com/vasma1984/cdnfly-pin-duo-duo/refs/heads/main/v5.1.13/version_num.json") | grep -Po '"agent_ver":"\d+"' | grep -Po "\d+" || true`
     if [[ "$agent_ver" == "" ]]; then
         echo "无法获取agent版本"
         exit 1
